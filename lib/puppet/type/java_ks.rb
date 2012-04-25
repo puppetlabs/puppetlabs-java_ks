@@ -48,6 +48,7 @@ module Puppet
 
     newparam(:target) do
       desc ''
+      isnamevar
     end
 
     newparam(:certificate) do
@@ -64,6 +65,17 @@ module Puppet
 
     newparam(:trustcacerts) do
       desc ''
+    end
+
+    def self.title_patterns
+      identity = lambda {|x| x}
+      [[
+        /^(.*):(.*)$/,
+       [
+         [ :name, identity ],
+         [ :target, identity ]
+       ]
+      ]]
     end
   end
 end

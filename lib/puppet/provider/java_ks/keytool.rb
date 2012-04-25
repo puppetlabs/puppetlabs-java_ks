@@ -98,7 +98,7 @@ without an accomapaning certificate.'
       cmd << '-file' << @resource[:certificate]
       cmd << '-keystore' << @resource[:target]
       Tempfile.open("#{@resource[:name]}.") do |tmpfile|
-        if File.exists?(@resource[:taget])
+        if File.exists?(@resource[:target])
           tmpfile.write(@resource[:password])
         else
           tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
