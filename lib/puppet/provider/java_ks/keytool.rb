@@ -5,31 +5,41 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   commands :keytool => 'keytool'
 
   def to_pkcs12
+    output = ''
     cmd = [command(:openssl)]
     cmd << 'pkcs12' << '-export'
     cmd << '-in' << @resource[:certificate]
     cmd << '-inkey' << @resource[:private_key]
     cmd << '-name' << @resource[:name]
-    cmd << '-passout' << "pass:#{@resource[:password]}"
-    raw, status = Puppet::Util::SUIDManager.run_and_capture(cmd)
-    return raw
+    cmd << '-passout' << 'stdin'
+    Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+      tmpfile.write(@resource[:password])
+      tmpfile.flush
+      output = Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+    end
+    return output
   end
 
   def import_ks
-    Tempfile.open("#{@resource[:name]}.pk12.") do |tmpfile|
-      tmpfile.write(to_pkcs12)
-      tmpfile.flush
+    Tempfile.open("#{@resource[:name]}.pk12.") do |tmppk12|
+      tmppk12.write(to_pkcs12)
+      tmppk12.flush
       cmd = [command(:keytool)]
       cmd << '-importkeystore'
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       cmd << '-destkeystore' << @resource[:target]
-      cmd << '-destkeypass' << @resource[:password]
-      cmd << '-deststorepass' << @resource[:password]
-      cmd << '-srckeystore' << tmpfile.path.to_s
-      cmd << '-srcstorepass' << @resource[:password]
+      cmd << '-srckeystore' << tmppk12.path.to_s
       cmd << '-srcstoretype' << 'PKCS12'
       cmd << '-alias' << @resource[:name]
-      Puppet::Util.execute(cmd)
+      Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+        if File.exists?(@resource[:target])
+          tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+        else
+          tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
+        end
+        tmpfile.flush
+        Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+      end
     end
   end
 
@@ -38,11 +48,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     cmd << '-list'
     cmd << '-keystore' << @resource[:target]
     cmd << '-alias' << @resource[:name]
-    cmd << '-storepass' << @resource[:password]
-    raw, status = Puppet::Util::SUIDManager.run_and_capture(cmd)
-    if status == 0
+    begin
+      Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+        tmpfile.write(@resource[:password])
+        tmpfile.flush
+        Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+      end
       return true
-    else
+    rescue
       return false
     end
   end
@@ -51,19 +64,23 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     cmd = [command(:openssl)]
     cmd << 'x509' << '-fingerprint' << '-md5' << '-noout'
     cmd << '-in' << @resource[:certificate]
-    raw, status = Puppet::Util::SUIDManager.run_and_capture(cmd)
-    latest = raw.scan(/MD5 Fingerprint=(.*)/)[0][0]
+    output = Puppet::Util.execute(cmd)
+    latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
 
   def current
+    output = ''
     cmd = [command(:keytool)]
     cmd << '-list'
     cmd << '-keystore' << @resource[:target]
     cmd << '-alias' << @resource[:name]
-    cmd << '-storepass' << @resource[:password]
-    raw, status = Puppet::Util::SUIDManager.run_and_capture(cmd)
-    current = raw.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
+    Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+      tmpfile.write(@resource[:password])
+      tmpfile.flush
+      output = Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+    end
+    current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
     return current
   end
 
@@ -80,8 +97,15 @@ without an accomapaning certificate.'
       cmd << '-alias' << @resource[:name]
       cmd << '-file' << @resource[:certificate]
       cmd << '-keystore' << @resource[:target]
-      cmd << '-storepass' << @resource[:password]
-      Puppet::Util.execute(cmd)
+      Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+        if File.exists?(@resource[:taget])
+          tmpfile.write(@resource[:password])
+        else
+          tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+        end
+        tmpfile.flush
+        Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+      end
     end
   end
 
@@ -90,8 +114,11 @@ without an accomapaning certificate.'
     cmd << '-delete'
     cmd << '-alias' << @resource[:name]
     cmd << '-keystore' << @resource[:target]
-    cmd << '-storepass' << @resource[:password]
-    Puppet::Util.execute(cmd)
+    Tempfile.open("#{@resource[:name]}.") do |tmpfile|
+      tmpfile.write(@resource[:password])
+      tmpfile.flush
+      Puppet::Util.execute(cmd, :stdinfile => tmpfile.path.to_s, :failonfail => true, :combine => true)
+    end
   end
 
   def update
