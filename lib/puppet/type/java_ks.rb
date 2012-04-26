@@ -78,7 +78,7 @@ module Puppet
           auto_requires << @parameters[param].value
         end
       end
-      if @parameters.include(:target)
+      if @parameters.include?(:target)
         auto_requires << ::File.dirname(@parameters[:target].value)
       end
       auto_requires

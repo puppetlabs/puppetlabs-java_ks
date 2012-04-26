@@ -20,7 +20,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         cmd,
         :stdinfile  => tmpfile.path.to_s,
         :failonfail => true,
-        :combine    => truer
+        :combine    => true
       )
     end
     return output
