@@ -44,6 +44,10 @@ module Puppet
     newparam(:name) do
       desc ''
       isnamevar
+
+      munge do |value|
+        value.downcase
+      end
     end
 
     newparam(:target) do
