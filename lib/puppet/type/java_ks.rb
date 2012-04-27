@@ -44,6 +44,10 @@ module Puppet
     newparam(:name) do
       desc ''
       isnamevar
+
+      munge do |value|
+        value.downcase
+      end
     end
 
     newparam(:target) do
@@ -66,6 +70,19 @@ module Puppet
     newparam(:trustcacerts) do
       desc ''
     end
+
+    autorequire(:file) do
+      auto_requires = []
+      [:private_key, :certificate].each do |param|
+        if @parameters.include?(param)
+          auto_requires << @parameters[param].value
+        end
+      end
+      if @parameters.include?(:target)
+        auto_requires << ::File.dirname(@parameters[:target].value)
+      end
+      auto_requires
+  end
 
     def self.title_patterns
       identity = lambda {|x| x}
