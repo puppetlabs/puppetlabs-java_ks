@@ -57,6 +57,7 @@ module Puppet
 
     newparam(:certificate) do
       desc ''
+      isrequired
     end
 
     newparam(:private_key) do
@@ -65,6 +66,7 @@ module Puppet
 
     newparam(:password) do
       desc ''
+      isrequired
     end
 
     newparam(:trustcacerts) do
