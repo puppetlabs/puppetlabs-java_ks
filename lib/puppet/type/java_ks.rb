@@ -35,7 +35,7 @@ module Puppet
           end
         end
 
-        false
+        return false
       end
 
       defaultto :present
@@ -71,6 +71,10 @@ module Puppet
 
     newparam(:trustcacerts) do
       desc ''
+
+      newvalues(:true, :false)
+
+      defaultto :false
     end
 
     autorequire(:file) do
