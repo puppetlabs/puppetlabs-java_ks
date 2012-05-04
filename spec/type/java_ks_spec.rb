@@ -5,13 +5,13 @@ describe Puppet::Type.type(:java_ks) do
 
   before do
     @app_example_com = {
-        :title       => 'app.example.com:/tmp/application.jks',
-        :name        => 'app.example.com',
-        :target      => '/tmp/application.jks',
-        :password    => 'puppet',
-        :certificate => '/tmp/app.example.com.pem',
-        :private_key => '/tmp/private/app.example.com.pem',
-        :provider    => :keytool
+      :title       => 'app.example.com:/tmp/application.jks',
+      :name        => 'app.example.com',
+      :target      => '/tmp/application.jks',
+      :password    => 'puppet',
+      :certificate => '/tmp/app.example.com.pem',
+      :private_key => '/tmp/private/app.example.com.pem',
+      :provider    => :keytool
     }
     @provider = stub('provider', :class => Puppet::Type.type(:java_ks).defaultprovider, :clear => nil)
     Puppet::Type.type(:java_ks).defaultprovider.stubs(:new).returns(@provider)
@@ -69,7 +69,7 @@ describe Puppet::Type.type(:java_ks) do
       jks[:name] = 'APP.EXAMPLE.COM'
       Puppet::Type.type(:java_ks).new(jks)[:name].should == jks_resource[:name]
     end
-
+ 
     it 'should have :false value to :trustcacerts when parameter not provided' do
       Puppet::Type.type(:java_ks).new(jks_resource)[:trustcacerts].should == :false
     end
