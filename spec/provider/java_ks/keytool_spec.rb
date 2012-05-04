@@ -16,12 +16,13 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     provider.stubs(:command).with(:keytool).returns('mykeytool')
     provider.stubs(:command).with(:openssl).returns('myopenssl')
 
-    file = stub('file', :class => Puppet::Util::FileType::FileTypeFlat,
+    tempfile = stub('tempfile', :class => Tempfile,
                 :write => true,
-                :remove => true,
+                :flush => true,
+                :close! => true,
                 :path => '/tmp/testing.stuff'
                )
-    Puppet::Util::FileType.filetype(:flat).stubs(:new).returns(file)
+    Tempfile.stubs(:new).returns(tempfile)
   end
 
   let(:resource) do

@@ -16,22 +16,24 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-inkey', @resource[:private_key],
       '-name', @resource[:name]
     ]
-    tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
+    tmpfile.flush
     output = Puppet::Util.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
       )
-    tmpfile.remove
+    tmpfile.close!
     return output
   end
 
   # Where we actually to the import of the file created using to_pkcs12.
   def import_ks
-    tmppk12 = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+    tmppk12 = Tempfile.new("#{@resource[:name]}.")
     tmppk12.write(to_pkcs12)
+    tmppk12.flush
     cmd = [
       command(:keytool),
       '-importkeystore', '-srcstoretype', 'PKCS12',
@@ -40,20 +42,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-    tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
     if File.exists?(@resource[:target])
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
     else
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
+    tmpfile.flush
     Puppet::Util.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
     )
-    tmppk12.remove
-    tmpfile.remove
+    tmppk12.close!
+    tmpfile.close!
   end
 
   def exists?
@@ -64,15 +67,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     begin
-      tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+      tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
+      tmpfile.flush
       Puppet::Util.execute(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
         :combine    => true
       )
-      tmpfile.remove
+      tmpfile.close!
       return true
     rescue
       return false
@@ -100,15 +104,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
-    tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
+    tmpfile.flush
     output = Puppet::Util.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
     )
-    tmpfile.remove
+    tmpfile.close!
     current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
     return current
   end
@@ -129,19 +134,20 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-      tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+      tmpfile = Tempfile.new("#{@resource[:name]}.")
       if File.exists?(@resource[:target])
         tmpfile.write(@resource[:password])
       else
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
+      tmpfile.flush
       Puppet::Util.execute(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
         :combine    => true
       )
-      tmpfile.remove
+      tmpfile.close!
     end
   end
 
@@ -152,15 +158,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name],
       '-keystore', @resource[:target]
     ]
-    tmpfile = Puppet::Util::FileType.filetype(:flat).new("/tmp/#{@resource[:name]}.#{rand(2 << 64)}")
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
+    tmpfile.flush
     Puppet::Util.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
     )
-    tmpfile.remove
+    tmpfile.close!
   end
 
   # Being safe since I have seen some additions overwrite and some just throw errors.
