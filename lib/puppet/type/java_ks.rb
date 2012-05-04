@@ -1,8 +1,14 @@
 module Puppet
   newtype(:java_ks) do
-    @doc = 'Manages entries in a java keystore.'
+    @doc = 'Manages entries in a java keystore.  Uses composite namevars to
+        accomplish the same alias spread across multiple target keystores.'
 
     ensurable do
+
+      desc 'Has three states, the obvious present and absent plus latest.  Latest
+        will compare the on disk MD5 fingerprint of the certificate and to that
+        in keytool to determine if insync? returns true or false.  We redefine
+        insync? for this paramerter to accomplish this.'
 
       newvalue(:present) do
         provider.create
@@ -42,7 +48,9 @@ module Puppet
     end
 
     newparam(:name) do
-      desc ''
+      desc 'The alias that is used to identify the entry in the keystore.  We
+        are down casing it for you here because keytool will do so for you too.'
+
       isnamevar
 
       munge do |value|
@@ -51,32 +59,44 @@ module Puppet
     end
 
     newparam(:target) do
-      desc ''
+      desc 'Destination file for the keystore.  We autorequire the parent
+        directory for conveinance.'
+
       isnamevar
     end
 
     newparam(:certificate) do
-      desc ''
+      desc 'An already signed certificate that we can place in the keystore.  We
+        autorequire the file for conveinence.'
+
       isrequired
     end
 
     newparam(:private_key) do
-      desc ''
+      desc 'If you desire for an application to be a server and encrypt traffic
+        you will need a private key.  Private key entries in a keystore must be
+        accompanied by a signed certificate for the keytool provider.'
     end
 
     newparam(:password) do
-      desc ''
+      desc 'The password used to protect the keystore.  If private keys are
+        sebsequently also protected this password will be used to attempt
+        unlocking...P.S. Let me know if you eve need a seperate private key
+        password parameter...'
+
       isrequired
     end
 
     newparam(:trustcacerts) do
-      desc ''
+      desc "When inputing certificate authorities into a keystore, they aren't
+        by default trusted so if you are adding a CA you need to set this to true."
 
       newvalues(:true, :false)
 
       defaultto :false
     end
 
+    # Where we setup autorequires.
     autorequire(:file) do
       auto_requires = []
       [:private_key, :certificate].each do |param|
@@ -88,8 +108,10 @@ module Puppet
         auto_requires << ::File.dirname(@parameters[:target].value)
       end
       auto_requires
-  end
+    end
 
+    # Our title_patterns method for mapping titles to namevars for supporting
+    # composite namevars.
     def self.title_patterns
       identity = lambda {|x| x}
       [[
