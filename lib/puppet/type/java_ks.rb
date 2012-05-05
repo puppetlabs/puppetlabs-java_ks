@@ -60,14 +60,14 @@ module Puppet
 
     newparam(:target) do
       desc 'Destination file for the keystore.  We autorequire the parent
-        directory for conveinance.'
+        directory for convenience.'
 
       isnamevar
     end
 
     newparam(:certificate) do
       desc 'An already signed certificate that we can place in the keystore.  We
-        autorequire the file for conveinence.'
+        autorequire the file for convenience.'
 
       isrequired
     end
