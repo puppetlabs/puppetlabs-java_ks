@@ -1,5 +1,5 @@
 name    'puppetlabs-java_ks'
-version '0.0.1'
+version '0.0.2'
 source 'https://github.com/puppetlabs/puppetlabs-java_ks.git'
 author 'puppetlabs'
 license 'APL 2.0'
