@@ -78,6 +78,12 @@ module Puppet
         accompanied by a signed certificate for the keytool provider.'
     end
 
+    newparam(:chain) do
+      desc 'It has been found that some java applications do not properly send
+        intermediary certificate authorities, in this case you can bundle them
+        with the server certificate using this chain parameter.'
+    end
+
     newparam(:password) do
       desc 'The password used to protect the keystore.  If private keys are
         sebsequently also protected this password will be used to attempt
@@ -99,7 +105,7 @@ module Puppet
     # Where we setup autorequires.
     autorequire(:file) do
       auto_requires = []
-      [:private_key, :certificate].each do |param|
+      [:private_key, :certificate, :chain].each do |param|
         if @parameters.include?(param)
           auto_requires << @parameters[param].value
         end
