@@ -16,6 +16,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-inkey', @resource[:private_key],
       '-name', @resource[:name]
     ]
+    cmd << [ '-certfile', @resource[:chain] ] if @resource[:chain]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
