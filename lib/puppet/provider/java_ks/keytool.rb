@@ -88,11 +88,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def latest
     cmd = [
       command(:openssl),
-      'x509', '-fingerprint', '-md5', '-noout',
+      'x509', '-fingerprint', '-sha1', '-noout',
       '-in', @resource[:certificate]
     ]
     output = Puppet::Util.execute(cmd)
-    latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
+    latest = output.scan(/SHA1 Fingerprint=(.*)/)[0][0]
     return latest
   end
 
@@ -115,7 +115,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       :combine    => true
     )
     tmpfile.close!
-    current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
+    current = output.scan(/Certificate fingerprint \(SHA1\): (.*)/)[0][0]
     return current
   end
 
