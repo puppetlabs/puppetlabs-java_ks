@@ -86,7 +86,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     output = ''
     cmd = [
       command(:keytool),
-      '-list',
+      '-list', '-v',
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
@@ -95,7 +95,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile.flush
     output = run_command(cmd, false, tmpfile)
     tmpfile.close!
-    current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
+    current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
     return current
   end
 
