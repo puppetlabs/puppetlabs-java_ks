@@ -5,6 +5,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   commands :openssl => 'openssl'
   commands :keytool => 'keytool'
 
+
+  # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
+  # but we need this to work on 2.7.x too.
+  if Puppet::Util::Execution.respond_to?(:execute)
+    exec_method = Puppet::Util::Execution.execute
+  else 
+    exec_method = Puppet::Util.execute
+  end
+
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12
@@ -20,7 +29,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
+    output = exec_method(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
@@ -50,7 +59,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
     tmpfile.flush
-    Puppet::Util.execute(
+    exec_method(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
@@ -71,7 +80,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
       tmpfile.flush
-      Puppet::Util.execute(
+      exec_method(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
@@ -91,7 +100,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
-    output = Puppet::Util.execute(cmd)
+    output = exec_method(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
@@ -108,7 +117,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
+    output = exec_method(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
@@ -142,7 +151,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
       tmpfile.flush
-      Puppet::Util.execute(
+      exec_method(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
@@ -162,7 +171,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    Puppet::Util.execute(
+    exec_method(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
