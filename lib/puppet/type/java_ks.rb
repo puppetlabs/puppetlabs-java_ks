@@ -120,13 +120,21 @@ module Puppet
     # composite namevars.
     def self.title_patterns
       identity = lambda {|x| x}
-      [[
-        /^(.*):(.*)$/,
-       [
-         [ :name, identity ],
-         [ :target, identity ]
-       ]
-      ]]
+      [
+        [
+          /^([^:]+)$/,
+          [
+            [ :name, identity ]
+          ]
+        ],
+        [
+          /^(.*):(.*)$/,
+          [
+            [ :name, identity ],
+            [ :target, identity ]
+          ]
+        ]
+      ]
     end
   end
 end
