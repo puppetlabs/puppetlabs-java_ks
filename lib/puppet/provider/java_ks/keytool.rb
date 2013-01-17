@@ -132,11 +132,27 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-importcert', '-noprompt',
         '-alias', @resource[:name],
         '-file', @resource[:certificate],
-        '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+
+      # The tmpfile will store input for the keytool command, and its path
+      # will be used as a basis for the temptarget path if needed
       tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target])
+
+      # In the event that a file exists but is zero length, the java keytool
+      # will explode spectacularly. Should the target be empty we work around
+      # this by using a temp file which we will later write into the empty
+      # target.
+      if File.zero?(@resource[:target])
+        temptarget = tmpfile.path + "#{@resource[:target].gsub('/', '_')}."
+        cmd << '-keystore' << temptarget
+      else
+        temptarget = false
+        cmd << '-keystore' << @resource[:target]
+      end
+
+      # Run the command with appropriate input
+      if File.exists?(@resource[:target]) and not temptarget
         tmpfile.write(@resource[:password])
       else
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
@@ -149,6 +165,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         :combine    => true
       )
       tmpfile.close!
+
+      # If necessary, copy the generated keystore to the specified target
+      # (occurs if the target previously existed but was a zero-length file)
+      # and delete the temporary target file
+      if temptarget
+        File.open(@resource[:target], 'w') do |target|
+          target.write(File.read(temptarget))
+        end
+        File.delete(temptarget)
+      end
     end
   end
 
