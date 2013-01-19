@@ -20,6 +20,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
+    randfile = Tempfile.new("#{@resource[:name]}.")
+    ENV["RANDFILE"] = randfile.path
     output = Puppet::Util::Execution.execute(
       cmd,
       :stdinfile  => tmpfile.path,
@@ -27,6 +29,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       :combine    => true
       )
     tmpfile.close!
+    randfile.close!
     return output
   end
 
