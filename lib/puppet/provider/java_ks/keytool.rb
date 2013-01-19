@@ -20,13 +20,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
+    randfile = Tempfile.new("#{@resource[:name]}.")
+    ENV["RANDFILE"] = randfile.path
+    output = Puppet::Util::Execution.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
       )
     tmpfile.close!
+    randfile.close!
     return output
   end
 
@@ -50,7 +53,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
     tmpfile.flush
-    Puppet::Util.execute(
+    Puppet::Util::Execution.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
@@ -71,7 +74,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
       tmpfile.flush
-      Puppet::Util.execute(
+      Puppet::Util::Execution.execute(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
@@ -91,7 +94,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
-    output = Puppet::Util.execute(cmd)
+    output = Puppet::Util::Execution.execute(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
@@ -101,21 +104,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     output = ''
     cmd = [
       command(:keytool),
-      '-list',
+      '-list', '-v',
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
+    output = Puppet::Util::Execution.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
       :combine    => true
     )
     tmpfile.close!
-    current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
+    current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
     return current
   end
 
@@ -158,7 +161,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
       tmpfile.flush
-      Puppet::Util.execute(
+      Puppet::Util::Execution.execute(
         cmd,
         :stdinfile  => tmpfile.path,
         :failonfail => true,
@@ -188,7 +191,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    Puppet::Util.execute(
+    Puppet::Util::Execution.execute(
       cmd,
       :stdinfile  => tmpfile.path,
       :failonfail => true,
