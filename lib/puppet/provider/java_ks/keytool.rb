@@ -20,8 +20,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = run_command(cmd, false, tmpfile)
+
+    # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
+    # code to make sure RANDFILE is passed as an environment variable to the
+    # openssl command but not retained in the Puppet process environment.
+    randfile = Tempfile.new("#{@resource[:name]}.")
+    if Puppet::Util::Execution.respond_to?(:withenv)
+      withenv = Puppet::Util::Execution.method(:withenv)
+    else
+      withenv = Puppet::Util.method(:withenv)
+    end
+    output = withenv.call('RANDFILE' => randfile.path) do
+      run_command(cmd, false, tmpfile)
+    end
     tmpfile.close!
+    randfile.close!
     return output
   end
 
