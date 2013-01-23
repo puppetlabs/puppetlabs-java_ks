@@ -44,18 +44,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
     tmpfile = Tempfile.new("#{@resource[:name]}.")
-    if File.exists?(@resource[:target])
+    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
     else
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
     tmpfile.flush
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    run_keystore_command(cmd, @resource[:target], tmpfile)
     tmppk12.close!
     tmpfile.close!
   end
@@ -132,49 +127,18 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-importcert', '-noprompt',
         '-alias', @resource[:name],
         '-file', @resource[:certificate],
+        '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-
-      # The tmpfile will store input for the keytool command, and its path
-      # will be used as a basis for the temptarget path if needed
       tmpfile = Tempfile.new("#{@resource[:name]}.")
-
-      # In the event that a file exists but is zero length, the java keytool
-      # will explode spectacularly. Should the target be empty we work around
-      # this by using a temp file which we will later write into the empty
-      # target.
-      if File.zero?(@resource[:target])
-        temptarget = tmpfile.path + "#{@resource[:target].gsub('/', '_')}."
-        cmd << '-keystore' << temptarget
-      else
-        temptarget = false
-        cmd << '-keystore' << @resource[:target]
-      end
-
-      # Run the command with appropriate input
-      if File.exists?(@resource[:target]) and not temptarget
+      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
         tmpfile.write(@resource[:password])
       else
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
       tmpfile.flush
-      Puppet::Util.execute(
-        cmd,
-        :stdinfile  => tmpfile.path,
-        :failonfail => true,
-        :combine    => true
-      )
+      run_keystore_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
-
-      # If necessary, copy the generated keystore to the specified target
-      # (occurs if the target previously existed but was a zero-length file)
-      # and delete the temporary target file
-      if temptarget
-        File.open(@resource[:target], 'w') do |target|
-          target.write(File.read(temptarget))
-        end
-        File.delete(temptarget)
-      end
     end
   end
 
@@ -202,4 +166,39 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     destroy
     create
   end
+
+  def run_keystore_command(cmd, target, stdinfile)
+    # the java keytool will not correctly deal with an empty target keystore
+    # file. If we encounter an empty keystore target file, preserve the mode,
+    # owner and group, and delete the empty file.
+    if File.exists?(target) and File.zero?(target)
+      stat = File.stat(target)
+      File.delete(target)
+    end
+
+    # There's a problem in IBM java wherein stdin cannot be used (trivially)
+    # pass in the keystore passwords. This makes the provider work on SLES
+    # with minimal effort.
+    if Facter.value('osfamily') == 'Suse' and @resource[:password]
+     cmd << '-srcstorepass'  << @resource[:password]
+     cmd << '-deststorepass' << @resource[:password]
+    end
+
+    # Now run the command
+    Puppet::Util.execute(
+      cmd,
+      :stdinfile  => stdinfile.path,
+      :failonfail => true,
+      :combine    => true
+    )
+
+    # for previously empty files, restore the mode, owner and group. The funky
+    # double-take check is because on Suse defined? doesn't seem to behave
+    # quite the same as on Debian, RedHat
+    if defined? stat and stat
+      File.chmod(stat.mode, target)
+      File.chown(stat.uid, stat.gid, target)
+    end
+  end
+
 end
