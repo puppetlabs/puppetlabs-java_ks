@@ -192,8 +192,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       :combine    => true
     )
 
-    # for previously empty files, restore the mode, owner and group
-    if defined? stat
+    # for previously empty files, restore the mode, owner and group. The funky
+    # double-take check is because on Suse defined? doesn't seem to behave
+    # quite the same as on Debian, RedHat
+    if defined? stat and stat
       File.chmod(stat.mode, target)
       File.chown(stat.uid, stat.gid, target)
     end
