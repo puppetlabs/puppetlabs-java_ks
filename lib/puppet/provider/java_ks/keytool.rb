@@ -176,6 +176,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       File.delete(target)
     end
 
+    # There's a problem in IBM java wherein stdin cannot be used (trivially)
+    # pass in the keystore passwords. This makes the provider work on SLES
+    # with minimal effort.
+    if Facter.value('osfamily') == 'Suse' and @resource[:password]
+     cmd << '-srcstorepass'  << @resource[:password]
+     cmd << '-deststorepass' << @resource[:password]
+    end
+
     # Now run the command
     Puppet::Util.execute(
       cmd,
