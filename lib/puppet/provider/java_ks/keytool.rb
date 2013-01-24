@@ -168,6 +168,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def run_keystore_command(cmd, target, stdinfile)
+
+    # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
+    # but we need this to work on 2.7.x too.
+    if Puppet::Util::Execution.respond_to?(:execute)
+      exec_method = Puppet::Util::Execution.execute
+    else
+      exec_method = Puppet::Util.execute
+    end
+
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
     # owner and group, and delete the empty file.
@@ -185,7 +194,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
 
     # Now run the command
-    Puppet::Util.execute(
+    exec_method(
       cmd,
       :stdinfile  => stdinfile.path,
       :failonfail => true,
