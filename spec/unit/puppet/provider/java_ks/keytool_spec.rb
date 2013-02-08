@@ -47,6 +47,24 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
   end
 
+  describe 'when running keystore commands' do
+    it 'should call the passed command' do
+      cmd = '/bin/echo testing 1 2 3'
+
+      if Puppet::Util::Execution.respond_to?(:execute)
+        exec_class = Puppet::Util::Execution
+      else
+        exec_class = Puppet::Util
+      end
+      exec_class.expects(:execute).with(
+        cmd,
+        :failonfail => true,
+        :combine    => true
+      )
+      provider.run_command(cmd)
+    end
+  end
+
   describe 'when importing a private key and certifcate' do
     it 'should execute openssl and keytool with specific options' do
       provider.expects(:run_command).with([
