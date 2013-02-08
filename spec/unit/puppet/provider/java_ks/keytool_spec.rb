@@ -47,7 +47,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when importing a private key and certifcate' do
     it 'should execute openssl and keytool with specific options' do
-      Puppet::Util.expects(:execute).with do |args|
+      provider.expects(:run_keystore_command).with do |*args|
         args[0] == [
           'myopenssl', 'pkcs12', '-export', '-passout', 'stdin',
           '-in', resource[:certificate],
@@ -55,7 +55,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           '-name', resource[:name]
         ]
       end
-      Puppet::Util.expects(:execute).with do |args|
+      provider.expects(:run_keystore_command).with do |*args|
         args[0] == [
           'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
           '-destkeystore', resource[:target],
@@ -76,7 +76,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     it 'should call keytool with specific options if only certificate is provided' do
       no_pk = resource.dup
       no_pk.delete(:private_key)
-      Puppet::Util.expects(:execute).with do |args|
+      provider.expects(:run_keystore_command).with do |*args|
         args[0] == [
           'mykeytool', '-importcert', '-noprompt',
           '-alias', no_pk[:name],
@@ -91,7 +91,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when removing entries from keytool' do
     it 'should execute keytool with a specific set of options' do
-      Puppet::Util.expects(:execute).with do |args|
+      provider.expects(:run_keystore_command).with do |*args|
         args[0] == [
           'mykeytool', '-delete',
           '-alias', resource[:name],
