@@ -20,7 +20,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = run_keystore_command(cmd, false, tmpfile)
+    output = run_command(cmd, false, tmpfile)
     tmpfile.close!
     return output
   end
@@ -45,7 +45,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
     tmpfile.flush
-    run_keystore_command(cmd, @resource[:target], tmpfile)
+    run_command(cmd, @resource[:target], tmpfile)
     tmppk12.close!
     tmpfile.close!
   end
@@ -61,7 +61,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
       tmpfile.flush
-      run_keystore_command(cmd, false, tmpfile)
+      run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
     rescue
@@ -76,7 +76,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
-    output = run_keystore_command(cmd)
+    output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
@@ -93,7 +93,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = run_keystore_command(cmd, false, tmpfile)
+    output = run_command(cmd, false, tmpfile)
     tmpfile.close!
     current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
     return current
@@ -122,7 +122,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
       tmpfile.flush
-      run_keystore_command(cmd, @resource[:target], tmpfile)
+      run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
     end
   end
@@ -137,7 +137,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    run_keystore_command(cmd, false, tmpfile)
+    run_command(cmd, false, tmpfile)
     tmpfile.close!
   end
 
@@ -147,14 +147,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     create
   end
 
-  def run_keystore_command(cmd, target=false, stdinfile=false)
+  def run_command(cmd, target=false, stdinfile=false)
 
     # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
     # but we need this to work on 2.7.x too.
     if Puppet::Util::Execution.respond_to?(:execute)
-      exec_method = Puppet::Util::Execution.execute
+      exec_method = Puppet::Util::Execution.method(:execute)
     else
-      exec_method = Puppet::Util.execute
+      exec_method = Puppet::Util.method(:execute)
     end
 
     # the java keytool will not correctly deal with an empty target keystore
@@ -165,19 +165,27 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       File.delete(target)
     end
 
-    # There's a problem in IBM java wherein stdin cannot be used (trivially)
-    # pass in the keystore passwords. This makes the provider work on SLES
-    # with minimal effort.
+    # There's a problem in IBM java keytool wherein stdin cannot be used
+    # (trivially) to pass in the keystore passwords. The below hack makes the
+    # provider work on SLES with minimal effort at the cost of letting the
+    # passphrase to the keystore show up in the process list as an argument.
+    # From a best practice standpoint the keystore should be protected by file
+    # permissions and not just the passphrase so "making it work on SLES"
+    # trumps.
     if Facter.value('osfamily') == 'Suse' and @resource[:password]
-     cmd << '-srcstorepass'  << @resource[:password]
-     cmd << '-deststorepass' << @resource[:password]
+      cmd_to_run = cmd.is_a?(String) ? cmd.split(/\s/).first : cmd.first
+      if cmd_to_run == command(:keytool)
+        cmd << '-srcstorepass'  << @resource[:password]
+        cmd << '-deststorepass' << @resource[:password]
+      end
     end
 
     # Now run the command
+    options = { :failonfail => true, :combine => true }
     output = if stdinfile
-      exec_method(cmd, :stdinfile => stdinfile.path, :failonfail => true, :combine => true)
+      exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
     else
-      exec_method(cmd, :failonfail => true, :combine => true)
+      exec_method.call(cmd, options)
     end
 
     # for previously empty files, restore the mode, owner and group. The funky
