@@ -20,12 +20,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-      )
+    output = run_keystore_command(cmd, false, tmpfile)
     tmpfile.close!
     return output
   end
@@ -66,12 +61,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
       tmpfile.flush
-      Puppet::Util.execute(
-        cmd,
-        :stdinfile  => tmpfile.path,
-        :failonfail => true,
-        :combine    => true
-      )
+      run_keystore_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
     rescue
@@ -86,7 +76,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
-    output = Puppet::Util.execute(cmd)
+    output = run_keystore_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
@@ -103,12 +93,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    output = run_keystore_command(cmd, false, tmpfile)
     tmpfile.close!
     current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
     return current
@@ -152,12 +137,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    run_keystore_command(cmd, false, tmpfile)
     tmpfile.close!
   end
 
@@ -167,11 +147,20 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     create
   end
 
-  def run_keystore_command(cmd, target, stdinfile)
+  def run_keystore_command(cmd, target=false, stdinfile=false)
+
+    # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
+    # but we need this to work on 2.7.x too.
+    if Puppet::Util::Execution.respond_to?(:execute)
+      exec_method = Puppet::Util::Execution.execute
+    else
+      exec_method = Puppet::Util.execute
+    end
+
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
     # owner and group, and delete the empty file.
-    if File.exists?(target) and File.zero?(target)
+    if target and (File.exists?(target) and File.zero?(target))
       stat = File.stat(target)
       File.delete(target)
     end
@@ -185,20 +174,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
 
     # Now run the command
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => stdinfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    output = if stdinfile
+      exec_method(cmd, :stdinfile => stdinfile.path, :failonfail => true, :combine => true)
+    else
+      exec_method(cmd, :failonfail => true, :combine => true)
+    end
 
     # for previously empty files, restore the mode, owner and group. The funky
     # double-take check is because on Suse defined? doesn't seem to behave
     # quite the same as on Debian, RedHat
-    if defined? stat and stat
+    if target and (defined? stat and stat)
       File.chmod(stat.mode, target)
       File.chown(stat.uid, stat.gid, target)
     end
+
+    return output
   end
 
 end
