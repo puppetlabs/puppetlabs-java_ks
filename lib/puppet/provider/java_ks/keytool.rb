@@ -22,14 +22,23 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-      )
+
+    # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
+    # code to make sure RANDFILE is passed as an environment variable to the
+    # openssl command but not retained in the Puppet process environment.
+    randfile = Tempfile.new("#{@resource[:name]}.")
+    if Puppet::Util::Execution.respond_to?(:withenv)
+      withenv = Puppet::Util::Execution.method(:withenv)
+    else
+      withenv = Puppet::Util.method(:withenv)
+    end
+    output = withenv.call('RANDFILE' => randfile.path) do
+      run_command(cmd, false, tmpfile)
+    end
     tmpfile.close!
+    randfile.close!
     return tmppk12
+
   end
 
   # Where we actually to the import of the file created using to_pkcs12.
@@ -44,18 +53,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
     tmpfile = Tempfile.new("#{@resource[:name]}.")
-    if File.exists?(@resource[:target])
+    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
     else
       tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
     end
     tmpfile.flush
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    run_command(cmd, @resource[:target], tmpfile)
     tmppk12.close!
     tmpfile.close!
   end
@@ -71,12 +75,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
       tmpfile.flush
-      Puppet::Util.execute(
-        cmd,
-        :stdinfile  => tmpfile.path,
-        :failonfail => true,
-        :combine    => true
-      )
+      run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
     rescue
@@ -91,7 +90,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
-    output = Puppet::Util.execute(cmd)
+    output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
   end
@@ -101,21 +100,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     output = ''
     cmd = [
       command(:keytool),
-      '-list',
+      '-list', '-v',
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    output = Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    output = run_command(cmd, false, tmpfile)
     tmpfile.close!
-    current = output.scan(/Certificate fingerprint \(MD5\): (.*)/)[0][0]
+    current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
     return current
   end
 
@@ -136,18 +130,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target])
+      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
         tmpfile.write(@resource[:password])
       else
         tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
       end
       tmpfile.flush
-      Puppet::Util.execute(
-        cmd,
-        :stdinfile  => tmpfile.path,
-        :failonfail => true,
-        :combine    => true
-      )
+      run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
     end
   end
@@ -162,12 +151,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
-    Puppet::Util.execute(
-      cmd,
-      :stdinfile  => tmpfile.path,
-      :failonfail => true,
-      :combine    => true
-    )
+    run_command(cmd, false, tmpfile)
     tmpfile.close!
   end
 
@@ -176,4 +160,57 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     destroy
     create
   end
+
+  def run_command(cmd, target=false, stdinfile=false)
+
+    # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
+    # but we need this to work on 2.7.x too.
+    if Puppet::Util::Execution.respond_to?(:execute)
+      exec_method = Puppet::Util::Execution.method(:execute)
+    else
+      exec_method = Puppet::Util.method(:execute)
+    end
+
+    # the java keytool will not correctly deal with an empty target keystore
+    # file. If we encounter an empty keystore target file, preserve the mode,
+    # owner and group, and delete the empty file.
+    if target and (File.exists?(target) and File.zero?(target))
+      stat = File.stat(target)
+      File.delete(target)
+    end
+
+    # There's a problem in IBM java keytool wherein stdin cannot be used
+    # (trivially) to pass in the keystore passwords. The below hack makes the
+    # provider work on SLES with minimal effort at the cost of letting the
+    # passphrase to the keystore show up in the process list as an argument.
+    # From a best practice standpoint the keystore should be protected by file
+    # permissions and not just the passphrase so "making it work on SLES"
+    # trumps.
+    if Facter.value('osfamily') == 'Suse' and @resource[:password]
+      cmd_to_run = cmd.is_a?(String) ? cmd.split(/\s/).first : cmd.first
+      if cmd_to_run == command(:keytool)
+        cmd << '-srcstorepass'  << @resource[:password]
+        cmd << '-deststorepass' << @resource[:password]
+      end
+    end
+
+    # Now run the command
+    options = { :failonfail => true, :combine => true }
+    output = if stdinfile
+      exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+    else
+      exec_method.call(cmd, options)
+    end
+
+    # for previously empty files, restore the mode, owner and group. The funky
+    # double-take check is because on Suse defined? doesn't seem to behave
+    # quite the same as on Debian, RedHat
+    if target and (defined? stat and stat)
+      File.chmod(stat.mode, target)
+      File.chown(stat.uid, stat.gid, target)
+    end
+
+    return output
+  end
+
 end
