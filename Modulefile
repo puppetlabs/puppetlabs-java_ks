@@ -1,8 +1,9 @@
-name    'puppetlabs-java_ks'
-version '1.0.0'
-source 'https://github.com/puppetlabs/puppetlabs-java_ks.git'
+name 'puppetlabs-java_ks'
+version '1.0.1'
+
 author 'puppetlabs'
 license 'ASL 2.0'
+project_page 'https://github.com/puppetlabs/puppetlabs-java_ks'
+source 'https://github.com/puppetlabs/puppetlabs-java_ks.git'
 summary 'Manage arbitrary Java keystore files'
 description 'Uses a combination of keytool and openssl to manage entries in a Java keystore.'
-project_page 'https://github.com/puppetlabs/puppetlabs-java_ks'

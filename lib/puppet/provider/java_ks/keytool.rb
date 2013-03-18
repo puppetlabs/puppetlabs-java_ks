@@ -1,16 +1,22 @@
 require 'puppet/util/filetype'
+
 Puppet::Type.type(:java_ks).provide(:keytool) do
   desc 'Uses a combination of openssl and keytool to manage Java keystores'
 
-  commands :openssl => 'openssl'
-  commands :keytool => 'keytool'
+  def command_openssl
+    'openssl'
+  end
+
+  def command_keytool
+    'keytool'
+  end
 
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12
     output = ''
     cmd = [
-      command(:openssl),
+      command_openssl,
       'pkcs12', '-export', '-passout', 'stdin',
       '-in', @resource[:certificate],
       '-inkey', @resource[:private_key],
@@ -25,14 +31,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # code to make sure RANDFILE is passed as an environment variable to the
     # openssl command but not retained in the Puppet process environment.
     randfile = Tempfile.new("#{@resource[:name]}.")
-    if Puppet::Util::Execution.respond_to?(:withenv)
-      withenv = Puppet::Util::Execution.method(:withenv)
-    else
-      withenv = Puppet::Util.method(:withenv)
-    end
-    output = withenv.call('RANDFILE' => randfile.path) do
-      run_command(cmd, false, tmpfile)
-    end
+    output = run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
     tmpfile.close!
     randfile.close!
     return output
@@ -44,7 +43,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmppk12.write(to_pkcs12)
     tmppk12.flush
     cmd = [
-      command(:keytool),
+      command_keytool,
       '-importkeystore', '-srcstoretype', 'PKCS12',
       '-destkeystore', @resource[:target],
       '-srckeystore', tmppk12.path,
@@ -65,7 +64,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def exists?
     cmd = [
-      command(:keytool),
+      command_keytool,
       '-list',
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
@@ -85,7 +84,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Reading the fingerprint of the certificate on disk.
   def latest
     cmd = [
-      command(:openssl),
+      command_openssl,
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', @resource[:certificate]
     ]
@@ -98,7 +97,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def current
     output = ''
     cmd = [
-      command(:keytool),
+      command_keytool,
       '-list', '-v',
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
@@ -121,7 +120,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       raise Puppet::Error 'Keytool is not capable of importing a private key without an accomapaning certificate.'
     else
       cmd = [
-        command(:keytool),
+        command_keytool,
         '-importcert', '-noprompt',
         '-alias', @resource[:name],
         '-file', @resource[:certificate],
@@ -142,7 +141,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def destroy
     cmd = [
-      command(:keytool),
+      command_keytool,
       '-delete',
       '-alias', @resource[:name],
       '-keystore', @resource[:target]
@@ -160,7 +159,9 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     create
   end
 
-  def run_command(cmd, target=false, stdinfile=false)
+  def run_command(cmd, target=false, stdinfile=false, env={})
+
+    env[:PATH] = @resource[:path].join(File::PATH_SEPARATOR) if resource[:path]
 
     # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
     # but we need this to work on 2.7.x too.
@@ -168,6 +169,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       exec_method = Puppet::Util::Execution.method(:execute)
     else
       exec_method = Puppet::Util.method(:execute)
+    end
+
+    if Puppet::Util::Execution.respond_to?(:withenv)
+      withenv = Puppet::Util::Execution.method(:withenv)
+    else
+      withenv = Puppet::Util.method(:withenv)
     end
 
     # the java keytool will not correctly deal with an empty target keystore
@@ -187,7 +194,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # trumps.
     if Facter.value('osfamily') == 'Suse' and @resource[:password]
       cmd_to_run = cmd.is_a?(String) ? cmd.split(/\s/).first : cmd.first
-      if cmd_to_run == command(:keytool)
+      if cmd_to_run == command_keytool
         cmd << '-srcstorepass'  << @resource[:password]
         cmd << '-deststorepass' << @resource[:password]
       end
@@ -196,9 +203,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # Now run the command
     options = { :failonfail => true, :combine => true }
     output = if stdinfile
-      exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+      withenv.call(env) do
+        exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+      end
     else
-      exec_method.call(cmd, options)
+      withenv.call(env) do
+        exec_method.call(cmd, options)
+      end
     end
 
     # for previously empty files, restore the mode, owner and group. The funky
