@@ -102,6 +102,18 @@ module Puppet
       defaultto :false
     end
 
+    newparam(:path) do
+      desc "The search path used for command (keytool, openssl) execution.
+        Paths can be specified as an array or as a '#{File::PATH_SEPARATOR}' separated list."
+
+      # Support both arrays and colon-separated fields.
+      def value=(*values)
+        @value = values.flatten.collect { |val|
+          val.split(File::PATH_SEPARATOR)
+        }.flatten
+      end
+    end
+
     # Where we setup autorequires.
     autorequire(:file) do
       auto_requires = []
