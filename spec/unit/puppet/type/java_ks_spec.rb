@@ -25,9 +25,9 @@ describe Puppet::Type.type(:java_ks) do
     Puppet::Type.type(:java_ks).new(@app_example_com)[:ensure].should == :present
   end
 
-  describe 'when validating arttibutes' do
+  describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :certificate, :password, :trustcacerts].each do |param|
+    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts].each do |param|
       it "should have a #{param} parameter" do
         Puppet::Type.type(:java_ks).attrtype(param).should == :param
       end
@@ -72,6 +72,22 @@ describe Puppet::Type.type(:java_ks) do
  
     it 'should have :false value to :trustcacerts when parameter not provided' do
       Puppet::Type.type(:java_ks).new(jks_resource)[:trustcacerts].should == :false
+    end
+
+    it 'should fail if both :password and :password_file are provided' do
+      jks = jks_resource.dup
+      jks[:password_file] = '/path/to/password_file'
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error, /You must pass either/)
+    end
+
+    it 'should fail if neither :password or :password_file is provided' do
+      jks = jks_resource.dup
+      jks.delete(:password)
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error, /You must pass one of/)
     end
   end
 

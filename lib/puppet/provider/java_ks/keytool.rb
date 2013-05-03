@@ -50,16 +50,23 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-      tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+
+    tmpfile = nil
+    if @resource[:password_file].nil?
+      tmpfile = Tempfile.new("#{@resource[:name]}.")
+      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
+        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+      else
+        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
+      end
+      tmpfile.flush
+      pwfile = tmpfile
     else
-      tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
+      pwfile = @resource[:password_file]
     end
-    tmpfile.flush
-    run_command(cmd, @resource[:target], tmpfile)
+    run_command(cmd, @resource[:target], pwfile)
     tmppk12.close!
-    tmpfile.close!
+    tmpfile.close! if tmpfile
   end
 
   def exists?
