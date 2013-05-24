@@ -37,6 +37,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     return output
   end
 
+  def password_file
+    if @resource[:password_file].nil?
+      tmpfile = Tempfile.new("#{@resource[:name]}.")
+      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
+        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+      else
+        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
+      end
+      tmpfile.flush
+      tmpfile
+    else
+      @resource[:password_file]
+    end
+  end
+
   # Where we actually to the import of the file created using to_pkcs12.
   def import_ks
     tmppk12 = Tempfile.new("#{@resource[:name]}.")
@@ -50,16 +65,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-      tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
-    else
-      tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
-    end
-    tmpfile.flush
-    run_command(cmd, @resource[:target], tmpfile)
+
+    pwfile = password_file
+    run_command(cmd, @resource[:target], pwfile)
     tmppk12.close!
-    tmpfile.close!
+    pwfile.close! if pwfile.is_a? Tempfile
   end
 
   def exists?
