@@ -1,6 +1,8 @@
 java_ks
 =======
 
+[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-java_ks.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-java_ks)
+
 ####Table of Contents
 
 1. [Overview - What is the java_ks module?](#overview)
