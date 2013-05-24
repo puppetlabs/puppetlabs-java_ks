@@ -86,11 +86,14 @@ module Puppet
 
     newparam(:password) do
       desc 'The password used to protect the keystore.  If private keys are
-        sebsequently also protected this password will be used to attempt
-        unlocking...P.S. Let me know if you eve need a seperate private key
+        subsequently also protected this password will be used to attempt
+        unlocking...P.S. Let me know if you ever need a separate private key
         password parameter...'
+    end
 
-      isrequired
+    newparam(:password_file) do
+      desc 'The path to a file containing the password used to protect the
+        keystore. This cannot be used together with :password.'
     end
 
     newparam(:trustcacerts) do
@@ -147,6 +150,16 @@ module Puppet
           ]
         ]
       ]
+    end
+
+    validate do
+      if value(:password) and value(:password_file)
+        self.fail "You must pass either 'password' or 'password_file', not both."
+      end
+
+      unless value(:password) or value(:password_file)
+        self.fail "You must pass one of 'password' or 'password_file'."
+      end
     end
   end
 end
