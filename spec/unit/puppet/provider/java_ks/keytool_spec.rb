@@ -3,18 +3,32 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
-  before do
-    @app_example_com = {
-        :title       => 'app.example.com:/tmp/application.jks',
-        :name        => 'app.example.com',
-        :target      => '/tmp/application.jks',
-        :password    => 'puppet',
-        :certificate => '/tmp/app.example.com.pem',
-        :private_key => '/tmp/private/app.example.com.pem',
-        :provider    => described_class.name
+  let(:params) do
+    {
+      :title       => 'app.example.com:/tmp/application.jks',
+      :name        => 'app.example.com',
+      :target      => '/tmp/application.jks',
+      :password    => 'puppet',
+      :certificate => '/tmp/app.example.com.pem',
+      :private_key => '/tmp/private/app.example.com.pem',
+      :provider    => described_class.name
     }
+  end
+
+  let(:resource) do
+    Puppet::Type.type(:java_ks).new(params)
+  end
+
+  let(:provider) do
+    resource.provider
+  end
+
+  before do
     provider.stubs(:command).with(:keytool).returns('mykeytool')
     provider.stubs(:command).with(:openssl).returns('myopenssl')
+
+    provider.stubs(:command_keytool).returns 'mykeytool'
+    provider.stubs(:command_openssl).returns 'myopenssl'
 
     tempfile = stub('tempfile', :class => Tempfile,
                 :write => true,
@@ -23,18 +37,6 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                 :path => '/tmp/testing.stuff'
                )
     Tempfile.stubs(:new).returns(tempfile)
-  end
-
-  let(:resource) do
-    Puppet::Type.type(:java_ks).new @app_example_com
-  end
-
-  let(:provider) do
-    resource.provider
-  end
-
-  let(:app_example_com) do
-    @app_example_com
   end
 
   describe 'when updating a certificate' do
@@ -47,22 +49,21 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when importing a private key and certifcate' do
     it 'should execute openssl and keytool with specific options' do
-      provider.expects(:run_command).with do |*args|
-        args[0] == [
+      provider.expects(:run_command).with([
           'myopenssl', 'pkcs12', '-export', '-passout', 'stdin',
           '-in', resource[:certificate],
           '-inkey', resource[:private_key],
           '-name', resource[:name]
-        ]
-      end
-      provider.expects(:run_command).with do |*args|
-        args[0] == [
+        ],
+        any_parameters
+      )
+      provider.expects(:run_command).with([
           'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
           '-destkeystore', resource[:target],
           '-srckeystore', '/tmp/testing.stuff',
           '-alias', resource[:name]
-        ]
-      end
+        ], any_parameters
+      )
       provider.import_ks
     end
   end
@@ -76,14 +77,13 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     it 'should call keytool with specific options if only certificate is provided' do
       no_pk = resource.dup
       no_pk.delete(:private_key)
-      provider.expects(:run_command).with do |*args|
-        args[0] == [
+      provider.expects(:run_command).with([
           'mykeytool', '-importcert', '-noprompt',
           '-alias', no_pk[:name],
           '-file', no_pk[:certificate],
           '-keystore', no_pk[:target]
-        ]
-      end
+        ], any_parameters
+      )
       no_pk.provider.expects(:import_ks).never
       no_pk.provider.create
     end
@@ -91,13 +91,12 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when removing entries from keytool' do
     it 'should execute keytool with a specific set of options' do
-      provider.expects(:run_command).with do |*args|
-        args[0] == [
+      provider.expects(:run_command).with([
           'mykeytool', '-delete',
           '-alias', resource[:name],
           '-keystore', resource[:target]
-        ]
-      end
+        ], any_parameters
+      )
       provider.destroy
     end
   end
