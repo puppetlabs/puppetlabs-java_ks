@@ -93,6 +93,14 @@ The `ensure` parameter accepts three attributes: absent, present, and latest.  L
 
 The password used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. 
 
+#### `password_file`
+
+Used as an alternative to `password` here you can specify a plaintext file where the password is stored.
+
+#### `path`
+
+The search path used for command (keytool, openssl) execution. Paths can be specified as an array or as a file path seperated list (for example : in linux).
+
 #### `private_key`
 
 If you want an application to be a server and encrypt traffic, you will need a private key. Private key entries in a keystore must be accompanied by a signed certificate for the keytool provider.
@@ -134,10 +142,3 @@ Puppet Labs modules on the Puppet Forge are open projects, and community contrib
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 You can read the complete module contribution guide [on the Puppet Labs wiki.](http://projects.puppetlabs.com/projects/module-site/wiki/Module_contributing)
- 
-Release Notes
--------------
-
-**0.0.6**
-
-Fixes an issue with ibm java handling input from stdin on SLES
