@@ -48,12 +48,23 @@ describe Puppet::Type.type(:java_ks) do
       end
     end
 
-    [:name, :target].each do |nvar|
-      it "#{nvar} title component should map to #{nvar} parameter" do
-        jks = jks_resource.dup
-        jks.delete(nvar)
-        Puppet::Type.type(:java_ks).new(jks)[nvar].should == jks_resource[nvar]
-      end
+    it "first half of title should map to name parameter" do
+      jks = jks_resource.dup
+      jks.delete(:name)
+      Puppet::Type.type(:java_ks).new(jks)[:name].should == jks_resource[:name]
+    end
+
+    it "second half of title should map to target parameter when no target is supplied" do
+      jks = jks_resource.dup
+      jks.delete(:target)
+      Puppet::Type.type(:java_ks).new(jks)[:target].should == jks_resource[:target]
+    end
+
+    it "second half of title should not map to target parameter when target is supplied" do
+      jks = jks_resource.dup
+      jks[:target] = '/tmp/some_other_app.jks'
+      Puppet::Type.type(:java_ks).new(jks)[:target].should_not == jks_resource[:target]
+      Puppet::Type.type(:java_ks).new(jks)[:target].should == '/tmp/some_other_app.jks'
     end
 
     it 'title components should map to namevar parameters' do
