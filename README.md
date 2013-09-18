@@ -69,13 +69,13 @@ This resource manages the entries in a java keystore, and uses composite namevar
 
 #### `certificate`
 
-An already-signed certificate to place in the keystore. 
+An already-signed certificate to place in the keystore. Accepts local file paths or `puppet://` uri paths.
 
 To have a java application server use a specific certificate for incoming connections, you will need to simultaneously import the private key accompanying the signed certificate you want to use. As long as you provide the path to the key and the certificate, the provider will do the conversion for you.
 
 #### `chain`
 
-Some java applications do not properly send intermediary certificate authorities. In these cases, you can bundle them with the server certificate using this chain parameter.
+Some java applications do not properly send intermediary certificate authorities. In these cases, you can bundle them with the server certificate using this chain parameter. Accepts local file paths or `puppet://` uri paths.
 
     java_ks { 'broker.example.com:/etc/activemq/broker.jks':
       ensure      => latest,
@@ -103,7 +103,7 @@ The search path used for command (keytool, openssl) execution. Paths can be spec
 
 #### `private_key`
 
-If you want an application to be a server and encrypt traffic, you will need a private key. Private key entries in a keystore must be accompanied by a signed certificate for the keytool provider.
+If you want an application to be a server and encrypt traffic, you will need a private key. Private key entries in a keystore must be accompanied by a signed certificate for the keytool provider. Accepts local file paths or `puppet://` uri paths.
 
 #### `target`
 
