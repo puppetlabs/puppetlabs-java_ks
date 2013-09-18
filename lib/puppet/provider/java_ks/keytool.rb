@@ -18,11 +18,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     cmd = [
       command_openssl,
       'pkcs12', '-export', '-passout', 'stdin',
-      '-in', @resource[:certificate],
-      '-inkey', @resource[:private_key],
+      '-in', certificate,
+      '-inkey', private_key,
       '-name', @resource[:name]
     ]
-    cmd << [ '-certfile', @resource[:chain] ] if @resource[:chain]
+    cmd << [ '-certfile', chain ] if chain
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
@@ -96,7 +96,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     cmd = [
       command_openssl,
       'x509', '-fingerprint', '-md5', '-noout',
-      '-in', @resource[:certificate]
+      '-in', certificate
     ]
     output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
@@ -124,16 +124,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Determine if we need to do an import of a private_key and certificate pair
   # or just add a signed certificate, then do it.
   def create
-    if ! @resource[:certificate].nil? and ! @resource[:private_key].nil?
+    if ! certificate.nil? and ! private_key.nil?
       import_ks
-    elsif @resource[:certificate].nil? and ! @resource[:private_key].nil?
+    elsif certificate.nil? and ! private_key.nil?
       raise Puppet::Error 'Keytool is not capable of importing a private key without an accomapaning certificate.'
     else
       cmd = [
         command_keytool,
         '-importcert', '-noprompt',
         '-alias', @resource[:name],
-        '-file', @resource[:certificate],
+        '-file', certificate,
         '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
@@ -167,6 +167,26 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def update
     destroy
     create
+  end
+
+  def certificate
+    file_path @resource[:certificate]
+  end
+
+  def private_key
+    file_path @resource[:private_key]
+  end
+
+  def chain
+    file_path @resource[:chain]
+  end
+
+  def file_path(path)
+    return path unless path and path.start_with? 'puppet://'
+
+    served_file = Puppet::FileServing::Metadata.indirection.find(path, :environment => @resource.catalog.environment)
+    self.fail "Could not retrieve information for #{path}" unless served_file
+    served_file.full_path
   end
 
   def run_command(cmd, target=false, stdinfile=false, env={})
