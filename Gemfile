@@ -2,9 +2,12 @@ source "https://rubygems.org"
 
 group :development, :test do
   gem 'rake'
-  gem 'rspec', "~> 2.11.0", :require => false
-  gem 'mocha', "~> 0.10.5", :require => false
-  gem 'puppetlabs_spec_helper', :require => false
+  gem 'rspec',                   :require => false
+  gem 'mocha',                   :require => false
+  gem 'puppetlabs_spec_helper',  :require => false
+  gem 'rspec-system',            :require => false
+  gem 'rspec-system-puppet',     :require => false
+  gem 'rspec-system-serverspec', :require => false
 end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
