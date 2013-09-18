@@ -66,23 +66,33 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 
   describe 'when importing a private key and certifcate' do
-    it 'should execute openssl and keytool with specific options' do
-      provider.expects(:run_command).with([
-          'myopenssl', 'pkcs12', '-export', '-passout', 'stdin',
-          '-in', resource[:certificate],
-          '-inkey', resource[:private_key],
-          '-name', resource[:name]
-        ],
-        any_parameters
-      )
-      provider.expects(:run_command).with([
-          'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
-          '-destkeystore', resource[:target],
-          '-srckeystore', '/tmp/testing.stuff',
-          '-alias', resource[:name]
-        ], any_parameters
-      )
-      provider.import_ks
+    describe '#to_pkcs12' do
+      it 'converts a certificate to a pkcs12 file' do
+        provider.expects(:run_command).with([
+            'myopenssl', 'pkcs12', '-export', '-passout', 'stdin',
+            '-in', resource[:certificate],
+            '-inkey', resource[:private_key],
+            '-name', resource[:name],
+            '-out', '/tmp/testing.stuff'
+          ],
+          any_parameters
+        )
+        provider.to_pkcs12('/tmp/testing.stuff')
+      end
+    end
+
+    describe "#import_ks" do
+      it 'should execute openssl and keytool with specific options' do
+        provider.expects(:to_pkcs12).with('/tmp/testing.stuff')
+        provider.expects(:run_command).with([
+            'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
+            '-destkeystore', resource[:target],
+            '-srckeystore', '/tmp/testing.stuff',
+            '-alias', resource[:name]
+          ], any_parameters
+        )
+        provider.import_ks
+      end
     end
   end
 
