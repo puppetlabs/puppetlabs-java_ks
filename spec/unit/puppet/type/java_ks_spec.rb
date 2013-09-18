@@ -100,6 +100,14 @@ describe Puppet::Type.type(:java_ks) do
         Puppet::Type.type(:java_ks).new(jks)
       }.to raise_error(Puppet::Error, /You must pass one of/)
     end
+
+    it 'should fail if :password is fewer than 6 characters' do
+      jks = jks_resource.dup
+      jks[:password] = 'aoeui'
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error, /length 6/)
+    end
   end
 
   describe 'when ensure is set to latest' do
