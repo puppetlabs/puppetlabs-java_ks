@@ -89,6 +89,10 @@ module Puppet
         subsequently also protected this password will be used to attempt
         unlocking...P.S. Let me know if you ever need a separate private key
         password parameter...'
+
+      validate do |value|
+        raise Puppet::Error, "password is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
+      end
     end
 
     newparam(:password_file) do
