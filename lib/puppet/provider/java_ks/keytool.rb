@@ -14,13 +14,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12
-    output = ''
+    tmppk12 = Tempfile.new("#{@resource[:name]}.")
+    tmppk12.close(false)
     cmd = [
       command_openssl,
       'pkcs12', '-export', '-passout', 'stdin',
       '-in', @resource[:certificate],
       '-inkey', @resource[:private_key],
-      '-name', @resource[:name]
+      '-name', @resource[:name],
+      '-out', tmppk12.path
     ]
     cmd << [ '-certfile', @resource[:chain] ] if @resource[:chain]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
@@ -34,7 +36,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     output = run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
     tmpfile.close!
     randfile.close!
-    return output
+    return tmppk12
+
   end
 
   def password_file
@@ -54,9 +57,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   # Where we actually to the import of the file created using to_pkcs12.
   def import_ks
-    tmppk12 = Tempfile.new("#{@resource[:name]}.")
-    tmppk12.write(to_pkcs12)
-    tmppk12.flush
+    tmppk12 = to_pkcs12
     cmd = [
       command_keytool,
       '-importkeystore', '-srcstoretype', 'PKCS12',
