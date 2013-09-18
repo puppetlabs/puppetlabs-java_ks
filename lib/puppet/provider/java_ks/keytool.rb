@@ -127,7 +127,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     if ! @resource[:certificate].nil? and ! @resource[:private_key].nil?
       import_ks
     elsif @resource[:certificate].nil? and ! @resource[:private_key].nil?
-      raise Puppet::Error 'Keytool is not capable of importing a private key without an accomapaning certificate.'
+      raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
     else
       cmd = [
         command_keytool,
