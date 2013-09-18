@@ -4,6 +4,20 @@ Release notes for the puppetlabs-java_ks module
 
 ---------------------------------------
 
+2013-09-18 Release 1.2.0
+========================
+
+### Summary
+This release adds `puppet://` URI support, a few bugfixes, and lots of tests.
+
+### Features
+- `puppet://` URI support for the `chain`, `certificate`, and `private_key` parameters
+
+### Bugfixes
+- Validate that keystore passwords are > 6 characters (would silent fail before)
+- Fixed corrupted keystore PKCS12 files in some cases.
+- More acceptance tests, unit tests, and rspec-puppet tests.
+
 1.1.0
 =====
 
