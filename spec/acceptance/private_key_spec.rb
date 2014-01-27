@@ -1,15 +1,20 @@
-require 'spec_helper_system'
+require 'spec_helper_acceptance'
+
+hostname = default.node_name
 
 describe 'managing java private keys' do
   it 'creates a private key' do
-    puppet_apply(%{
+    pp = <<-EOS
+      class { 'java': }
       java_ks { 'broker.example.com:/etc/private_key.ks':
         ensure       => latest,
-        certificate  => '/var/lib/puppet/ssl/certs/main.foo.vm.pem',
-        private_key  => '/var/lib/puppet/ssl/private_keys/main.foo.vm.pem',
+        certificate  => "/etc/puppet/ssl/certs/#{hostname}.pem",
+        private_key  => "/etc/puppet/ssl/private_keys/#{hostname}.pem",
         password     => 'puppet',
       }
-    }) { |r| [0,2].should include r.exit_code}
+    EOS
+
+    apply_manifest(pp, :catch_failures => true)
   end
 
   it 'verifies the private key' do
@@ -23,7 +28,8 @@ describe 'managing java private keys' do
 
   describe 'from a puppet:// uri' do
     it 'puts a key in a module' do
-      puppet_apply(%{
+      pp = <<-EOS
+        class { 'java': }
         file { [
           '/etc/puppet/modules/keys',
           '/etc/puppet/modules/keys/files',
@@ -32,21 +38,24 @@ describe 'managing java private keys' do
         }
         file { '/etc/puppet/modules/keys/files/ca.pem':
           ensure => file,
-          source => '/var/lib/puppet/ssl/certs/ca.pem',
+          source => '/etc/puppet/ssl/certs/ca.pem',
         }
         file { '/etc/puppet/modules/keys/files/certificate.pem':
           ensure => file,
-          source => '/var/lib/puppet/ssl/certs/main.foo.vm.pem',
+          source => '/etc/puppet/ssl/certs/#{hostname}.pem',
         }
         file { '/etc/puppet/modules/keys/files/private_key.pem':
           ensure => file,
-          source => '/var/lib/puppet/ssl/private_keys/main.foo.vm.pem',
+          source => '/etc/puppet/ssl/private_keys/#{hostname}.pem',
         }
-      }) { |r| [0,2].should include r.exit_code}
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
     end
 
     it 'creates a keystore' do
-      puppet_apply(%{
+      pp = <<-EOS
+        class { 'java': }
         java_ks { 'uri.example.com:/etc/uri_key.ks':
           ensure       => latest,
           certificate  => 'puppet:///modules/keys/certificate.pem',
@@ -54,7 +63,9 @@ describe 'managing java private keys' do
           chain        => 'puppet:///modules/keys/ca.pem',
           password     => 'puppet',
         }
-      }) { |r| [0,2].should include r.exit_code}
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
     end
 
     it 'verifies the private key' do

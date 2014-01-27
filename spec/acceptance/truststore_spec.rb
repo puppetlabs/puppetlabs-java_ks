@@ -1,16 +1,18 @@
-require 'spec_helper_system'
+require 'spec_helper_acceptance'
 
 describe 'managing java truststores' do
   it 'creates a truststore' do
-    puppet_apply(%{
+    pp = <<-EOS
+      class { 'java': }
       java_ks { 'puppetca:truststore':
         ensure       => latest,
-        certificate  => '/var/lib/puppet/ssl/certs/ca.pem',
+        certificate  => '/etc/puppet/ssl/certs/ca.pem',
         target       => '/etc/truststore.ts',
         password     => 'puppet',
         trustcacerts => true,
-      }
-    }) { |r| [0,2].should include r.exit_code}
+    }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
   end
 
   it 'verifies the truststore' do
