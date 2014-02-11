@@ -4,6 +4,7 @@ group :development, :test do
   gem 'rake'
   gem 'rspec',                   :require => false
   gem 'mocha',                   :require => false
+  gem 'puppet-lint',             :require => false
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'beaker',                  :require => false
   gem 'beaker-rspec',            :require => false
