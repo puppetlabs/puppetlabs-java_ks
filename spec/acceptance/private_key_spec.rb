@@ -3,13 +3,15 @@ require 'spec_helper_acceptance'
 hostname = default.node_name
 
 describe 'managing java private keys' do
+  let(:confdir)    { default['puppetpath']    }
+  let(:modulepath) { default['distmoduledir'] }
   it 'creates a private key' do
     pp = <<-EOS
       class { 'java': }
       java_ks { 'broker.example.com:/etc/private_key.ks':
         ensure       => latest,
-        certificate  => "/etc/puppet/ssl/certs/#{hostname}.pem",
-        private_key  => "/etc/puppet/ssl/private_keys/#{hostname}.pem",
+        certificate  => "#{confdir}/ssl/certs/#{hostname}.pem",
+        private_key  => "#{confdir}/ssl/private_keys/#{hostname}.pem",
         password     => 'puppet',
       }
     EOS
@@ -31,22 +33,22 @@ describe 'managing java private keys' do
       pp = <<-EOS
         class { 'java': }
         file { [
-          '/etc/puppet/modules/keys',
-          '/etc/puppet/modules/keys/files',
+          '#{modulepath}/keys',
+          '#{modulepath}/keys/files',
         ]:
           ensure => directory,
         }
-        file { '/etc/puppet/modules/keys/files/ca.pem':
+        file { '#{modulepath}/keys/files/ca.pem':
           ensure => file,
-          source => '/etc/puppet/ssl/certs/ca.pem',
+          source => '#{confdir}/ssl/certs/ca.pem',
         }
-        file { '/etc/puppet/modules/keys/files/certificate.pem':
+        file { '#{modulepath}/keys/files/certificate.pem':
           ensure => file,
-          source => '/etc/puppet/ssl/certs/#{hostname}.pem',
+          source => '#{confdir}/ssl/certs/#{hostname}.pem',
         }
-        file { '/etc/puppet/modules/keys/files/private_key.pem':
+        file { '#{modulepath}/keys/files/private_key.pem':
           ensure => file,
-          source => '/etc/puppet/ssl/private_keys/#{hostname}.pem',
+          source => '#{confdir}/ssl/private_keys/#{hostname}.pem',
         }
       EOS
 
