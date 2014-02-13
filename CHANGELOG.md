@@ -4,6 +4,12 @@ Release notes for the puppetlabs-java_ks module
 
 ---------------------------------------
 
+2014-02-12 Release 1.2.1
+========================
+
+### Bugfixes
+- Updating specs
+
 2013-09-18 Release 1.2.0
 ========================
 
