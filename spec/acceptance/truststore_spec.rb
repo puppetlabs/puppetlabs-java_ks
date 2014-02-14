@@ -6,7 +6,7 @@ describe 'managing java truststores' do
       class { 'java': }
       java_ks { 'puppetca:truststore':
         ensure       => latest,
-        certificate  => '/etc/puppet/ssl/certs/ca.pem',
+        certificate  => '#{default['puppetpath']}/ssl/certs/ca.pem',
         target       => '/etc/truststore.ts',
         password     => 'puppet',
         trustcacerts => true,

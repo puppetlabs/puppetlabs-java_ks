@@ -6,7 +6,7 @@ describe 'managing java keystores' do
       class { 'java': }
       java_ks { 'puppetca:keystore':
         ensure       => latest,
-        certificate  => '/etc/puppet/ssl/certs/ca.pem',
+        certificate  => #{default['puppetpath']}/ssl/certs/ca.pem',
         target       => '/etc/keystore.ks',
         password     => 'puppet',
         trustcacerts => true,
