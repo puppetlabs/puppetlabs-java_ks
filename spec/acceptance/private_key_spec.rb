@@ -23,7 +23,7 @@ describe 'managing java private keys' do
     shell('keytool -list -v -keystore /etc/private_key.ks -storepass puppet') do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: broker\.example\.com/)
-      expect(r.stdout).to match(/Entry type: PrivateKeyEntry/)
+      expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
       expect(r.stdout).to match(/CN=Puppet CA/)
     end
   end
@@ -74,7 +74,7 @@ describe 'managing java private keys' do
       shell('keytool -list -v -keystore /etc/uri_key.ks -storepass puppet') do |r|
         expect(r.exit_code).to be_zero
         expect(r.stdout).to match(/Alias name: uri\.example\.com/)
-        expect(r.stdout).to match(/Entry type: PrivateKeyEntry/)
+        expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
         expect(r.stdout).to match(/CN=Puppet CA/)
       end
     end
