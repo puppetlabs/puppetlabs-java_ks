@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores' do
+describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   it 'creates a keystore' do
     pp = <<-EOS
       class { 'java': }

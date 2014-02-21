@@ -1,6 +1,8 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
 
+UNSUPPORTED_PLATFORMS = [ 'Scientific' ]
+
 hosts.each do |host|
   if host['platform'] =~ /debian/
     on host, 'echo \'export PATH=/var/lib/gems/1.8/bin/:${PATH}\' >> ~/.bashrc'
