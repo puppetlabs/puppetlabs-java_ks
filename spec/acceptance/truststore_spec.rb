@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   it 'creates a truststore' do
     pp = <<-EOS
       class { 'java': }
