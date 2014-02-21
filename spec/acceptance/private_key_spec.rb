@@ -2,7 +2,7 @@ require 'spec_helper_acceptance'
 
 hostname = default.node_name
 
-describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   let(:confdir)    { default['puppetpath']    }
   let(:modulepath) { default['distmoduledir'] }
   it 'creates a private key' do
