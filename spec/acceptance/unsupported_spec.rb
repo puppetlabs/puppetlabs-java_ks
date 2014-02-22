@@ -12,6 +12,6 @@ describe 'unsupported distributions and OSes', :if => UNSUPPORTED_PLATFORMS.incl
       trustcacerts => true,
     }
     EOS
-    expect(apply_manifest(pp, :expect_failures => true).to match(/is not supported/))
+    expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/is not supported/)
   end
 end
