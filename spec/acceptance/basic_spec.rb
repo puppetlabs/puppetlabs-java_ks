@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'prep nodes', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
-  it 'requires java' do
+  it 'requires java', :unless => fact('osfamily') == "Solaris" do
     pp = <<-EOS
       class { 'java': }
     EOS
