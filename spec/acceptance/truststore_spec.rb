@@ -1,9 +1,13 @@
 require 'spec_helper_acceptance'
 
 describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
-  if fact('osfamily') == "Solaris"
+  case fact('osfamily')
+  when "Solaris"
     keytool_path = '/usr/java/bin/'
     resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
+  when "AIX"
+    keytool_path = '/usr/java6/bin/'
+    resource_path = "['/usr/java6/bin/','/usr/bin/']"
   else
     resource_path = "undef"
   end
