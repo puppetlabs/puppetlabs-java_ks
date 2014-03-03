@@ -57,7 +57,7 @@
           "Server 2012 R2",
           "7"
         ]
-      }
+      },
       {
         "operatingsystem": "AIX",
         "operatingsystemrelease": [
@@ -65,7 +65,7 @@
           "6.1",
           "7.1"
         ]
-      },
+      }
     ],
     "requirements": [
       { "name": "pe", "version_requirement": "3.2.x" },
