@@ -1,4 +1,11 @@
 {
+    "name": "puppetlabs-java_ks",
+    "version": "1.2.2",
+    "source": "https://github.com/puppetlabs/puppetlabs-java_ks",
+    "author": "Puppet Labs",
+    "license": "Apache-2.0",
+    "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
+    "summary": "Manage arbitrary Java keystore files",
     "operatingsystem_support": [
       {
         "operatingsystem": "RedHat",
@@ -70,5 +77,6 @@
     "requirements": [
       { "name": "pe", "version_requirement": "3.2.x" },
       { "name": "puppet", "version_requirement": "3.x" }
-    ]
+    ],
+    "dependencies": []
 }
