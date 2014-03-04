@@ -1,7 +1,7 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
 
-UNSUPPORTED_PLATFORMS = [ 'Scientific' ]
+UNSUPPORTED_PLATFORMS = []
 
 unless ENV['RS_PROVISION'] == 'no'
   hosts.each do |host|
@@ -34,7 +34,7 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'java_ks')
     hosts.each do |host|
-      on host, puppet('module','install','puppetlabs-java','--version','1.0.1')
+      on host, puppet('module','install','puppetlabs-java')
     end
   end
 end
