@@ -6,7 +6,7 @@ describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(
       class { 'java': }
       java_ks { 'puppetca:truststore':
         ensure       => latest,
-        certificate  => '#{default['puppetpath']}/ssl/certs/ca.pem',
+        certificate  => "${settings::ssldir}/certs/ca.pem",
         target       => '/etc/truststore.ts',
         password     => 'puppet',
         trustcacerts => true,

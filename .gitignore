@@ -1,4 +1,9 @@
-pkg
+.pkg
 metadata.json
-.rspec_system/
 Gemfile.lock
+vendor
+spec/fixtures
+.rspec_system
+.bundle
+.vagrant
+.*sw*
