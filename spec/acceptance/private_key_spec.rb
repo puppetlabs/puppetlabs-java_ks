@@ -10,8 +10,8 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
       class { 'java': }
       java_ks { 'broker.example.com:/etc/private_key.ks':
         ensure       => latest,
-        certificate  => "#{confdir}/ssl/certs/#{hostname}.pem",
-        private_key  => "#{confdir}/ssl/private_keys/#{hostname}.pem",
+        certificate  => "${settings::ssldir}/certs/#{hostname}.pem",
+        private_key  => "${settings::ssldir}/private_keys/#{hostname}.pem",
         password     => 'puppet',
       }
     EOS
@@ -33,22 +33,22 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
       pp = <<-EOS
         class { 'java': }
         file { [
-          '#{modulepath}/keys',
-          '#{modulepath}/keys/files',
+          "#{modulepath}/keys",
+          "#{modulepath}/keys/files",
         ]:
           ensure => directory,
         }
-        file { '#{modulepath}/keys/files/ca.pem':
+        file { "#{modulepath}/keys/files/ca.pem":
           ensure => file,
-          source => '#{confdir}/ssl/certs/ca.pem',
+          source => "${settings::ssldir}/certs/ca.pem",
         }
-        file { '#{modulepath}/keys/files/certificate.pem':
+        file { "#{modulepath}/keys/files/certificate.pem":
           ensure => file,
-          source => '#{confdir}/ssl/certs/#{hostname}.pem',
+          source => "${settings::ssldir}/certs/#{hostname}.pem",
         }
-        file { '#{modulepath}/keys/files/private_key.pem':
+        file { "#{modulepath}/keys/files/private_key.pem":
           ensure => file,
-          source => '#{confdir}/ssl/private_keys/#{hostname}.pem',
+          source => "${settings::ssldir}/private_keys/#{hostname}.pem",
         }
       EOS
 

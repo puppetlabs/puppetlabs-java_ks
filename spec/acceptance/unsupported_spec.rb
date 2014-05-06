@@ -6,7 +6,7 @@ describe 'unsupported distributions and OSes', :if => UNSUPPORTED_PLATFORMS.incl
     class { 'java': }
     java_ks { 'puppetca:keystore':
       ensure       => latest,
-      certificate  => '#{default['puppetpath']}/ssl/certs/ca.pem',
+      certificate  => "${settings::ssldir}/certs/ca.pem",
       target       => '/etc/keystore.ks',
       password     => 'puppet',
       trustcacerts => true,
