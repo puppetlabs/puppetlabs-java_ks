@@ -1,6 +1,6 @@
 {
     "name": "puppetlabs-java_ks",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "source": "https://github.com/puppetlabs/puppetlabs-java_ks",
     "author": "Puppet Labs",
     "license": "Apache-2.0",
