@@ -1,8 +1,9 @@
-##2014-03-04 - Supported Release 1.2.4
+##2014-06-04 - Release 1.2.4
 ###Summary
 
-No functional changes to this module were made in this release, just testing
-infrastructure changes to extend tests to RHEL7 and Ubuntu 14.04
+This is a compatibility release. No functional changes to this module were made
+in this release, just testing infrastructure changes to extend tests to RHEL7
+and Ubuntu 14.04
 
 ####Features
 
