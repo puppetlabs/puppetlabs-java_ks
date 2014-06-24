@@ -168,23 +168,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def certificate
-    file_path @resource[:certificate]
+    @resource[:certificate]
   end
 
   def private_key
-    file_path @resource[:private_key]
+    @resource[:private_key]
   end
 
   def chain
-    file_path @resource[:chain]
-  end
-
-  def file_path(path)
-    return path unless path and path.start_with? 'puppet://'
-
-    served_file = Puppet::FileServing::Metadata.indirection.find(path, :environment => @resource.catalog.environment)
-    self.fail "Could not retrieve information for #{path}" unless served_file
-    served_file.full_path
+    @resource[:chain]
   end
 
   def run_command(cmd, target=false, stdinfile=false, env={})
