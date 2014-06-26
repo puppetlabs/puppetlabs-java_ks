@@ -1,5 +1,5 @@
 HOSTS:
-  centos-64-x64.local:
+  centos-64-x64:
     roles:
       - master
       - database
