@@ -113,6 +113,10 @@ Destination file for the keystore. We autorequire the parent directory for conve
 
 Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to true.
 
+#### `extension`
+
+When adding a certificate into a keystore you have the option to add an extension, like Subject Alternative Names (san=ip:localhost).
+
 ### Namevars
 
 Java_ks supports multiple certificates with different keystores but the same alias by implementing Puppet's composite namevar functionality.  Titles map to namevars via `$alias:$target` (alias of certificate, colon, on-disk path to the keystore). If you create dependencies on these resources you need to remember to use the same title syntax outlined for generating the composite namevars. 
