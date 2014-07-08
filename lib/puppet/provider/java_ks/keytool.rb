@@ -63,6 +63,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd.concat ['-ext', @resource[:extension]] unless @resource[:extension].nil?
 
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
@@ -135,6 +136,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+      cmd.concat ['-ext', @resource[:extension]] unless @resource[:extension].nil?
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
         tmpfile.write(@resource[:password])

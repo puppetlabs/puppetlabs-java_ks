@@ -100,6 +100,11 @@ module Puppet
         keystore. This cannot be used together with :password.'
     end
 
+    newparam(:extension) do
+      desc 'The extension option can be used in -genkeypair and -gencert to
+        embed extensions into the certificate generated.'
+    end
+
     newparam(:trustcacerts) do
       desc "When inputing certificate authorities into a keystore, they aren't
         by default trusted so if you are adding a CA you need to set this to true."
