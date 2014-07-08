@@ -1,0 +1,6 @@
+---
+Gemfile:
+  optional:
+  - gem: mocha
+spec/spec_helper.rb:
+  unmanaged: true
