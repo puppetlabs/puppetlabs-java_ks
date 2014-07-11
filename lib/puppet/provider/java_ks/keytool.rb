@@ -111,6 +111,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
+    cmd.concat [ '-storetype', storetype ] if storetype == "jceks"
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
@@ -135,6 +136,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-file', certificate,
         '-keystore', @resource[:target]
       ]
+      cmd.concat [ '-storetype', storetype ] if storetype == "jceks"
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       cmd.concat ['-ext', @resource[:extension]] unless @resource[:extension].nil?
       tmpfile = Tempfile.new("#{@resource[:name]}.")
@@ -179,6 +181,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def chain
     @resource[:chain]
+  end
+
+  def storetype
+    @resource[:storetype]
   end
 
   def run_command(cmd, target=false, stdinfile=false, env={})

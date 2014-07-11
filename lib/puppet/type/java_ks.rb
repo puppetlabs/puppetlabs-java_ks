@@ -78,6 +78,10 @@ module Puppet
         accompanied by a signed certificate for the keytool provider.'
     end
 
+    newparam(:storetype) do
+      desc 'Optional storetype supports jceks at the momment'
+    end
+
     newparam(:chain) do
       desc 'It has been found that some java applications do not properly send
         intermediary certificate authorities, in this case you can bundle them
