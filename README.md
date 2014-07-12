@@ -120,11 +120,10 @@ The storetype parameter allows you to use 'jceks' format if desired.
     java_ks { 'puppetca:/opt/puppet/truststore.jceks':
       ensure       => latest,
       storetype    => 'jceks',
-      certificate  => '/etc/puppet/ssl/certs/ca.pem',
+      certificate  => '/etc/puppet/ssl/certs/ca.crt',
       password     => 'puppet',
       trustcacerts => true,
     }
-  
 
 #### `extension`
 

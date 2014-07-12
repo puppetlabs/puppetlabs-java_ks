@@ -36,6 +36,27 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     randfile.close!
   end
 
+def to_der(path)
+    cmd = [
+      command_openssl,
+      'x509', '-outform', 'der',
+      '-in', certificate,
+      '-name', @resource[:name],
+      '-out', path
+    ]
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
+    tmpfile.flush
+
+    # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
+    # code to make sure RANDFILE is passed as an environment variable to the
+    # openssl command but not retained in the Puppet process environment.
+    randfile = Tempfile.new("#{@resource[:name]}.")
+    run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
+    tmpfile.close!
+    randfile.close!
+  end
+
+
   def password_file
     if @resource[:password_file].nil?
       tmpfile = Tempfile.new("#{@resource[:name]}.")
@@ -69,6 +90,30 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     run_command(cmd, @resource[:target], pwfile)
     tmppk12.close!
     pwfile.close! if pwfile.is_a? Tempfile
+  end
+
+  def import_jceks
+    tmpder = Tempfile.new("#{@resource[:name]}.")
+    to_der(tmpder.path)
+    cmd = [
+        command_keytool,
+        '-importcert', '-noprompt',
+        '-alias', @resource[:name],
+        '-file', tmpder.path,
+        '-keystore', @resource[:target],
+        '-storetype', storetype
+      ]
+      cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+      cmd.concat ['-ext', @resource[:extension]] unless @resource[:extension].nil?
+      tmpfile = Tempfile.new("#{@resource[:name]}.")
+      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
+        tmpfile.write(@resource[:password])
+      else
+        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
+      end
+      tmpfile.flush
+      run_command(cmd, @resource[:target], tmpfile)
+      tmpfile.close!
   end
 
   def exists?
@@ -130,6 +175,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       import_ks
     elsif certificate.nil? and ! private_key.nil?
       raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
+    elsif storetype == "jceks"
+      import_jceks
     else
       cmd = [
         command_keytool,
@@ -138,7 +185,6 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-file', certificate,
         '-keystore', @resource[:target]
       ]
-      cmd.concat [ '-storetype', storetype ] if storetype == "jceks"
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       cmd.concat ['-ext', @resource[:extension]] unless @resource[:extension].nil?
       tmpfile = Tempfile.new("#{@resource[:name]}.")
