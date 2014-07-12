@@ -142,7 +142,6 @@ def to_der(path)
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', certificate
     ]
-    cmd.concat [ '-inform', 'DER'] if storetype == "jceks"
     output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
