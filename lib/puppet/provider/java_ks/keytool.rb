@@ -78,6 +78,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
+    cmd.concat [ '-storetype', storetype ] if storetype == "jceks"
     begin
       tmpfile = Tempfile.new("#{@resource[:name]}.")
       tmpfile.write(@resource[:password])
