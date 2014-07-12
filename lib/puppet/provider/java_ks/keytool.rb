@@ -41,7 +41,6 @@ def to_der(path)
       command_openssl,
       'x509', '-outform', 'der',
       '-in', certificate,
-      '-name', @resource[:name],
       '-out', path
     ]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
