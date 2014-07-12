@@ -98,7 +98,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'x509', '-fingerprint', '-md5', '-noout',
       '-in', certificate
     ]
-    cmd << '-inform DER' if storetype == "jceks"
+    cmd.concat [ '-inform', 'DER'] if storetype == "jceks"
     output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
     return latest
