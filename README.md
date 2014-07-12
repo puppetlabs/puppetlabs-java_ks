@@ -113,6 +113,19 @@ Destination file for the keystore. We autorequire the parent directory for conve
 
 Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to true.
 
+### `storetype`
+
+The storetype parameter allows you to use 'jceks' format if desired.
+
+    java_ks { 'puppetca:/opt/puppet/truststore.jceks':
+      ensure       => latest,
+      storetype    => 'jceks',
+      certificate  => '/etc/puppet/ssl/certs/ca.pem',
+      password     => 'puppet',
+      trustcacerts => true,
+    }
+  
+
 #### `extension`
 
 When adding a certificate into a keystore you have the option to add an extension, like Subject Alternative Names (san=ip:localhost).
