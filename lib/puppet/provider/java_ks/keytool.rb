@@ -94,7 +94,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     cmd = [
       command_openssl,
       'x509', '-fingerprint', '-md5', '-noout',
-      '-in', certificate
+      '-in', certificate, '-inform', @resource[:encoding]
     ]
     output = run_command(cmd)
     latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
