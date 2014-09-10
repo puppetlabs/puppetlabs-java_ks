@@ -45,11 +45,6 @@ RSpec.configure do |c|
     hosts.each do |host|
       copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
       on host, puppet('module', 'install', 'puppetlabs-java')
-      # Generate private key and CA for keystore
-      path = '${PATH}'
-      path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
-      path = "/opt/puppet/bin:#{path}" # But try PE's ruby first
-      on host, "PATH=#{path} ruby -e \"#{opensslscript}\""
     end
   end
 end
