@@ -25,8 +25,8 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'java_ks')
     hosts.each do |host|
+      copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
       shell('puppet module install puppetlabs-java')
     end
   end
