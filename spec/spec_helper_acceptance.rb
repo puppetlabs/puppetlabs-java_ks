@@ -11,8 +11,7 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   if default.is_pe?; then install_pe; else install_puppet( foss_opts ); end
 
   hosts.each do |host|
-    on host, 'puppet master'
-    on hosts, "mkdir -p #{host['distmoduledir']}"
+    on host, "mkdir -p #{host['distmoduledir']}"
   end
 end
 
@@ -28,7 +27,7 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'java_ks')
     hosts.each do |host|
-      shell('puppet module install puppetlabs-java')
+      on host, puppet('module', 'install', 'puppetlabs-java')
     end
   end
 end
