@@ -17,8 +17,6 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
   end
   it 'creates a private key' do
     pp = <<-EOS
-      class { 'java': } ->
-
       java_ks { 'broker.example.com:/etc/private_key.ks':
         ensure       => latest,
         certificate  => "/tmp/ca.pem",
