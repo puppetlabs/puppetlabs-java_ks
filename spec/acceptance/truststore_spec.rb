@@ -15,7 +15,7 @@ describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(
     pp = <<-EOS
       java_ks { 'puppetca:truststore':
         ensure       => latest,
-        certificate  => "${settings::ssldir}/certs/ca.pem",
+        certificate  => "/tmp/ca.pem",
         target       => '/etc/truststore.ts',
         password     => 'puppet',
         trustcacerts => true,
@@ -30,7 +30,7 @@ describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)
-      expect(r.stdout).to match(/CN=Puppet CA/)
+      expect(r.stdout).to match(/CN=Test CA/)
     end
   end
 end
