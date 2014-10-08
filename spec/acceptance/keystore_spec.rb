@@ -13,8 +13,6 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   end
   it 'creates a keystore' do
     pp = <<-EOS
-      class { 'java':} ->
-
       java_ks { 'puppetca:keystore':
         ensure       => latest,
         certificate  => "/tmp/ca.pem",
