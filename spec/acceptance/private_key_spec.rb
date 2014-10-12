@@ -1,19 +1,19 @@
 require 'spec_helper_acceptance'
 
 hostname = default.node_name
-
-describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
-  let(:confdir)    { default['puppetpath']    }
+UNSUPPORTED_PRIVATE_KEY = UNSUPPORTED_PLATFORMS + ['windows']
+describe 'managing java private keys', :unless => UNSUPPORTED_PRIVATE_KEY.include?(fact('operatingsystem')) do
+  let(:confdir) { default['puppetpath'] }
   let(:modulepath) { default['distmoduledir'] }
   case fact('osfamily')
-  when "Solaris"
-    keytool_path = '/usr/java/bin/'
-    resource_path = "['/usr/java/bin/','/opt/puppet/bin/', '/usr/bin']"
-  when "AIX"
-    keytool_path = '/usr/java6/bin/'
-    resource_path = "['/usr/java6/bin/','/usr/bin/']"
-  else
-    resource_path = "undef"
+    when "Solaris"
+      keytool_path = '/usr/java/bin/'
+      resource_path = "['/usr/java/bin/','/opt/puppet/bin/', '/usr/bin']"
+    when "AIX"
+      keytool_path = '/usr/java6/bin/'
+      resource_path = "['/usr/java6/bin/','/usr/bin/']"
+    else
+      resource_path = "undef"
   end
   it 'creates a private key' do
     pp = <<-EOS
