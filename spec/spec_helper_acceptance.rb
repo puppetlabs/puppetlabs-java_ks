@@ -10,8 +10,10 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
     install_puppet
   end
   hosts.each do |host|
-    on host, 'puppet master'
-    on hosts, "mkdir -p #{host['distmoduledir']}"
+    if host['platform'] !~ /windows/i
+      on host, 'puppet master'
+      on host, "mkdir -p #{host['distmoduledir']}"
+    end
   end
 end
 
@@ -26,8 +28,14 @@ RSpec.configure do |c|
   c.before :suite do
     # Install module and dependencies
     hosts.each do |host|
+      #install java if windows
+      if host['platform'] =~ /windows/i
+        on host, 'powershell.exe -command "(New-Object System.Net.Webclient).DownloadString(\'https://forge.puppetlabs.com\')"'
+        on host, puppet('module install cyberious-windows_java')
+      else
+        on host, puppet('module install puppetlabs-java')
+      end
       copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
-      shell('puppet module install puppetlabs-java')
     end
   end
 end
