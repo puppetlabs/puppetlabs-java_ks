@@ -15,14 +15,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
     cmd = [
-      command_openssl,
-      'pkcs12', '-export', '-passout', 'stdin',
-      '-in', certificate,
-      '-inkey', private_key,
-      '-name', @resource[:name],
-      '-out', path
+        command_openssl,
+        'pkcs12', '-export', '-passout', 'stdin',
+        '-in', certificate,
+        '-inkey', private_key,
+        '-name', @resource[:name],
+        '-out', path
     ]
-    cmd << [ '-certfile', chain ] if chain
+    cmd << ['-certfile', chain] if chain
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
     tmpfile.flush
@@ -56,11 +56,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmppk12 = Tempfile.new("#{@resource[:name]}.")
     to_pkcs12(tmppk12.path)
     cmd = [
-      command_keytool,
-      '-importkeystore', '-srcstoretype', 'PKCS12',
-      '-destkeystore', @resource[:target],
-      '-srckeystore', tmppk12.path,
-      '-alias', @resource[:name]
+        command_keytool,
+        '-importkeystore', '-srcstoretype', 'PKCS12',
+        '-destkeystore', @resource[:target],
+        '-srckeystore', tmppk12.path,
+        '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
 
@@ -72,10 +72,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def exists?
     cmd = [
-      command_keytool,
-      '-list',
-      '-keystore', @resource[:target],
-      '-alias', @resource[:name]
+        command_keytool,
+        '-list',
+        '-keystore', @resource[:target],
+        '-alias', @resource[:name]
     ]
     begin
       tmpfile = Tempfile.new("#{@resource[:name]}.")
@@ -92,12 +92,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Reading the fingerprint of the certificate on disk.
   def latest
     cmd = [
-      command_openssl,
-      'x509', '-fingerprint', '-md5', '-noout',
-      '-in', certificate
+        command_keytool,
+        '-v', '-printcert', '-file', certificate
     ]
     output = run_command(cmd)
-    latest = output.scan(/MD5 Fingerprint=(.*)/)[0][0]
+    latest = output.scan(/MD5:\s+(.*)/)[0][0]
     return latest
   end
 
@@ -105,10 +104,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def current
     output = ''
     cmd = [
-      command_keytool,
-      '-list', '-v',
-      '-keystore', @resource[:target],
-      '-alias', @resource[:name]
+        command_keytool,
+        '-list', '-v',
+        '-keystore', @resource[:target],
+        '-alias', @resource[:name]
     ]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
@@ -122,17 +121,17 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Determine if we need to do an import of a private_key and certificate pair
   # or just add a signed certificate, then do it.
   def create
-    if ! certificate.nil? and ! private_key.nil?
+    if !certificate.nil? and !private_key.nil?
       import_ks
-    elsif certificate.nil? and ! private_key.nil?
+    elsif certificate.nil? and !private_key.nil?
       raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
     else
       cmd = [
-        command_keytool,
-        '-importcert', '-noprompt',
-        '-alias', @resource[:name],
-        '-file', certificate,
-        '-keystore', @resource[:target]
+          command_keytool,
+          '-importcert', '-noprompt',
+          '-alias', @resource[:name],
+          '-file', certificate,
+          '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       tmpfile = Tempfile.new("#{@resource[:name]}.")
@@ -149,10 +148,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def destroy
     cmd = [
-      command_keytool,
-      '-delete',
-      '-alias', @resource[:name],
-      '-keystore', @resource[:target]
+        command_keytool,
+        '-delete',
+        '-alias', @resource[:name],
+        '-keystore', @resource[:target]
     ]
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     tmpfile.write(@resource[:password])
@@ -215,22 +214,22 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     if Facter.value('osfamily') == 'Suse' and @resource[:password]
       cmd_to_run = cmd.is_a?(String) ? cmd.split(/\s/).first : cmd.first
       if cmd_to_run == command_keytool
-        cmd << '-srcstorepass'  << @resource[:password]
+        cmd << '-srcstorepass' << @resource[:password]
         cmd << '-deststorepass' << @resource[:password]
       end
     end
 
     # Now run the command
-    options = { :failonfail => true, :combine => true }
+    options = {:failonfail => true, :combine => true}
     output = if stdinfile
-      withenv.call(env) do
-        exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
-      end
-    else
-      withenv.call(env) do
-        exec_method.call(cmd, options)
-      end
-    end
+               withenv.call(env) do
+                 exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+               end
+             else
+               withenv.call(env) do
+                 exec_method.call(cmd, options)
+               end
+             end
 
     # for previously empty files, restore the mode, owner and group. The funky
     # double-take check is because on Suse defined? doesn't seem to behave
