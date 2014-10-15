@@ -6,7 +6,7 @@ UNSUPPORTED_PLATFORMS = []
 unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   # This will install the latest available package on el and deb based
   # systems fail on windows and osx, and install via gem on other *nixes
-  foss_opts = {:default_action => 'gem_install'}
+  foss_opts = {:default_action => 'gem_install', :version => '3.7.1'}
   if default.is_pe?; then
     install_pe;
   else
@@ -21,8 +21,28 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   end
 end
 
-/* @TODO need to add alternate path for windows */
-opensslscript =<<EOS
+#/* @TODO need to add alternate path for windows */
+
+def create_keys_for_test(host)
+  # Generate private key and CA for keystore
+
+  if host['platform'] =~ /windows/i
+    cmd = 'env PATH="$( [ -d "/cygdrive/c/Program Files (x86)/Puppet Labs/Puppet/sys/ruby/bin" ]'
+    cmd += ' && echo "/cygdrive/c/Program Files (x86)" || echo "/cygdrive/c/Program Files" )/Puppet Labs/Puppet/sys/ruby/bin:${PATH}" ruby -e'
+    temp_dir = 'C:\\tmp\\'
+    on host, 'mkdir /cygdrive/c/tmp'
+  else
+    path = '${PATH}'
+    path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
+    path = "/opt/puppet/bin:#{path}" # But try PE's ruby first
+    cmd = "PATH=#{path} ruby -e"
+    temp_dir = '/tmp/'
+  end
+  # Need to check for ruby path on puppet install, use vendor ruby and add it to the path durring execution
+  tmp_privky = "#{temp_dir}privkey.pem"
+  tmp_ca = "#{temp_dir}ca.pem"
+  tmp_chain = "#{temp_dir}chain.pem"
+  opensslscript =<<EOS
   require 'openssl'
   key = OpenSSL::PKey::RSA.new 1024
   ca = OpenSSL::X509::Certificate.new
@@ -35,9 +55,22 @@ opensslscript =<<EOS
   ca.not_after = ca.not_before + 360
   ca.sign(key, OpenSSL::Digest::SHA256.new)
 
-  File.open('/tmp/privkey.pem', 'w') { |f| f.write key.to_pem }
-  File.open('/tmp/ca.pem', 'w') { |f| f.write ca.to_pem }
+  chain = OpenSSL::X509::Certificate.new
+  chain.serial = 1
+  chain.public_key = key.public_key
+  chain_subj = '/CN=Chain CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.net'
+  chain.subject = OpenSSL::X509::Name.parse chain_subj
+  chain.issuer = chain.subject
+  chain.not_before = Time.now
+  chain.not_after = chain.not_before + 360
+  chain.sign(key, OpenSSL::Digest::SHA256.new)
+
+  File.open('#{tmp_privky}', 'w') { |f| f.write key.to_pem }
+  File.open('#{tmp_ca}', 'w') { |f| f.write ca.to_pem }
+  File.open('#{tmp_chain}', 'w') { |f| f.write chain.to_pem }
 EOS
+  on host, "#{cmd} \"#{opensslscript}\""
+end
 
 RSpec.configure do |c|
   # Project root
@@ -51,12 +84,7 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'java_ks')
     hosts.each do |host|
-      # Generate private key and CA for keystore
-      path = '${PATH}'
-      path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
-      path = "/opt/puppet/bin:#{path}" # But try PE's ruby first
-      # Need to check for ruby path on puppet install, use vendor ruby and add it to the path durring execution
-      on host, "PATH=#{path} ruby -e \"#{opensslscript}\""
+      create_keys_for_test(host)
 
       #install java if windows
       if host['platform'] =~ /windows/i
@@ -67,4 +95,29 @@ RSpec.configure do |c|
       end
     end
   end
+end
+
+RSpec.shared_context 'common variables' do
+  before {
+    @ensure_ks = 'latest'
+    @temp_dir = '/tmp/'
+    @resource_path = "undef"
+    @target = '/etc/truststore.ts'
+    case fact('osfamily')
+      when "Solaris"
+        @keytool_path = '/usr/java/bin/'
+        @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
+        @target = '/etc/truststore.ts'
+      when "AIX"
+        @keytool_path = '/usr/java6/bin/'
+        @resource_path = "['/usr/java6/bin/','/usr/bin/']"
+        @target = '/etc/truststore.ts'
+      when 'windows'
+        @ensure_ks = 'present'
+        @keytool_path = 'C:/Java/jdk1.7.0_60/bin/'
+        @target = 'c:/truststore.ts'
+        @temp_dir = 'C:/tmp/'
+        @resource_path = "['C:/Java/jdk1.7.0_60/bin/']"
+    end
+  }
 end

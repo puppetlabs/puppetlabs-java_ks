@@ -1,13 +1,5 @@
 HOSTS:
-  ubuntu1204:
-      roles:
-        - master
-        - database
-        - dashboard
-      platform: ubuntu-12.04-amd64
-      template: ubuntu-1204-x86_64
-      hypervisor: vcloud
-  w2012:
+  v1bo8bpae8lkmsu:
     roles:
       - agent
       - default
@@ -15,6 +7,7 @@ HOSTS:
     template: win-2012r2-x86_64
     hypervisor: vcloud
 CONFIG:
+  type: git
   nfs_server: none
   consoleport: 443
   datastore: instance0

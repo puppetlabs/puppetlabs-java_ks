@@ -1,11 +1,12 @@
+require 'openssl'
 require 'puppet/util/filetype'
 
 Puppet::Type.type(:java_ks).provide(:keytool) do
   desc 'Uses a combination of openssl and keytool to manage Java keystores'
 
-  def command_openssl
-    'openssl'
-  end
+  # def command_openssl
+  #   'openssl'
+  # end
 
   def command_keytool
     'keytool'
@@ -14,26 +15,35 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
-    cmd = [
-        command_openssl,
-        'pkcs12', '-export', '-passout', 'stdin',
-        '-in', certificate,
-        '-inkey', private_key,
-        '-name', @resource[:name],
-        '-out', path
-    ]
-    cmd << ['-certfile', chain] if chain
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
-
-    # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
-    # code to make sure RANDFILE is passed as an environment variable to the
-    # openssl command but not retained in the Puppet process environment.
-    randfile = Tempfile.new("#{@resource[:name]}.")
-    run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
-    tmpfile.close!
-    randfile.close!
+    pkey = OpenSSL::PKey::RSA.new File.read private_key
+    x509_cert = OpenSSL::X509::Certificate.new File.read certificate
+    if chain
+      chain_certs = [(OpenSSL::X509::Certificate.new File.read chain)]
+    else
+      chain_certs = []
+    end
+    pkcs12 = OpenSSL::PKCS12.create(@resource[:password], @resource[:name], pkey, x509_cert, chain_certs)
+    File.open(path, "wb") { |f| f.print pkcs12.to_der }
+    # cmd = [
+    #     command_openssl,
+    #     'pkcs12', '-export', '-passout', 'stdin',
+    #     '-in', certificate,
+    #     '-inkey', private_key,
+    #     '-name', @resource[:name],
+    #     '-out', path
+    # ]
+    # cmd << ['-certfile', chain] if chain
+    # tmpfile = Tempfile.new("#{@resource[:name]}.")
+    # tmpfile.write(@resource[:password])
+    # tmpfile.flush
+    #
+    # # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
+    # # code to make sure RANDFILE is passed as an environment variable to the
+    # # openssl command but not retained in the Puppet process environment.
+    # randfile = Tempfile.new("#{@resource[:name]}.")
+    # run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
+    # tmpfile.close!
+    # randfile.close!
   end
 
   def password_file
