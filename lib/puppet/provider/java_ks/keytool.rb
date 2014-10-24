@@ -58,6 +58,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd += [ '-destkeypass', @resource[:destkeypass] ] unless @resource[:destkeypass].nil?
 
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)

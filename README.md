@@ -99,6 +99,9 @@ This password is used to protect the keystore. If private keys are also protecte
 #####`password_file`
 Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef. 
 
+#####`destkeypass`
+The password you want to set to protect the key in the keystore.
+
 #####`path`
 Used for command (keytool, openssl) execution. Valid options: array or file path separated list (for example : in linux). Default: undef.
 
