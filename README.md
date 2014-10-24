@@ -91,11 +91,15 @@ The `ensure` parameter accepts three attributes: absent, present, and latest.  L
 
 #### `password`
 
-The password used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. 
+The password used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them.
 
 #### `password_file`
 
 Used as an alternative to `password` here you can specify a plaintext file where the password is stored.
+
+#### `ks_keypassword`
+
+The password you want to set to protect the key in the keystore.
 
 #### `path`
 
