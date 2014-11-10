@@ -1,5 +1,5 @@
 name 'puppetlabs-java_ks'
-version '1.2.3'
+version '1.2.5'
 
 author 'puppetlabs'
 license 'ASL 2.0'

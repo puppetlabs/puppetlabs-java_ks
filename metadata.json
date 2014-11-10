@@ -1,6 +1,6 @@
 {
     "name": "puppetlabs-java_ks",
-    "version": "1.2.3",
+    "version": "1.2.5",
     "source": "https://github.com/puppetlabs/puppetlabs-java_ks",
     "author": "Puppet Labs",
     "license": "Apache-2.0",
@@ -69,19 +69,8 @@
         ]
       },
       {
-        "operatingsystem": "Windows",
-        "operatingsystemrelease": [
-          "Server 2003 R2",
-          "Server 2008 R2",
-          "Server 2012",
-          "Server 2012 R2",
-          "7"
-        ]
-      },
-      {
         "operatingsystem": "AIX",
         "operatingsystemrelease": [
-          "5.3",
           "6.1",
           "7.1"
         ]

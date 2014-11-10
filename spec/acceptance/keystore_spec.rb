@@ -4,7 +4,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   case fact('osfamily')
   when "Solaris"
     keytool_path = '/usr/java/bin/'
-    resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
+    resource_path = "['/usr/java/bin/','/opt/puppet/bin/','/usr/bin/']"
   when "AIX"
     keytool_path = '/usr/java6/bin/'
     resource_path = "['/usr/java6/bin/','/usr/bin/']"
