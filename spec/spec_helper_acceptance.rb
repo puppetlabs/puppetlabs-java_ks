@@ -4,16 +4,33 @@ require 'beaker-rspec/helpers/serverspec'
 UNSUPPORTED_PLATFORMS = []
 
 unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
-  if hosts.first.is_pe?
-    install_pe
-  else
-    install_puppet
-  end
+  # This will install the latest available package on el and deb based
+  # systems fail on windows and osx, and install via gem on other *nixes
+  foss_opts = { :default_action => 'gem_install' }
+
+  if default.is_pe?; then install_pe; else install_puppet( foss_opts ); end
+
   hosts.each do |host|
-    on host, 'puppet master'
-    on hosts, "mkdir -p #{host['distmoduledir']}"
+    on host, "mkdir -p #{host['distmoduledir']}"
   end
 end
+
+opensslscript =<<EOS
+  require 'openssl'
+  key = OpenSSL::PKey::RSA.new 1024
+  ca = OpenSSL::X509::Certificate.new
+  ca.serial = 1
+  ca.public_key = key.public_key
+  subj = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
+  ca.subject = OpenSSL::X509::Name.parse subj
+  ca.issuer = ca.subject
+  ca.not_before = Time.now
+  ca.not_after = ca.not_before + 360
+  ca.sign(key, OpenSSL::Digest::SHA256.new)
+
+  File.open('/tmp/privkey.pem', 'w') { |f| f.write key.to_pem }
+  File.open('/tmp/ca.pem', 'w') { |f| f.write ca.to_pem }
+EOS
 
 RSpec.configure do |c|
   # Project root
@@ -27,7 +44,7 @@ RSpec.configure do |c|
     # Install module and dependencies
     hosts.each do |host|
       copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
-      shell('puppet module install puppetlabs-java')
+      on host, puppet('module', 'install', 'puppetlabs-java')
     end
   end
 end

@@ -19,9 +19,9 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
     pp = <<-EOS
       java_ks { 'broker.example.com:/etc/private_key.ks':
         ensure       => latest,
-        certificate  => "${settings::ssldir}/certs/#{hostname}.pem",
-        private_key  => "${settings::ssldir}/private_keys/#{hostname}.pem",
-        password     => 'puppet',
+        certificate  => "/tmp/ca.pem",
+        private_key  => "/tmp/privkey.pem",
+        password     => 'testpass',
         path         => #{resource_path},
       }
     EOS
@@ -30,11 +30,11 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
   end
 
   it 'verifies the private key' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/private_key.ks -storepass puppet") do |r|
+    shell("#{keytool_path}keytool -list -v -keystore /etc/private_key.ks -storepass testpass") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: broker\.example\.com/)
       expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
-      expect(r.stdout).to match(/CN=Puppet CA/)
+      expect(r.stdout).to match(/CN=Test CA/)
     end
   end
 end

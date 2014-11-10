@@ -1,5 +1,5 @@
 HOSTS:
-  centos-59-x64.local:
+  centos-59-x64:
     roles:
       - master
     platform: el-5-x86_64
