@@ -1,12 +1,12 @@
 {
   "name": "puppetlabs-java_ks",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "author": "puppetlabs",
   "summary": "Manage arbitrary Java keystore files",
   "license": "ASL 2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-java_ks.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-java_ks/issues",
+  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -43,6 +43,7 @@
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
+        "10 SP4",
         "11 SP1"
       ]
     },
@@ -79,7 +80,7 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": ">= 3.2.0 < 3.4.0"
+      "version_requirement": "3.x"
     },
     {
       "name": "puppet",
