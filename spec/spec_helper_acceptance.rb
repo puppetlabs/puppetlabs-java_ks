@@ -11,6 +11,9 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   if default.is_pe?; then install_pe; else install_puppet( foss_opts ); end
 
   hosts.each do |host|
+    if host["platform"] =~ /solaris/
+      on host, "echo 'export PATH=/opt/puppet/bin:/var/ruby/1.8/gem_home/bin:${PATH}' >> ~/.bashrc"
+    end
     on host, "mkdir -p #{host['distmoduledir']}"
   end
 end
