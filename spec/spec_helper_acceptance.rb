@@ -51,7 +51,11 @@ RSpec.configure do |c|
       copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
       on host, puppet('module', 'install', 'puppetlabs-java'), { :acceptable_exit_codes => [0,1] }
       # Generate private key and CA for keystore
-      on host, "ruby -e \"#{opensslscript}\""
+      if host.is_pe?
+        on host, "#{host['puppetbindir']}/ruby -e \"#{opensslscript}\""
+      else
+        on host, "ruby -e \"#{opensslscript}\""
+      end
     end
   end
 end
