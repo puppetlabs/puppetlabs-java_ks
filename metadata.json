@@ -1,84 +1,95 @@
 {
-    "name": "puppetlabs-java_ks",
-    "version": "1.2.5",
-    "source": "https://github.com/puppetlabs/puppetlabs-java_ks",
-    "author": "Puppet Labs",
-    "license": "Apache-2.0",
-    "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
-    "summary": "Manage arbitrary Java keystore files",
-    "operatingsystem_support": [
-      {
-        "operatingsystem": "RedHat",
-        "operatingsystemrelease": [
-          "5",
-          "6",
-          "7"
-        ]
-      },
-      {
-        "operatingsystem": "CentOS",
-        "operatingsystemrelease": [
-          "5",
-          "6",
-          "7"
-        ]
-      },
-      {
-        "operatingsystem": "OracleLinux",
-        "operatingsystemrelease": [
-          "5",
-          "6",
-          "7"
-        ]
-      },
-      {
-        "operatingsystem": "Scientific",
-        "operatingsystemrelease": [
-          "5",
-          "6",
-          "7"
-        ]
-      },
-      {
-        "operatingsystem": "SLES",
-        "operatingsystemrelease": [
-          "10 SP4",
-          "11 SP1"
-        ]
-      },
-      {
-        "operatingsystem": "Debian",
-        "operatingsystemrelease": [
-          "6",
-          "7"
-        ]
-      },
-      {
-        "operatingsystem": "Ubuntu",
-        "operatingsystemrelease": [
-          "10.04",
-          "12.04",
-          "14.04"
-        ]
-      },
-      {
-        "operatingsystem": "Solaris",
-        "operatingsystemrelease": [
-          "10",
-          "11"
-        ]
-      },
-      {
-        "operatingsystem": "AIX",
-        "operatingsystemrelease": [
-          "6.1",
-          "7.1"
-        ]
-      }
-    ],
-    "requirements": [
-      { "name": "pe", "version_requirement": "3.x" },
-      { "name": "puppet", "version_requirement": "3.x" }
-    ],
-    "dependencies": []
+  "name": "puppetlabs-java_ks",
+  "version": "1.2.6",
+  "author": "puppetlabs",
+  "summary": "Manage arbitrary Java keystore files",
+  "license": "ASL 2.0",
+  "source": "https://github.com/puppetlabs/puppetlabs-java_ks.git",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
+  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "SLES",
+      "operatingsystemrelease": [
+        "10 SP4",
+        "11 SP1",
+        "12"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "10.04",
+        "12.04",
+        "14.04"
+      ]
+    },
+    {
+      "operatingsystem": "Solaris",
+      "operatingsystemrelease": [
+        "10",
+        "11"
+      ]
+    },
+    {
+      "operatingsystem": "AIX",
+      "operatingsystemrelease": [
+        "6.1",
+        "7.1"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "description": "Uses a combination of keytool and openssl to manage entries in a Java keystore.",
+  "dependencies": [
+  
+  ]
 }
