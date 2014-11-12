@@ -1,3 +1,8 @@
+##2014-11-11 - Supported Release 1.2.6
+###Summary
+
+This release has test fixes and files synced from modulesync.
+
 ##2014-07-10 - Supported Release 1.2.5
 ###Summary
 
