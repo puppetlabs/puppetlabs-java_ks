@@ -78,6 +78,10 @@ module Puppet
         accompanied by a signed certificate for the keytool provider.'
     end
 
+    newparam(:storetype) do
+      desc 'Optional storetype supports jceks at the momment'
+    end
+
     newparam(:chain) do
       desc 'It has been found that some java applications do not properly send
         intermediary certificate authorities, in this case you can bundle them
@@ -98,6 +102,11 @@ module Puppet
     newparam(:password_file) do
       desc 'The path to a file containing the password used to protect the
         keystore. This cannot be used together with :password.'
+    end
+
+    newparam(:extension) do
+      desc 'The extension option can be used in -genkeypair and -gencert to
+        embed extensions into the certificate generated.'
     end
 
     newparam(:trustcacerts) do
