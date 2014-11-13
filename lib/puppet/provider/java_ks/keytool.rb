@@ -23,9 +23,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-out', path
     ]
     cmd << [ '-certfile', chain ] if chain
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
+    tmpfile = password_file
 
     # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
     # code to make sure RANDFILE is passed as an environment variable to the
@@ -38,17 +36,22 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def password_file
     if @resource[:password_file].nil?
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
-      else
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
-      end
-      tmpfile.flush
-      tmpfile
+        pword = @resource[:password]
     else
-      @resource[:password_file]
+        file = File.open(@resource[:password_file], "r")
+        pword = file.read
+        file.close
+        pword = pword.chomp
     end
+
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
+    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
+      tmpfile.write("#{pword}\n#{pword}")
+    else
+      tmpfile.write("#{pword}\n#{pword}\n#{pword}")
+    end
+    tmpfile.flush
+    tmpfile
   end
 
   # Where we actually to the import of the file created using to_pkcs12.
