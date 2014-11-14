@@ -34,4 +34,33 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
       expect(r.stdout).to match(/CN=Test CA/)
     end
   end
+
+  it 'uses password_file' do
+    pp = <<-EOS
+      file { '/tmp/password':
+        ensure  => file,
+        content => 'puppet',
+      }
+      java_ks { 'puppetca2:keystore':
+        ensure        => latest,
+        certificate   => "/tmp/ca2.pem",
+        target        => '/etc/keystore.ks',
+        password_file => '/tmp/password',
+        trustcacerts  => true,
+        path          => #{resource_path},
+        require       => File['/tmp/password']
+      }
+    EOS
+
+    apply_manifest(pp, :catch_failures => true)
+  end
+
+  it 'verifies the keystore' do
+    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ks -storepass puppet") do |r|
+      expect(r.exit_code).to be_zero
+      expect(r.stdout).to match(/Your keystore contains 2 entries/)
+      expect(r.stdout).to match(/Alias name: puppetca2/)
+      expect(r.stdout).to match(/CN=Test CA/)
+    end
+  end
 end

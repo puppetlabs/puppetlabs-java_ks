@@ -33,8 +33,20 @@ opensslscript =<<EOS
   ca.not_after = ca.not_before + 360
   ca.sign(key, OpenSSL::Digest::SHA256.new)
 
+  key2 = OpenSSL::PKey::RSA.new 1024
+  ca2 = OpenSSL::X509::Certificate.new
+  ca2.serial = 2
+  ca2.public_key = key2.public_key
+  subj2 = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
+  ca2.subject = OpenSSL::X509::Name.parse subj2
+  ca2.issuer = ca2.subject
+  ca2.not_before = Time.now
+  ca2.not_after = ca2.not_before + 360
+  ca2.sign(key2, OpenSSL::Digest::SHA256.new)
+
   File.open('/tmp/privkey.pem', 'w') { |f| f.write key.to_pem }
   File.open('/tmp/ca.pem', 'w') { |f| f.write ca.to_pem }
+  File.open('/tmp/ca2.pem', 'w') { |f| f.write ca2.to_pem }
 EOS
 
 RSpec.configure do |c|
