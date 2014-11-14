@@ -81,9 +81,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name]
     ]
     begin
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      tmpfile.write(@resource[:password])
-      tmpfile.flush
+      tmpfile = password_file
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
@@ -113,9 +111,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-alias', @resource[:name]
     ]
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
+    tmpfile = password_file
     output = run_command(cmd, false, tmpfile)
     tmpfile.close!
     current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
@@ -138,13 +134,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-        tmpfile.write(@resource[:password])
-      else
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
-      end
-      tmpfile.flush
+      tmpfile = password_file
       run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
     end
@@ -157,9 +147,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name],
       '-keystore', @resource[:target]
     ]
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
+    tmpfile = password_file
     run_command(cmd, false, tmpfile)
     tmpfile.close!
   end
