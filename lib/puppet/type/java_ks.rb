@@ -121,6 +121,16 @@ module Puppet
       end
     end
 
+    newparam(:encoding) do
+      desc "The type of encoding applied to this certificate. 
+        Available values are pem,der,net. Default is pem.
+        This is used by openssl when verifying certificate fingerprint."
+
+      newvalues(:pem, :der, :net)
+
+      defaultto :pem
+    end
+
     # Where we setup autorequires.
     autorequire(:file) do
       auto_requires = []

@@ -49,6 +49,7 @@ To use the java_ks module's functionality, declare each java_ks resource you nee
       target       => '/etc/activemq/broker.ks',
       password     => 'puppet',
       trustcacerts => true,
+      encoding => 'der',
     }
   
     java_ks { 'broker.example.com:/etc/activemq/broker.ks':
@@ -112,6 +113,10 @@ Destination file for the keystore. We autorequire the parent directory for conve
 #### `trustcacerts`
 
 Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to true.
+
+#### `encoding`
+
+Certificates can have different encodings, which is necessary to specify with the openssl command during the retrieval of the md5 fingerprint from the certificate. This can be pem (default), der, net.
 
 ### Namevars
 
