@@ -16,7 +16,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
         target       => '#{target}',
-        password     => 'testpass',
+        password     => 'puppet',
         trustcacerts => true,
         path         => #{@resource_path},
       }
@@ -26,7 +26,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   end
 
   it 'verifies the keystore' do
-    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass testpass") do |r|
+    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)
@@ -36,18 +36,18 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
 
   it 'uses password_file' do
     pp = <<-EOS
-      file { '/tmp/password':
+      file { '#{@temp_dir}password':
         ensure  => file,
         content => 'puppet',
       }
       java_ks { 'puppetca2:keystore':
         ensure        => latest,
-        certificate   => "/tmp/ca2.pem",
-        target        => '/etc/keystore.ks',
-        password_file => '/tmp/password',
+        certificate   => "#{@temp_dir}ca2.pem",
+        target        => '#{target}',
+        password_file => '#{@temp_dir}password',
         trustcacerts  => true,
-        path          => #{resource_path},
-        require       => File['/tmp/password']
+        path          => #{@resource_path},
+        require       => File['#{@temp_dir}password']
       }
     EOS
 
@@ -55,7 +55,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   end
 
   it 'verifies the keystore' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ks -storepass puppet") do |r|
+    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 2 entries/)
       expect(r.stdout).to match(/Alias name: puppetca2/)

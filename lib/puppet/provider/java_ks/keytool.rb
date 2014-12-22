@@ -4,10 +4,6 @@ require 'puppet/util/filetype'
 Puppet::Type.type(:java_ks).provide(:keytool) do
   desc 'Uses a combination of openssl and keytool to manage Java keystores'
 
-  # def command_openssl
-  #   'openssl'
-  # end
-
   def command_keytool
     'keytool'
   end
@@ -22,19 +18,23 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     else
       chain_certs = []
     end
-    pkcs12 = OpenSSL::PKCS12.create(@resource[:password], @resource[:name], pkey, x509_cert, chain_certs)
+    pkcs12 = OpenSSL::PKCS12.create(get_password, @resource[:name], pkey, x509_cert, chain_certs)
     File.open(path, "wb") { |f| f.print pkcs12.to_der }
   end
 
-  def password_file
+  def get_password
     if @resource[:password_file].nil?
-        pword = @resource[:password]
+      @resource[:password]
     else
-        file = File.open(@resource[:password_file], "r")
-        pword = file.read
-        file.close
-        pword = pword.chomp
+      file = File.open(@resource[:password_file], "r")
+      pword = file.read
+      file.close
+      pword.chomp
     end
+  end
+
+  def password_file
+    pword = get_password
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])

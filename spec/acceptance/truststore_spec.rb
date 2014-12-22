@@ -16,7 +16,7 @@ describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
         target       => '#{target}',
-        password     => 'testpass',
+        password     => 'puppet',
         trustcacerts => true,
         path         => #{@resource_path},
     }
@@ -25,7 +25,7 @@ describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(
   end
 
   it 'verifies the truststore' do
-    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass testpass") do |r|
+    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)

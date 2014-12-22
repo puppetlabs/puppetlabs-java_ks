@@ -44,6 +44,7 @@ def create_keys_for_test(host)
   # Need to check for ruby path on puppet install, use vendor ruby and add it to the path durring execution
   tmp_privky = "#{temp_dir}privkey.pem"
   tmp_ca = "#{temp_dir}ca.pem"
+  tmp_ca2 = "#{temp_dir}ca2.pem"
   tmp_chain = "#{temp_dir}chain.pem"
   opensslscript =<<EOS
   require 'openssl'
@@ -57,6 +58,17 @@ def create_keys_for_test(host)
   ca.not_before = Time.now
   ca.not_after = ca.not_before + 360
   ca.sign(key, OpenSSL::Digest::SHA256.new)
+  key2 = OpenSSL::PKey::RSA.new 1024
+
+  ca2 = OpenSSL::X509::Certificate.new
+  ca2.serial = 2
+  ca2.public_key = key2.public_key
+  subj2 = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
+  ca2.subject = OpenSSL::X509::Name.parse subj2
+  ca2.issuer = ca2.subject
+  ca2.not_before = Time.now
+  ca2.not_after = ca2.not_before + 360
+  ca2.sign(key2, OpenSSL::Digest::SHA256.new)
 
   chain = OpenSSL::X509::Certificate.new
   chain.serial = 1
@@ -70,6 +82,7 @@ def create_keys_for_test(host)
 
   File.open('#{tmp_privky}', 'w') { |f| f.write key.to_pem }
   File.open('#{tmp_ca}', 'w') { |f| f.write ca.to_pem }
+  File.open('#{tmp_ca2}', 'w') { |f| f.write ca2.to_pem }
   File.open('#{tmp_chain}', 'w') { |f| f.write chain.to_pem }
 EOS
   on host, "#{cmd} \"#{opensslscript}\""
@@ -93,8 +106,8 @@ RSpec.configure do |c|
       if host['platform'] =~ /windows/i
         exec_puppet = <<EOS
 exec{'Download':
-  command => 'powershell.exe -command \'(New-Object System.Net.Webclient).DownloadString("https://forge.puppetlabs.com")\'',
-  path => ['c:\windows\sysnative\WindowsPowershell\v1.0','c:\windows\system32\WindowsPowershell\v1.0'],
+  command => 'powershell.exe -command "Invoke-WebRequest https://forge.puppetlabs.com"',
+  path => ['c:\\windows\\sysnative\\WindowsPowershell\\v1.0','c:\\windows\\system32\\WindowsPowershell\\v1.0'],
 }
 EOS
         on host, apply_manifest(exec_puppet)
@@ -109,6 +122,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before {
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '7u67').split('u')
     @ensure_ks = 'latest'
     @temp_dir = '/tmp/'
     @resource_path = "undef"
@@ -124,10 +138,10 @@ RSpec.shared_context 'common variables' do
         @target = '/etc/truststore.ts'
       when 'windows'
         @ensure_ks = 'present'
-        @keytool_path = 'C:/Java/jdk1.7.0_60/bin/'
+        @keytool_path = "C:/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
         @target = 'c:/truststore.ts'
         @temp_dir = 'C:/tmp/'
-        @resource_path = "['C:/Java/jdk1.7.0_60/bin/']"
+        @resource_path = "['C:/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
     end
   }
 end
