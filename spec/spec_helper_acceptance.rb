@@ -17,11 +17,14 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
     if host['platform'] !~ /windows/i
       on host, 'puppet master'
       on host, "mkdir -p #{host['distmoduledir']}"
+    elsif host["platform"] =~ /solaris/
+      on host, "echo 'export PATH=/opt/puppet/bin:/var/ruby/1.8/gem_home/bin:${PATH}' >> ~/.bashrc"
+    elsif host.is_pe?
+      on host, "echo 'export PATH=#{host['puppetbindir']}:${PATH}' >> ~/.bashrc"
     end
+    on host, "mkdir -p #{host['distmoduledir']}"
   end
 end
-
-#/* @TODO need to add alternate path for windows */
 
 def create_keys_for_test(host)
   # Generate private key and CA for keystore
@@ -82,16 +85,23 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'java_ks')
     hosts.each do |host|
-      create_keys_for_test(host)
 
+      create_keys_for_test(host)
+      copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
       #install java if windows
       if host['platform'] =~ /windows/i
-        on host, 'powershell.exe -command "(New-Object System.Net.Webclient).DownloadString(\'https://forge.puppetlabs.com\')"'
+        exec_puppet = <<EOS
+exec{'Download':
+  command => 'powershell.exe -command \'(New-Object System.Net.Webclient).DownloadString("https://forge.puppetlabs.com")\'',
+  path => ['c:\windows\sysnative\WindowsPowershell\v1.0','c:\windows\system32\WindowsPowershell\v1.0'],
+}
+EOS
+        on host, apply_manifest(exec_puppet)
         on host, puppet('module install cyberious-windows_java')
       else
         on host, puppet('module install puppetlabs-java')
+        on host, puppet('module', 'install', 'puppetlabs-java'), {:acceptable_exit_codes => [0, 1]}
       end
     end
   end

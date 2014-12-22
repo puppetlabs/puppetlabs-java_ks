@@ -24,41 +24,26 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
     pkcs12 = OpenSSL::PKCS12.create(@resource[:password], @resource[:name], pkey, x509_cert, chain_certs)
     File.open(path, "wb") { |f| f.print pkcs12.to_der }
-    # cmd = [
-    #     command_openssl,
-    #     'pkcs12', '-export', '-passout', 'stdin',
-    #     '-in', certificate,
-    #     '-inkey', private_key,
-    #     '-name', @resource[:name],
-    #     '-out', path
-    # ]
-    # cmd << ['-certfile', chain] if chain
-    # tmpfile = Tempfile.new("#{@resource[:name]}.")
-    # tmpfile.write(@resource[:password])
-    # tmpfile.flush
-    #
-    # # To maintain backwards compatibility with Puppet 2.7.x, resort to ugly
-    # # code to make sure RANDFILE is passed as an environment variable to the
-    # # openssl command but not retained in the Puppet process environment.
-    # randfile = Tempfile.new("#{@resource[:name]}.")
-    # run_command(cmd, false, tmpfile, 'RANDFILE' => randfile.path)
-    # tmpfile.close!
-    # randfile.close!
   end
 
   def password_file
     if @resource[:password_file].nil?
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
-      else
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}\n#{@resource[:password]}")
-      end
-      tmpfile.flush
-      tmpfile
+        pword = @resource[:password]
     else
-      @resource[:password_file]
+        file = File.open(@resource[:password_file], "r")
+        pword = file.read
+        file.close
+        pword = pword.chomp
     end
+
+    tmpfile = Tempfile.new("#{@resource[:name]}.")
+    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
+      tmpfile.write("#{pword}\n#{pword}")
+    else
+      tmpfile.write("#{pword}\n#{pword}\n#{pword}")
+    end
+    tmpfile.flush
+    tmpfile
   end
 
   # Where we actually to the import of the file created using to_pkcs12.
@@ -88,9 +73,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-alias', @resource[:name]
     ]
     begin
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      tmpfile.write(@resource[:password])
-      tmpfile.flush
+      tmpfile = password_file
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
@@ -119,9 +102,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-keystore', @resource[:target],
         '-alias', @resource[:name]
     ]
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
+    tmpfile = password_file
     output = run_command(cmd, false, tmpfile)
     tmpfile.close!
     current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
@@ -144,13 +125,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
           '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-      tmpfile = Tempfile.new("#{@resource[:name]}.")
-      if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-        tmpfile.write(@resource[:password])
-      else
-        tmpfile.write("#{@resource[:password]}\n#{@resource[:password]}")
-      end
-      tmpfile.flush
+      tmpfile = password_file
       run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
     end
@@ -163,9 +138,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-alias', @resource[:name],
         '-keystore', @resource[:target]
     ]
-    tmpfile = Tempfile.new("#{@resource[:name]}.")
-    tmpfile.write(@resource[:password])
-    tmpfile.flush
+    tmpfile = password_file
     run_command(cmd, false, tmpfile)
     tmpfile.close!
   end

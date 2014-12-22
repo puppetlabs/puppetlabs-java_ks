@@ -4,7 +4,6 @@ hostname = default.node_name
 
 describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-
   case fact('osfamily')
     when 'windows'
       target = 'c:/private_key.ts'

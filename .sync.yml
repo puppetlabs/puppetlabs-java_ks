@@ -1,6 +1,7 @@
 ---
 Gemfile:
   optional:
-  - gem: mocha
+  ':development, :unit_tests':
+    - gem: mocha
 spec/spec_helper.rb:
   unmanaged: true

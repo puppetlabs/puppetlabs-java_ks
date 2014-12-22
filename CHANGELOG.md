@@ -1,3 +1,38 @@
+##2014-11-11 - Supported Release 1.2.6
+###Summary
+
+This release has test fixes and files synced from modulesync.
+
+##2014-07-10 - Supported Release 1.2.5
+###Summary
+
+This release has bugfixes and test improvements.
+
+####Features
+- Update tests to use RSpec 2.99 syntax
+
+####Bugfixes
+- Remove broken support for puppet:// files.
+- Remove incorrect statment of windows support from metadata.json.
+- Fix path issue for openssl on solaris 11.
+
+####Known Bugs
+* No known bugs
+
+##2014-06-04 - Release 1.2.4
+###Summary
+
+This is a compatibility release. No functional changes to this module were made
+in this release, just testing infrastructure changes to extend tests to RHEL7
+and Ubuntu 14.04
+
+####Features
+
+####Bugfixes
+
+####Known Bugs
+* No known bugs
+
 ##2014-03-04 - Supported Release 1.2.3
 ###Summary
 
