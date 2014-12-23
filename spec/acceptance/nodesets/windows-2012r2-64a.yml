@@ -1,0 +1,17 @@
+HOSTS:
+  v1bo8bpae8lkmsu:
+    roles:
+      - agent
+      - default
+    platform: windows-2012r2-x86_64
+    template: win-2012r2-x86_64
+    hypervisor: vcloud
+CONFIG:
+  type: git
+  nfs_server: none
+  consoleport: 443
+  datastore: instance0
+  folder: Delivery/Quality Assurance/FOSS/Dynamic
+  resourcepool: delivery/Quality Assurance/FOSS/Dynamic
+  pooling_api: http://vcloud.delivery.puppetlabs.net/
+  pe_dir: http://enterprise.delivery.puppetlabs.net/archives/releases/3.3.2/

@@ -1,25 +1,24 @@
 require 'spec_helper_acceptance'
 
 describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  include_context 'common variables'
+
   case fact('osfamily')
-  when "Solaris"
-    keytool_path = '/usr/java/bin/'
-    resource_path = "['/usr/java/bin/','/opt/puppet/bin/','/usr/bin/']"
-  when "AIX"
-    keytool_path = '/usr/java6/bin/'
-    resource_path = "['/usr/java6/bin/','/usr/bin/']"
-  else
-    resource_path = "undef"
+    when 'windows'
+      target = 'c:/tmp/keystore.ks'
+    else
+      target = '/etc/keystore.ks'
   end
+
   it 'creates a keystore' do
     pp = <<-EOS
       java_ks { 'puppetca:keystore':
-        ensure       => latest,
-        certificate  => "/tmp/ca.pem",
-        target       => '/etc/keystore.ks',
+        ensure       => #{@ensure_ks},
+        certificate  => "#{@temp_dir}ca.pem",
+        target       => '#{target}',
         password     => 'puppet',
         trustcacerts => true,
-        path         => #{resource_path},
+        path         => #{@resource_path},
       }
     EOS
 
@@ -27,7 +26,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   end
 
   it 'verifies the keystore' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ks -storepass puppet") do |r|
+    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)
@@ -37,18 +36,18 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
 
   it 'uses password_file' do
     pp = <<-EOS
-      file { '/tmp/password':
+      file { '#{@temp_dir}password':
         ensure  => file,
         content => 'puppet',
       }
       java_ks { 'puppetca2:keystore':
         ensure        => latest,
-        certificate   => "/tmp/ca2.pem",
-        target        => '/etc/keystore.ks',
-        password_file => '/tmp/password',
+        certificate   => "#{@temp_dir}ca2.pem",
+        target        => '#{target}',
+        password_file => '#{@temp_dir}password',
         trustcacerts  => true,
-        path          => #{resource_path},
-        require       => File['/tmp/password']
+        path          => #{@resource_path},
+        require       => File['#{@temp_dir}password']
       }
     EOS
 
@@ -56,7 +55,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
   end
 
   it 'verifies the keystore' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ks -storepass puppet") do |r|
+    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 2 entries/)
       expect(r.stdout).to match(/Alias name: puppetca2/)

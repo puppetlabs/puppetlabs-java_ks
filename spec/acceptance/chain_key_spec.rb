@@ -1,21 +1,21 @@
 require 'spec_helper_acceptance'
 
 hostname = default.node_name
-
-describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java chain keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-  case fact('osfamily')
-    when 'windows'
-      target = 'c:/private_key.ts'
-    else
-      target = '/etc/private_key.ts'
-  end
 
-  it 'creates a private key' do
+  case fact('osfamily')
+    when "windows"
+      target = 'c:/chain_key.ks'
+    else
+      target = '/etc/chain_key.ks'
+  end
+  it 'creates a private key with chain certs' do
     pp = <<-EOS
       java_ks { 'broker.example.com:#{target}':
-        ensure       => #{@ensure_ks},
+        ensure       => latest,
         certificate  => "#{@temp_dir}ca.pem",
+        chain        => "#{@temp_dir}chain.pem",
         private_key  => "#{@temp_dir}privkey.pem",
         password     => 'puppet',
         path         => #{@resource_path},

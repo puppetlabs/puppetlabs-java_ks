@@ -68,15 +68,15 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
       it 'converts a certificate to a pkcs12 file' do
-        provider.expects(:run_command).with([
-            'myopenssl', 'pkcs12', '-export', '-passout', 'stdin',
-            '-in', resource[:certificate],
-            '-inkey', resource[:private_key],
-            '-name', resource[:name],
-            '-out', '/tmp/testing.stuff'
-          ],
-          any_parameters
-        )
+        provider.stubs(:get_password).returns(resource[:password])
+        File.stubs(:read).with(resource[:private_key]).returns('private key')
+        File.stubs(:read).with(resource[:certificate]).returns('certificate')
+        OpenSSL::PKey::RSA.expects(:new).with('private key').returns('priv_obj')
+        OpenSSL::X509::Certificate.expects(:new).with('certificate').returns('cert_obj')
+
+        pkcs_double = BogusPkcs.new()
+        pkcs_double.expects(:to_der)
+        OpenSSL::PKCS12.expects(:create).with(resource[:password],resource[:name],'priv_obj','cert_obj',[]).returns(pkcs_double)
         provider.to_pkcs12('/tmp/testing.stuff')
       end
     end
@@ -128,4 +128,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       provider.destroy
     end
   end
+end
+
+class BogusPkcs
+
 end
