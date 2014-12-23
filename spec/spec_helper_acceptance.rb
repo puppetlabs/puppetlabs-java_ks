@@ -37,7 +37,9 @@ def create_keys_for_test(host)
   else
     path = '${PATH}'
     path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
-    path = "/opt/puppet/bin:#{path}" # But try PE's ruby first
+    if host.is_pe?
+      path = "#{host['puppetbindir']}:#{path}" # But try PE's ruby first
+    end
     cmd = "PATH=#{path} ruby -e"
     temp_dir = '/tmp/'
   end
@@ -113,7 +115,6 @@ EOS
         on host, apply_manifest(exec_puppet)
         on host, puppet('module install cyberious-windows_java')
       else
-        on host, puppet('module install puppetlabs-java')
         on host, puppet('module', 'install', 'puppetlabs-java'), {:acceptable_exit_codes => [0, 1]}
       end
     end
