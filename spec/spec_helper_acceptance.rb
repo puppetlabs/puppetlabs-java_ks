@@ -14,7 +14,7 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   end
 
   hosts.each do |host|
-    if host['platform'] !~ /windows/i
+    if not host.is_pe? and host['platform'] !~ /windows/i
       on host, 'puppet master'
       on host, "mkdir -p #{host['distmoduledir']}"
     elsif host["platform"] =~ /solaris/
