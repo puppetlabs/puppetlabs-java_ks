@@ -106,7 +106,7 @@ describe Puppet::Type.type(:java_ks) do
       jks[:password] = 'aoeui'
       expect {
         Puppet::Type.type(:java_ks).new(jks)
-      }.to raise_error(Puppet::Error, /length 6/)
+      }.to raise_error(Puppet::Error, /6 characters/)
     end
   end
 
