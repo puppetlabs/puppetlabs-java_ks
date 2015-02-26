@@ -132,9 +132,9 @@ Limitations
 
 The java_ks module uses the `keytool` and `openssl` commands. It should work on all systems with these commands. 
 
-At the moment, Java 7 isn't fully supported, and `ensure => latest` will fail.
+Java 7 is supported as of 1.0.0.
 
-Only validated against IBM Java 6 on AIX. Other versions may be unsupported.
+Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 
 Development
 -----------
