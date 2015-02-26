@@ -89,8 +89,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-v', '-printcert', '-file', certificate
     ]
     output = run_command(cmd)
-    latest = output.scan(/MD5:\s+(.*)/)[0][0]
-    return latest
+    return Puppet[:noop] ? output : output.scan(/MD5:\s+(.*)/)[0][0]
   end
 
   # Reading the fingerprint of the certificate currently in the keystore.
@@ -105,8 +104,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpfile = password_file
     output = run_command(cmd, false, tmpfile)
     tmpfile.close!
-    current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
-    return current
+    return Puppet[:noop] ? output : output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
   end
 
   # Determine if we need to do an import of a private_key and certificate pair
@@ -203,7 +201,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
 
     # Now run the command
-    options = {:failonfail => true, :combine => true}
+    options = {:failonfail => Puppet[:noop] ? false : true, :combine => true}
     output = if stdinfile
                withenv.call(env) do
                  exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
