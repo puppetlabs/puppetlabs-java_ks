@@ -84,29 +84,39 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   # Reading the fingerprint of the certificate on disk.
   def latest
-    cmd = [
-        command_keytool,
-        '-v', '-printcert', '-file', certificate
-    ]
-    output = run_command(cmd)
-    latest = output.scan(/MD5:\s+(.*)/)[0][0]
-    return latest
+    # The certificate file may not exist during a puppet noop run as it's managed by puppet.
+    # Return value must be different to provider.current to signify a possible trigger event.
+    if Puppet[:noop] and !File.exists?(certificate)
+      return 'latest'
+    else
+      cmd = [
+          command_keytool,
+          '-v', '-printcert', '-file', certificate
+      ]
+      output = run_command(cmd)
+      latest = output.scan(/MD5:\s+(.*)/)[0][0]
+      return latest
+    end
   end
 
   # Reading the fingerprint of the certificate currently in the keystore.
   def current
-    output = ''
-    cmd = [
-        command_keytool,
-        '-list', '-v',
-        '-keystore', @resource[:target],
-        '-alias', @resource[:name]
-    ]
-    tmpfile = password_file
-    output = run_command(cmd, false, tmpfile)
-    tmpfile.close!
-    current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
-    return current
+    # The keystore file may not exist during a puppet noop run as it's managed by puppet.
+    if Puppet[:noop] and !File.exists?(@resource[:target])
+      return 'current'
+    else
+      cmd = [
+          command_keytool,
+          '-list', '-v',
+          '-keystore', @resource[:target],
+          '-alias', @resource[:name]
+      ]
+      tmpfile = password_file
+      output = run_command(cmd, false, tmpfile)
+      tmpfile.close!
+      current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
+      return current
+    end
   end
 
   # Determine if we need to do an import of a private_key and certificate pair
