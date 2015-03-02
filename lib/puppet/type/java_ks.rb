@@ -93,6 +93,14 @@ module Puppet
       end
     end
 
+    newparam(:ks_keypassword) do
+      desc 'The password used to protect the key in keystore.'
+
+      validate do |value|
+        raise Puppet::Error, "ks_keypassword is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
+      end
+    end
+
     newparam(:password_file) do
       desc 'The path to a file containing the password used to protect the
         keystore. This cannot be used together with :password, but you must pass at least one of these parameters.'
