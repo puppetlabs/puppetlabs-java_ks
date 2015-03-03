@@ -95,11 +95,11 @@ module Puppet
       end
     end
 
-    newparam(:ks_keypassword) do
+    newparam(:destkeypass) do
       desc 'The password used to protect the key in keystore.'
 
       validate do |value|
-        raise Puppet::Error, "ks_keypassword is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
+        raise Puppet::Error, "destkeypass is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
       end
     end
 

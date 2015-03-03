@@ -97,7 +97,7 @@ The password used to protect the keystore. If private keys are also protected, t
 
 Used as an alternative to `password` here you can specify a plaintext file where the password is stored.
 
-#### `ks_keypassword`
+#### `destkeypass`
 
 The password you want to set to protect the key in the keystore.
 
