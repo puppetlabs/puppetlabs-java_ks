@@ -18,7 +18,7 @@ The java_ks module uses a combination of keytool and openssl to manage entries i
 
 ##Module Description
 
-The java\_ks module contains a type called `java_ks` and a single provider named `keytool`.  Their purpose is to enable importation of arbitrary, already generated and signed certificates into a Java keystore for use by various applications. 
+The java_ks module contains a type called `java_ks` and a single provider named `keytool`.  Their purpose is to enable importation of arbitrary, already generated and signed certificates into a Java keystore for use by various applications. 
 
 ##Setup
 
@@ -73,52 +73,43 @@ broker.ks keystore with the alias of broker.example.com.
 ##Reference
 
 ###Public Types
-* `java_ks`: This resource manages the entries in a Java keystore, and uses composite namevars to accomplish the same alias spread across multiple target keystores. 
+* `java_ks`: This resource manages the entries in a Java keystore, and uses composite namevars to allow the same alias across multiple target keystores. 
 
 ###Public Providers
-* `keytool`: Uses a combination of the binaries `openssl` and `keytool` to manage Java keystores
+* `keytool`: Manages Java keystores by using a combination of the `openssl` and `keytool` commands.
 
 ####Parameters
 All parameters, except where specified, are optional. 
 
 #####`certificate`
-*Required.* Places an already-signed certificate in the keystore. This will autorequire the specified file and must be present on the node before java_ks{} is run.  
-Valid options: string. Default: undef.
+*Required.* Places an already-signed certificate in the keystore. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 #####`chain`
-Bundles intermediary certificate authorities with certificate authorities. This autorequires the file of the same path and must be present on the node before java_ks{} is run.  
-Valid options: string. Default: undef.
+Bundles intermediary certificate authorities with certificate authorities. This autorequires the file of the same path and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 #####`ensure`
 Valid options: absent, present, latest. Latest verifies md5 certificate fingerprints for the stored certificate and the source file. Default: present.
 
 #####`name`
-*Required.* Identifies the entry in the keystore. This will be converted to lowercase.  
-Valid options: string. Default: undef.  
+*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.  
 
 #####`password`
-Used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them.  
-Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
+This password is used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
 
 #####`password_file`
-A plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.*  
-Valid options: String to the plaintext file. Default: undef. 
+Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef. 
 
 #####`path`
-Used for command (keytool, openssl) execution.  
-Valid options: array or file path separated list (for example : in linux). Default: undef.
+Used for command (keytool, openssl) execution. Valid options: array or file path separated list (for example : in linux). Default: undef.
 
 #####`private_key`
-A private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This will autorequire the specified file and must be present on the node before java_ks{} is run.  
-Valid options: string. Default: undef.
+Sets a private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 #####`target`
-*Required.* Destination file for the keystore. Autorequires the parent directory of the file.  
-Valid options: string. Default: undef.
+*Required.* Specifies a destination file for the keystore. Autorequires the parent directory of the file. Valid options: string. Default: undef.
 
 #####`trustcacerts`
-Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to true.  
-Valid options: 'true' or 'false'. Default: 'false' 
+Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to 'true'. Valid options: 'true' or 'false'. Default: 'false'.
 
 
 Limitations
