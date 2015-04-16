@@ -1,3 +1,10 @@
+##2015-04-14 - Supported Release 1.3.0
+###Summary
+Remove openssl command line tool from requirements
+
+####Features
+- Add Windows support and tests
+
 ##2014-11-11 - Supported Release 1.2.6
 ###Summary
 
