@@ -9,6 +9,7 @@ describe Puppet::Type.type(:java_ks) do
       :name        => 'app.example.com',
       :target      => '/tmp/application.jks',
       :password    => 'puppet',
+      :destkeypass => 'keypass',
       :certificate => '/tmp/app.example.com.pem',
       :private_key => '/tmp/private/app.example.com.pem',
       :provider    => :keytool
@@ -27,7 +28,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts].each do |param|
+    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
       it "should have a #{param} parameter" do
         expect(Puppet::Type.type(:java_ks).attrtype(param)).to eq(:param)
       end
@@ -108,6 +109,15 @@ describe Puppet::Type.type(:java_ks) do
         Puppet::Type.type(:java_ks).new(jks)
       }.to raise_error(Puppet::Error, /length 6/)
     end
+
+    it 'should fail if :destkeypass is fewer than 6 characters' do
+      jks = jks_resource.dup
+      jks[:destkeypass] = 'aoeui'
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error, /length 6/)
+    end
+
   end
 
   describe 'when ensure is set to latest' do

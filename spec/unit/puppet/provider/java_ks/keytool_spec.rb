@@ -93,6 +93,20 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         )
         provider.import_ks
       end
+
+      it 'should use destkeypass when provided' do
+        dkp = resource.dup
+        dkp[:destkeypass] = 'keypass'
+        provider.expects(:to_pkcs12).with('/tmp/testing.stuff')
+        provider.expects(:run_command).with([
+            'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
+            '-destkeystore', dkp[:target],
+            '-srckeystore', '/tmp/testing.stuff',
+            '-alias', dkp[:name], '-destkeypass', dkp[:destkeypass]
+          ], any_parameters
+        )
+        provider.import_ks
+      end
     end
   end
 
