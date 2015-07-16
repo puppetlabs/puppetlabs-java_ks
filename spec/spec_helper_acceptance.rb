@@ -1,30 +1,10 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
+require 'beaker/puppet_install_helper'
+
+run_puppet_install_helper
 
 UNSUPPORTED_PLATFORMS = []
-
-unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
-  # This will install the latest available package on el and deb based
-  # systems fail on windows and osx, and install via gem on other *nixes
-  foss_opts = {:default_action => 'gem_install', :version => '3.7.1'}
-  if default.is_pe?; then
-    install_pe;
-  else
-    install_puppet(foss_opts);
-  end
-
-  hosts.each do |host|
-    if not host.is_pe? and host['platform'] !~ /windows/i
-      on host, 'puppet master'
-      on host, "mkdir -p #{host['distmoduledir']}"
-    elsif host["platform"] =~ /solaris/
-      on host, "echo 'export PATH=/opt/puppet/bin:/var/ruby/1.8/gem_home/bin:${PATH}' >> ~/.bashrc"
-    elsif host.is_pe?
-      on host, "echo 'export PATH=#{host['puppetbindir']}:${PATH}' >> ~/.bashrc"
-    end
-    on host, "mkdir -p #{host['distmoduledir']}"
-  end
-end
 
 def create_keys_for_test(host)
   # Generate private key and CA for keystore
@@ -36,7 +16,7 @@ def create_keys_for_test(host)
     on host, 'mkdir /cygdrive/c/tmp'
   else
     path = '${PATH}'
-    path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
+    path = "/opt/puppetlabs/puppet/bin:/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
     if host.is_pe?
       path = "#{host['puppetbindir']}:#{path}" # But try PE's ruby first
     end
