@@ -1,6 +1,6 @@
-##2015-07-16 - Supported Release 1.3.1
+##2015-07-20 - Supported Release 1.3.1
 ###Summary
-This release updates the metadata for the upcoming release of PE as well as an additional bugfixe.
+This release updates the metadata for the upcoming release of PE as well as an additional bugfix.
 
 ####Bugfixes
 - Fixes Puppet.newtype deprecation warning
