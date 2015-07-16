@@ -16,7 +16,7 @@ def create_keys_for_test(host)
     on host, 'mkdir /cygdrive/c/tmp'
   else
     path = '${PATH}'
-    path = "/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
+    path = "/opt/puppetlabs/puppet/bin:/opt/csw/bin:#{path}" # Need ruby's path on solaris 10 (foss)
     if host.is_pe?
       path = "#{host['puppetbindir']}:#{path}" # But try PE's ruby first
     end
