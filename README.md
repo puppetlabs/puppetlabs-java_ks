@@ -18,7 +18,7 @@ The java_ks module uses a combination of keytool and openssl to manage entries i
 
 ##Module Description
 
-The java_ks module contains a type called `java_ks` and a single provider named `keytool`.  Their purpose is to enable importation of arbitrary, already generated and signed certificates into a Java keystore for use by various applications. 
+The java_ks module contains a type called `java_ks` and a single provider named `keytool`.  Their purpose is to enable importation of arbitrary, already generated and signed certificates into a Java keystore for use by various applications.
 
 ##Setup
 
@@ -64,22 +64,22 @@ To have a Java application server use a specific certificate for incoming connec
 
 ### Namevars
 
-The java_ks module supports multiple certificates with different keystores but the same alias by implementing Puppet's composite namevar functionality.  Titles map to namevars via `$alias:$target` (alias of certificate, colon, on-disk path to the keystore). If you create dependencies on these resources you need to remember to use the same title syntax outlined for generating the composite namevars. 
+The java_ks module supports multiple certificates with different keystores but the same alias by implementing Puppet's composite namevar functionality.  Titles map to namevars via `$alias:$target` (alias of certificate, colon, on-disk path to the keystore). If you create dependencies on these resources you need to remember to use the same title syntax outlined for generating the composite namevars.
 
 *Note about composite namevars:*  
-The way composite namevars currently work, you must have the colon in the title. This is true *even if you define name and target parameters.*  The title can be `foo:bar`, but the name and target parameters must be `broker.example.com` and `/etc/activemq/broker.ks`. If you follow convention, it will do as you expect and correctly create an entry in the 
+The way composite namevars currently work, you must have the colon in the title. This is true *even if you define name and target parameters.*  The title can be `foo:bar`, but the name and target parameters must be `broker.example.com` and `/etc/activemq/broker.ks`. If you follow convention, it will do as you expect and correctly create an entry in the
 broker.ks keystore with the alias of broker.example.com.
 
 ##Reference
 
 ###Public Types
-* `java_ks`: This resource manages the entries in a Java keystore, and uses composite namevars to allow the same alias across multiple target keystores. 
+* `java_ks`: This resource manages the entries in a Java keystore, and uses composite namevars to allow the same alias across multiple target keystores.
 
 ###Public Providers
 * `keytool`: Manages Java keystores by using a combination of the `openssl` and `keytool` commands.
 
 ####Parameters
-All parameters, except where specified, are optional. 
+All parameters, except where specified, are optional.
 
 #####`certificate`
 *Required.* Places an already-signed certificate in the keystore. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
@@ -97,7 +97,7 @@ Valid options: absent, present, latest. Latest verifies md5 certificate fingerpr
 This password is used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
 
 #####`password_file`
-Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef. 
+Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef.
 
 #####`destkeypass`
 The password you want to set to protect the key in the keystore.
@@ -118,7 +118,7 @@ Certificate authorities input into a keystore aren’t trusted by default, so if
 Limitations
 ------------
 
-The java_ks module uses the `keytool` and `openssl` commands. It should work on all systems with these commands. 
+The java_ks module uses the `keytool` and `openssl` commands. It should work on all systems with these commands.
 
 Java 7 is supported as of 1.0.0.
 
@@ -130,4 +130,3 @@ Development
 Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.  
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
- 
