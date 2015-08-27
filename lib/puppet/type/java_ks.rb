@@ -97,6 +97,14 @@ Puppet::Type.newtype(:java_ks) do
       keystore. This cannot be used together with :password, but you must pass at least one of these parameters.'
   end
 
+  newparam(:destkeypass) do
+    desc 'The password used to protect the key in keystore.'
+
+    validate do |value|
+      raise Puppet::Error, "destkeypass is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
+    end
+  end
+
   newparam(:trustcacerts) do
     desc "Certificate authorities aren't by default trusted so if you are adding a CA you need to set this to true.
      Defaults to :false."
