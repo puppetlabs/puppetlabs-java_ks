@@ -69,6 +69,13 @@ Puppet::Type.newtype(:java_ks) do
     isrequired
   end
 
+  newparam(:storetype) do
+    desc 'Optional storetype
+      Valid options: <jceks>'
+
+    newvalues(:jceks)
+  end
+
   newparam(:private_key) do
     desc 'If you want an application to be a server and encrypt traffic,
       you will need a private key.  Private key entries in a keystore must be
