@@ -11,6 +11,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       :password    => 'puppet',
       :certificate => '/tmp/app.example.com.pem',
       :private_key => '/tmp/private/app.example.com.pem',
+      :storetype   => 'jceks',
       :provider    => described_class.name
     }
   end
@@ -88,7 +89,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
             'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
             '-destkeystore', resource[:target],
             '-srckeystore', '/tmp/testing.stuff',
-            '-alias', resource[:name]
+            '-alias', resource[:name],
           ], any_parameters
         )
         provider.import_ks
@@ -111,6 +112,25 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 
   describe 'when creating entires in a keystore' do
+    let(:params) do
+      {
+        :title       => 'app.example.com:/tmp/application.jks',
+        :name        => 'app.example.com',
+        :target      => '/tmp/application.jks',
+        :password    => 'puppet',
+        :certificate => '/tmp/app.example.com.pem',
+        :private_key => '/tmp/private/app.example.com.pem',
+        :provider    => described_class.name
+      }
+    end
+
+    let(:resource) do
+      Puppet::Type.type(:java_ks).new(params)
+    end
+
+    let(:provider) do
+      resource.provider
+    end
     it 'should call import_ks if private_key and certificate are provided' do
       provider.expects(:import_ks)
       provider.create
@@ -123,7 +143,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           'mykeytool', '-importcert', '-noprompt',
           '-alias', no_pk[:name],
           '-file', no_pk[:certificate],
-          '-keystore', no_pk[:target]
+          '-keystore', no_pk[:target],
         ], any_parameters
       )
       no_pk.provider.expects(:import_ks).never

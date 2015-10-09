@@ -114,6 +114,18 @@ Sets a private key that encrypts traffic to a server application. Must be accomp
 #####`trustcacerts`
 Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to 'true'. Valid options: 'true' or 'false'. Default: 'false'.
 
+### `storetype`
+
+The storetype parameter allows you to use 'jceks' format if desired.
+
+    java_ks { 'puppetca:/opt/puppet/truststore.jceks':
+      ensure       => latest,
+      storetype    => 'jceks',
+      certificate  => '/etc/puppet/ssl/certs/ca.pem',
+      password     => 'puppet',
+      trustcacerts => true,
+    }
+
 
 Limitations
 ------------
