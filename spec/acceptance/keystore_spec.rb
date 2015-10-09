@@ -15,15 +15,16 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
       pp = <<-EOS
         java_ks { 'puppetca:keystore':
           ensure       => latest,
-          certificate  => "${settings::ssldir}/certs/ca.pem",
-          target       => '/etc/keystore.ks',
+          certificate  => "#{@temp_dir}ca.pem",
+          target       => '#{target}',
           password     => 'puppet',
           trustcacerts => true,
-          path         => #{resource_path},
+          path         => #{@resource_path},
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
     end
 
     it 'verifies the keystore' do
@@ -53,6 +54,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
     end
   end
 
@@ -61,16 +63,26 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
       pp = <<-EOS
         java_ks { 'puppetca:keystore':
           ensure       => latest,
-          certificate  => "${settings::ssldir}/certs/ca.pem",
-          target       => '/etc/keystore.ks',
+          certificate  => "#{@temp_dir}ca.pem",
+          target       => '#{target}',
           password     => 'puppet',
           trustcacerts => true,
-          path         => #{resource_path},
+          path         => #{@resource_path},
           storetype    => 'jceks',
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+    it 'verifies the keystore' do
+      shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
+        expect(r.exit_code).to be_zero
+        expect(r.stdout).to match(/Your keystore contains 2 entries/)
+        expect(r.stdout).to match(/Alias name: puppetca/)
+        expect(r.stdout).to match(/CN=Test CA/)
+      end
     end
   end
 
