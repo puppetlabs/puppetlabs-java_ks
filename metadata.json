@@ -1,12 +1,16 @@
 {
   "name": "puppetlabs-java_ks",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": "puppetlabs",
   "summary": "Manage arbitrary Java keystore files",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-java_ks.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+  "dependencies": [
+  
+  ],
+  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -93,14 +97,12 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "3.x"
+      "version_requirement": ">= 3.0 < 2015.4.0"
     },
     {
       "name": "puppet",
-      "version_requirement": "3.x"
+      "version_requirement": ">= 3.0 < 5.0"
     }
   ],
-  "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
-  "dependencies": [
-  ]
+  "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore."
 }
