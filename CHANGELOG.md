@@ -1,3 +1,18 @@
+##Supported Release 1.4.0
+###Summary
+This release contains a new option to provide destkeypass. Also contains 
+bugfixes and a metadata update to support Puppet Enterprise 2015.3.x.
+
+####Features
+- Adds `destkeypass` option to pass in password when importing into the keystore.
+- Adds feature support for JCEKS format and extensions.
+
+####Bugfixes
+- Fixes composite title patterns in provider to improve support for Windows.
+
+####Test Improvements
+- Improves Windows testing.
+
 ##2015-04-14 - Supported Release 1.3.0
 ###Summary
 Remove openssl command line tool from requirements
