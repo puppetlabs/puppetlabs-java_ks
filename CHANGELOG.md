@@ -1,3 +1,10 @@
+##2015-07-20 - Supported Release 1.3.1
+###Summary
+This release updates the metadata for the upcoming release of PE as well as an additional bugfix.
+
+####Bugfixes
+- Fixes Puppet.newtype deprecation warning
+
 ##2015-04-14 - Supported Release 1.3.0
 ###Summary
 Remove openssl command line tool from requirements

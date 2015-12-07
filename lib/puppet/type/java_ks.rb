@@ -5,7 +5,7 @@ Puppet::Type.newtype(:java_ks) do
   ensurable do
 
     desc 'Has three states: present, absent, and latest.  Latest
-      will compare the on disk MD5 fingerprint of the certificate and to that
+      will compare the on disk MD5 fingerprint of the certificate to that
       in keytool to determine if insync? returns true or false.  We redefine
       insync? for this paramerter to accomplish this.'
 
