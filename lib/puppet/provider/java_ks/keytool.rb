@@ -226,9 +226,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
-    # owner and group, and delete the empty file.
+    # owner and group, temporarily raise the umask, and delete the empty file.
     if target and (File.exists?(target) and File.zero?(target))
       stat = File.stat(target)
+      umask = File.umask(0077)
       File.delete(target)
     end
 
@@ -259,12 +260,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
                end
              end
 
-    # for previously empty files, restore the mode, owner and group. The funky
-    # double-take check is because on Suse defined? doesn't seem to behave
-    # quite the same as on Debian, RedHat
+    # for previously empty files, restore the umask, mode, owner and group.
+    # The funky double-take check is because on Suse defined? doesn't seem
+    # to behave quite the same as on Debian, RedHat
     if target and (defined? stat and stat)
-      File.chmod(stat.mode, target)
+      File.umask(umask)
+      # Need to change group ownership before mode to prevent making the file
+      # accessible to the wrong group.
       File.chown(stat.uid, stat.gid, target)
+      File.chmod(stat.mode, target)
     end
 
     return output
