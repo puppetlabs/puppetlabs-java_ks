@@ -14,9 +14,9 @@ describe 'managing java chain keys', :unless => UNSUPPORTED_PLATFORMS.include?(f
     pp = <<-EOS
       java_ks { 'broker.example.com:#{target}':
         ensure       => latest,
-        certificate  => "#{@temp_dir}ca.pem",
+        certificate  => "#{@temp_dir}leaf.pem",
         chain        => "#{@temp_dir}chain.pem",
-        private_key  => "#{@temp_dir}privkey.pem",
+        private_key  => "#{@temp_dir}leafkey.pem",
         password     => 'puppet',
         path         => #{@resource_path},
       }
@@ -30,7 +30,8 @@ describe 'managing java chain keys', :unless => UNSUPPORTED_PLATFORMS.include?(f
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: broker\.example\.com/)
       expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
-      expect(r.stdout).to match(/CN=Test CA/)
+      expect(r.stdout).to match(/Certificate chain length: 2/)
+      expect(r.stdout).to match(/^Serial number: 4$.*^Serial number: 3$/m)
     end
   end
 end
@@ -96,9 +97,9 @@ describe 'managing existing java chain keys in noop', :unless => UNSUPPORTED_PLA
     pp = <<-EOS
       java_ks { 'broker.example.com:#{target}':
         ensure       => latest,
-        certificate  => "#{@temp_dir}ca.pem",
+        certificate  => "#{@temp_dir}leaf.pem",
         chain        => "#{@temp_dir}chain.pem",
-        private_key  => "#{@temp_dir}privkey.pem",
+        private_key  => "#{@temp_dir}leafkey.pem",
         password     => 'puppet',
         path         => #{@resource_path},
       }
