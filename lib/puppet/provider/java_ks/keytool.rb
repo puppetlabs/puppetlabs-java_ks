@@ -12,11 +12,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
     pkey = OpenSSL::PKey::RSA.new File.read private_key
-    x509_cert = OpenSSL::X509::Certificate.new File.read certificate
     if chain
+      x509_cert = OpenSSL::X509::Certificate.new File.read certificate
       chain_certs = get_chain(chain)
     else
-      chain_certs = []
+      chain_certs = get_chain(certificate)
+      x509_cert = chain_certs.shift
     end
     pkcs12 = OpenSSL::PKCS12.create(get_password, @resource[:name], pkey, x509_cert, chain_certs)
     File.open(path, "wb") { |f| f.print pkcs12.to_der }

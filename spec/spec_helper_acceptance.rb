@@ -82,6 +82,7 @@ def create_certs(host, tmpdir)
   create_remote_file(host, "#{tmpdir}/chain.pem", chain2.to_pem + chain.to_pem)
   create_remote_file(host, "#{tmpdir}/leafkey.pem", key_leaf.to_pem)
   create_remote_file(host, "#{tmpdir}/leaf.pem", leaf.to_pem)
+  create_remote_file(host, "#{tmpdir}/leafchain.pem", leaf.to_pem + chain2.to_pem + chain.to_pem)
 end
 
 
