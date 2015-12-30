@@ -14,7 +14,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     pkey = OpenSSL::PKey::RSA.new File.read private_key
     x509_cert = OpenSSL::X509::Certificate.new File.read certificate
     if chain
-      chain_certs = [(OpenSSL::X509::Certificate.new File.read chain)]
+      chain_certs = get_chain(chain)
     else
       chain_certs = []
     end
@@ -27,6 +27,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def to_der(path)
     x509_cert = OpenSSL::X509::Certificate.new File.read certificate
     File.open(path, "wb") { |f| f.print x509_cert.to_der }
+  end
+
+  def get_chain(path)
+    File.read(path).scan(/-----BEGIN [^\n]*CERTIFICATE.*?-----END [^\n]*CERTIFICATE-----/m).map {|cert| OpenSSL::X509::Certificate.new cert}
   end
 
   def get_password

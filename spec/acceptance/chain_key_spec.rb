@@ -30,8 +30,8 @@ describe 'managing java chain keys', :unless => UNSUPPORTED_PLATFORMS.include?(f
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: broker\.example\.com/)
       expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
-      expect(r.stdout).to match(/Certificate chain length: 2/)
-      expect(r.stdout).to match(/^Serial number: 4$.*^Serial number: 3$/m)
+      expect(r.stdout).to match(/Certificate chain length: 3/)
+      expect(r.stdout).to match(/^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$/m)
     end
   end
 end
