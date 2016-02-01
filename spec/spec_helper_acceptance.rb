@@ -31,8 +31,8 @@ def create_certs(host, tmpdir)
   ca.not_before = Time.now
   ca.not_after = ca.not_before + 360
   ca.sign(key, OpenSSL::Digest::SHA256.new)
-  key2 = OpenSSL::PKey::RSA.new 1024
 
+  key2 = OpenSSL::PKey::RSA.new 1024
   ca2 = OpenSSL::X509::Certificate.new
   ca2.serial = 2
   ca2.public_key = key2.public_key
@@ -43,20 +43,45 @@ def create_certs(host, tmpdir)
   ca2.not_after = ca2.not_before + 360
   ca2.sign(key2, OpenSSL::Digest::SHA256.new)
 
+  key_chain = OpenSSL::PKey::RSA.new 1024
   chain = OpenSSL::X509::Certificate.new
-  chain.serial = 1
-  chain.public_key = key.public_key
+  chain.serial = 3
+  chain.public_key = key_chain.public_key
   chain_subj = '/CN=Chain CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.net'
   chain.subject = OpenSSL::X509::Name.parse chain_subj
-  chain.issuer = chain.subject
+  chain.issuer = ca.subject
   chain.not_before = Time.now
   chain.not_after = chain.not_before + 360
   chain.sign(key, OpenSSL::Digest::SHA256.new)
 
+  key_chain2 = OpenSSL::PKey::RSA.new 1024
+  chain2 = OpenSSL::X509::Certificate.new
+  chain2.serial = 4
+  chain2.public_key = key_chain2.public_key
+  chain2_subj = '/CN=Chain CA 2/ST=Denial/L=Springfield/O=Dis/CN=www.example.net'
+  chain2.subject = OpenSSL::X509::Name.parse chain2_subj
+  chain2.issuer = chain.subject
+  chain2.not_before = Time.now
+  chain2.not_after = chain2.not_before + 360
+  chain2.sign(key_chain, OpenSSL::Digest::SHA256.new)
+
+  key_leaf = OpenSSL::PKey::RSA.new 1024
+  leaf = OpenSSL::X509::Certificate.new
+  leaf.serial = 5
+  leaf.public_key = key_leaf.public_key
+  leaf_subj = '/CN=Leaf Cert/ST=Denial/L=Springfield/O=Dis/CN=www.example.net'
+  leaf.subject = OpenSSL::X509::Name.parse leaf_subj
+  leaf.issuer = chain2.subject
+  leaf.not_before = Time.now
+  leaf.not_after = leaf.not_before + 360
+  leaf.sign(key_chain2, OpenSSL::Digest::SHA256.new)
+
   create_remote_file(host, "#{tmpdir}/privkey.pem", key.to_pem)
   create_remote_file(host, "#{tmpdir}/ca.pem", ca.to_pem)
   create_remote_file(host, "#{tmpdir}/ca2.pem", ca2.to_pem)
-  create_remote_file(host, "#{tmpdir}/chain.pem", chain.to_pem)
+  create_remote_file(host, "#{tmpdir}/chain.pem", chain2.to_pem + chain.to_pem)
+  create_remote_file(host, "#{tmpdir}/leafkey.pem", key_leaf.to_pem)
+  create_remote_file(host, "#{tmpdir}/leaf.pem", leaf.to_pem)
 end
 
 
