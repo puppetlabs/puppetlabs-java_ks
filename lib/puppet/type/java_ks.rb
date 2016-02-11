@@ -64,7 +64,8 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   newparam(:certificate) do
-    desc 'An already signed certificate that we can place in the keystore.  This will autorequire the specified file.'
+    desc 'A server certificate, followed by zero or more intermediate certificate authorities.
+      All certificates will be placed in the keystore.  This will autorequire the specified file.'
 
     isrequired
   end
@@ -83,9 +84,8 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   newparam(:chain) do
-    desc 'Some java applications do not properly send
-      intermediary certificate authorities, in this case you can bundle them
-      with the server certificate using chain. This will autorequire the specified file.'
+    desc 'The intermediate certificate authorities, if they are to be taken
+      from a file separate from the server certificate. This will autorequire the specified file.'
   end
 
   newparam(:password) do

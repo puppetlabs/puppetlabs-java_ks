@@ -69,11 +69,22 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
       it 'converts a certificate to a pkcs12 file' do
+        testing_key = OpenSSL::PKey::RSA.new 1024
+        testing_ca = OpenSSL::X509::Certificate.new
+        testing_ca.serial = 1
+        testing_ca.public_key = testing_key.public_key
+        testing_subj = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
+        testing_ca.subject = OpenSSL::X509::Name.parse testing_subj
+        testing_ca.issuer = testing_ca.subject
+        testing_ca.not_before = Time.now
+        testing_ca.not_after = testing_ca.not_before + 360
+        testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
+
         provider.stubs(:get_password).returns(resource[:password])
         File.stubs(:read).with(resource[:private_key]).returns('private key')
-        File.stubs(:read).with(resource[:certificate]).returns('certificate')
+        File.stubs(:read).with(resource[:certificate]).returns(testing_ca.to_pem)
         OpenSSL::PKey::RSA.expects(:new).with('private key').returns('priv_obj')
-        OpenSSL::X509::Certificate.expects(:new).with('certificate').returns('cert_obj')
+        OpenSSL::X509::Certificate.expects(:new).with(testing_ca.to_pem.chomp).returns('cert_obj')
 
         pkcs_double = BogusPkcs.new()
         pkcs_double.expects(:to_der)
