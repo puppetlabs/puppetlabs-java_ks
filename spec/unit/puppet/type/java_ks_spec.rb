@@ -29,7 +29,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
+    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts, :destkeypass, :password_fail_reset].each do |param|
       it "should have a #{param} parameter" do
         expect(Puppet::Type.type(:java_ks).attrtype(param)).to eq(:param)
       end
@@ -82,7 +82,7 @@ describe Puppet::Type.type(:java_ks) do
       jks[:name] = 'APP.EXAMPLE.COM'
       expect(Puppet::Type.type(:java_ks).new(jks)[:name]).to eq(jks_resource[:name])
     end
- 
+
     it 'should have :false value to :trustcacerts when parameter not provided' do
       expect(Puppet::Type.type(:java_ks).new(jks_resource)[:trustcacerts]).to eq(:false)
     end
@@ -119,6 +119,9 @@ describe Puppet::Type.type(:java_ks) do
       }.to raise_error(Puppet::Error, /length 6/)
     end
 
+    it 'should have :false value to :password_fail_reset when parameter not provided' do
+      expect(Puppet::Type.type(:java_ks).new(jks_resource)[:password_fail_reset]).to eq(:false)
+    end
   end
 
   describe 'when ensure is set to latest' do

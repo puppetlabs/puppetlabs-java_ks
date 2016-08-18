@@ -82,12 +82,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpder = Tempfile.new("#{@resource[:name]}.")
     to_der(tmpder.path)
     cmd = [
-	command_keytool,
-	'-importcert', '-noprompt',
-	'-alias', @resource[:name],
-	'-file', tmpder.path,
-	'-keystore', @resource[:target],
-	'-storetype', storetype
+      command_keytool,
+      '-importcert', '-noprompt',
+      '-alias', @resource[:name],
+      '-file', tmpder.path,
+      '-keystore', @resource[:target],
+      '-storetype', storetype
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
     cmd += [ '-destkeypass', @resource[:destkeypass] ] unless @resource[:destkeypass].nil?
@@ -110,7 +110,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
-    rescue
+    rescue => e
+      if e.message =~ /password was incorrect/i
+        # we have the wrong password for the keystore. so delete it if :password_fail_reset
+        if @resource[:password_fail_reset] == :true
+          File.delete(@resource[:target])
+        end
+      end
       return false
     end
   end

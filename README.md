@@ -51,10 +51,11 @@ java_ks { 'puppetca:keystore':
 }
 
 java_ks { 'broker.example.com:/etc/activemq/broker.ks':
-  ensure      => latest,
-  certificate => '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem',
-  private_key => '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem',
-  password    => 'puppet',
+  ensure              => latest,
+  certificate         => '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem',
+  private_key         => '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem',
+  password            => 'albatros',
+  password_fail_reset => true,
 }
 ~~~
 
@@ -66,7 +67,7 @@ To have a Java application server use a specific certificate for incoming connec
 
 The java_ks module supports multiple certificates with different keystores but the same alias by implementing Puppet's composite namevar functionality.  Titles map to namevars via `$alias:$target` (alias of certificate, colon, on-disk path to the keystore). If you create dependencies on these resources you need to remember to use the same title syntax outlined for generating the composite namevars.
 
-*Note about composite namevars:*  
+*Note about composite namevars:*
 The way composite namevars currently work, you must have the colon in the title. This is true *even if you define name and target parameters.*  The title can be `foo:bar`, but the name and target parameters must be `broker.example.com` and `/etc/activemq/broker.ks`. If you follow convention, it will do as you expect and correctly create an entry in the
 broker.ks keystore with the alias of broker.example.com.
 
@@ -91,13 +92,17 @@ Takes intermediate certificate authorities from a separate file from the server 
 Valid options: absent, present, latest. Latest verifies md5 certificate fingerprints for the stored certificate and the source file. Default: present.
 
 #####`name`
-*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.  
+*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.
 
 #####`password`
 This password is used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
 
 #####`password_file`
 Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef.
+
+#### `password_fail_reset`
+
+If the supplied password does not succeed in unlocking the keystore file, then **delete** the keystore file and create a new one. Default: `false`
 
 #####`destkeypass`
 The password you want to set to protect the key in the keystore.
@@ -139,6 +144,6 @@ Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 Development
 -----------
 
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.  
+Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
