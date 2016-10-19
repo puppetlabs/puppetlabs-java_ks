@@ -12,6 +12,7 @@ describe Puppet::Type.type(:java_ks) do
       :destkeypass => 'keypass',
       :certificate => '/tmp/app.example.com.pem',
       :private_key => '/tmp/private/app.example.com.pem',
+      :private_key_type => 'rsa',
       :storetype   => 'jceks',
       :provider    => :keytool
     }
@@ -29,7 +30,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
+    [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
       it "should have a #{param} parameter" do
         expect(Puppet::Type.type(:java_ks).attrtype(param)).to eq(:param)
       end
@@ -40,6 +41,7 @@ describe Puppet::Type.type(:java_ks) do
         expect(Puppet::Type.type(:java_ks).attrtype(prop)).to eq(:property)
       end
     end
+
   end
 
   describe 'when validating attribute values' do
@@ -82,9 +84,22 @@ describe Puppet::Type.type(:java_ks) do
       jks[:name] = 'APP.EXAMPLE.COM'
       expect(Puppet::Type.type(:java_ks).new(jks)[:name]).to eq(jks_resource[:name])
     end
- 
+
     it 'should have :false value to :trustcacerts when parameter not provided' do
       expect(Puppet::Type.type(:java_ks).new(jks_resource)[:trustcacerts]).to eq(:false)
+    end
+
+    it 'should have :rsa as the default value for :private_key_type' do
+      expect(Puppet::Type.type(:java_ks).new(jks_resource)[:private_key_type]).to eq(:rsa)
+    end
+
+    it 'should fail if :private_key_type is neither :rsa nor :ec' do
+      jks = jks_resource.dup
+      jks[:private_key_type] = 'nosuchkeytype'
+
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error)
     end
 
     it 'should fail if both :password and :password_file are provided' do
