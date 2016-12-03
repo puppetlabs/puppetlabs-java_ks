@@ -88,7 +88,7 @@ All parameters, except where specified, are optional.
 Takes intermediate certificate authorities from a separate file from the server certificate. This autorequires the file of the same path and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 #####`ensure`
-Valid options: absent, present, latest. Latest verifies md5 certificate fingerprints for the stored certificate and the source file. Default: present.
+Valid options: absent, present, latest. Latest verifies sha256 certificate fingerprints for the stored certificate and the source file. Default: present.
 
 #####`name`
 *Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.  
