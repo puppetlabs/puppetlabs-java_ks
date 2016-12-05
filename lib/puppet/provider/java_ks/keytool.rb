@@ -127,7 +127,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
           '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
-      latest = output.scan(/MD5:\s+(.*)/)[0][0]
+      latest = output.scan(/SHA256:\s+(.*)/)[0][0]
       return latest
     end
   end
@@ -148,7 +148,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
+      current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: .*\n\s+SHA256: (.*)/)[0][0]
       return current
     end
   end
