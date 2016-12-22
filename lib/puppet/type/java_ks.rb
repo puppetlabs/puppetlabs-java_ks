@@ -83,6 +83,16 @@ Puppet::Type.newtype(:java_ks) do
       accompanied by a signed certificate for the keytool provider. This will autorequire the specified file.'
   end
 
+  newparam(:private_key_type) do
+    desc 'The type of the private key. Usually the private key is of type RSA
+      key but it can also be an Elliptic Curve key (EC).
+      Valid options: <rsa>, <ec>. Defaults to <rsa>'
+
+    newvalues(:rsa, :ec)
+
+    defaultto :rsa
+  end
+
   newparam(:chain) do
     desc 'The intermediate certificate authorities, if they are to be taken
       from a file separate from the server certificate. This will autorequire the specified file.'
