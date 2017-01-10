@@ -13,9 +13,9 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def to_pkcs12(path)
     case private_key_type
     when :rsa
-      pkey = OpenSSL::PKey::RSA.new File.read private_key
+      pkey = OpenSSL::PKey::RSA.new File.read(private_key), get_password
     when :ec
-      pkey = OpenSSL::PKey::EC.new File.read private_key
+      pkey = OpenSSL::PKey::EC.new File.read(private_key), get_password
     end
 
     if chain
