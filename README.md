@@ -58,6 +58,17 @@ java_ks { 'broker.example.com:/etc/activemq/broker.ks':
 }
 ~~~
 
+You can also use hiera by passing params to the java_ks::config class
+
+~~~
+java_ks::config::params:
+  'broker.example.com:/etc/activemq/broker.ks':
+    ensure: latest
+    certificate: '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem'
+    private_key: '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem'
+    password: true
+~~~
+
 ### Certificates
 To have a Java application server use a specific certificate for incoming connections, use the certificate parameter. You will need to simultaneously import the private key accompanying the signed certificate you want to use. As long as you provide the path to the key and the certificate, the provider will do the conversion for you.
 
