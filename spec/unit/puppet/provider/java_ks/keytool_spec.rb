@@ -83,7 +83,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         provider.stubs(:get_password).returns(resource[:password])
         File.stubs(:read).with(resource[:private_key]).returns('private key')
         File.stubs(:read).with(resource[:certificate]).returns(testing_ca.to_pem)
-        OpenSSL::PKey::RSA.expects(:new).with('private key').returns('priv_obj')
+        OpenSSL::PKey::RSA.expects(:new).with('private key', 'puppet').returns('priv_obj')
         OpenSSL::X509::Certificate.expects(:new).with(testing_ca.to_pem.chomp).returns('cert_obj')
 
         pkcs_double = BogusPkcs.new()
