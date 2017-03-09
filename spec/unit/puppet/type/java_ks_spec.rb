@@ -137,11 +137,11 @@ describe Puppet::Type.type(:java_ks) do
   end
 
   describe 'when ensure is set to latest' do
-    it 'insync? should return false if sha256 fingerprints do not match and state is :present' do
+    it 'insync? should return false if sha1 fingerprints do not match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      @provider.stubs(:latest).returns('7A:4A:0B:29:66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A:AE:82:12:EE:3C:7C:C2:56:94:77')
-      @provider.stubs(:current).returns('10:84:17:2A:A5:23:15:82:1C:1E:72:5E:21:21:46:45:65:57:50:FE:2D:DA:7C:C8:57:D2:33:3A:B0:A6:7F:1C')
+      @provider.stubs(:latest).returns('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A')
+      @provider.stubs(:current).returns('21:46:45:65:57:50:FE:2D:DA:7C:C8:57:D2:33:3A:B0:A6')
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:present)).to be_falsey
     end
 
@@ -151,11 +151,11 @@ describe Puppet::Type.type(:java_ks) do
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:absent)).to be_falsey
     end
 
-    it 'insync? should return true if sha256 fingerprints match and state is :present' do
+    it 'insync? should return true if sha1 fingerprints match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      @provider.stubs(:latest).returns('7A:4A:0B:29:66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A:AE:82:12:EE:3C:7C:C2:56:94:77')
-      @provider.stubs(:current).returns('7A:4A:0B:29:66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A:AE:82:12:EE:3C:7C:C2:56:94:77')
+      @provider.stubs(:latest).returns('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      @provider.stubs(:current).returns('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:present)).to be_truthy
     end
   end
