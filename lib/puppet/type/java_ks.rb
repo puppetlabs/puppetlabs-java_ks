@@ -160,26 +160,25 @@ Puppet::Type.newtype(:java_ks) do
   # Our title_patterns method for mapping titles to namevars for supporting
   # composite namevars.
   def self.title_patterns
-    identity = lambda {|x| x}
     [
       [
         /^([^:]+)$/,
         [
-          [ :name, identity ]
+          [ :name ]
         ]
       ],
       [
         /^(.*):([a-z]:(\/|\\).*)$/i,
         [
-            [ :name, identity ],
-            [ :target, identity ]
+            [ :name ],
+            [ :target ]
         ]
       ],
       [
         /^(.*):(.*)$/,
         [
-          [ :name, identity ],
-          [ :target, identity ]
+          [ :name ],
+          [ :target ]
         ]
       ]
     ]
