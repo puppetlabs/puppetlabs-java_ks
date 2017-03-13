@@ -58,6 +58,17 @@ java_ks { 'broker.example.com:/etc/activemq/broker.ks':
 }
 ~~~
 
+You can also use hiera by passing params to the java_ks::config class
+
+~~~
+java_ks::config::params:
+  'broker.example.com:/etc/activemq/broker.ks':
+    ensure: latest
+    certificate: '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem'
+    private_key: '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem'
+    password: true
+~~~
+
 ### Certificates
 To have a Java application server use a specific certificate for incoming connections, use the certificate parameter. You will need to simultaneously import the private key accompanying the signed certificate you want to use. As long as you provide the path to the key and the certificate, the provider will do the conversion for you.
 
@@ -66,7 +77,7 @@ To have a Java application server use a specific certificate for incoming connec
 
 The java_ks module supports multiple certificates with different keystores but the same alias by implementing Puppet's composite namevar functionality.  Titles map to namevars via `$alias:$target` (alias of certificate, colon, on-disk path to the keystore). If you create dependencies on these resources you need to remember to use the same title syntax outlined for generating the composite namevars.
 
-*Note about composite namevars:*  
+*Note about composite namevars:*
 The way composite namevars currently work, you must have the colon in the title. This is true *even if you define name and target parameters.*  The title can be `foo:bar`, but the name and target parameters must be `broker.example.com` and `/etc/activemq/broker.ks`. If you follow convention, it will do as you expect and correctly create an entry in the
 broker.ks keystore with the alias of broker.example.com.
 
@@ -88,10 +99,10 @@ All parameters, except where specified, are optional.
 Takes intermediate certificate authorities from a separate file from the server certificate. This autorequires the file of the same path and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 #####`ensure`
-Valid options: absent, present, latest. Latest verifies md5 certificate fingerprints for the stored certificate and the source file. Default: present.
+Valid options: absent, present, latest. Latest verifies sha1 certificate fingerprints for the stored certificate and the source file. Default: present.
 
 #####`name`
-*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.  
+*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.
 
 #####`password`
 This password is used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
@@ -107,6 +118,10 @@ Used for command (keytool, openssl) execution. Valid options: array or file path
 
 #####`private_key`
 Sets a private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
+
+#####`private_key_type`
+
+Set the type of the private key. Usually this is RSA but EC (Elliptic Curve) keys are also supported. Valid options: `rsa` and `ec`. Default: `rsa`.
 
 #####`target`
 *Required.* Specifies a destination file for the keystore. Autorequires the parent directory of the file. Valid options: string. Default: undef.
@@ -139,6 +154,6 @@ Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 Development
 -----------
 
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.  
+Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)

@@ -12,6 +12,7 @@ describe Puppet::Type.type(:java_ks) do
       :destkeypass => 'keypass',
       :certificate => '/tmp/app.example.com.pem',
       :private_key => '/tmp/private/app.example.com.pem',
+      :private_key_type => 'rsa',
       :storetype   => 'jceks',
       :provider    => :keytool
     }
@@ -29,7 +30,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
+    [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass].each do |param|
       it "should have a #{param} parameter" do
         expect(Puppet::Type.type(:java_ks).attrtype(param)).to eq(:param)
       end
@@ -40,6 +41,7 @@ describe Puppet::Type.type(:java_ks) do
         expect(Puppet::Type.type(:java_ks).attrtype(prop)).to eq(:property)
       end
     end
+
   end
 
   describe 'when validating attribute values' do
@@ -82,9 +84,22 @@ describe Puppet::Type.type(:java_ks) do
       jks[:name] = 'APP.EXAMPLE.COM'
       expect(Puppet::Type.type(:java_ks).new(jks)[:name]).to eq(jks_resource[:name])
     end
- 
+
     it 'should have :false value to :trustcacerts when parameter not provided' do
       expect(Puppet::Type.type(:java_ks).new(jks_resource)[:trustcacerts]).to eq(:false)
+    end
+
+    it 'should have :rsa as the default value for :private_key_type' do
+      expect(Puppet::Type.type(:java_ks).new(jks_resource)[:private_key_type]).to eq(:rsa)
+    end
+
+    it 'should fail if :private_key_type is neither :rsa nor :ec' do
+      jks = jks_resource.dup
+      jks[:private_key_type] = 'nosuchkeytype'
+
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error)
     end
 
     it 'should fail if both :password and :password_file are provided' do
@@ -122,11 +137,11 @@ describe Puppet::Type.type(:java_ks) do
   end
 
   describe 'when ensure is set to latest' do
-    it 'insync? should return false if md5 fingerprints do not match and state is :present' do
+    it 'insync? should return false if sha1 fingerprints do not match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      @provider.stubs(:latest).returns('AF:61:1C:FF:C7:C0:B2:C6:37:C5:D1:6E:00:AB:7A:B2')
-      @provider.stubs(:current).returns('B4:54:EB:55:86:41:84:2E:22:A0:6A:36:1B:28:47:76')
+      @provider.stubs(:latest).returns('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A')
+      @provider.stubs(:current).returns('21:46:45:65:57:50:FE:2D:DA:7C:C8:57:D2:33:3A:B0:A6')
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:present)).to be_falsey
     end
 
@@ -136,11 +151,11 @@ describe Puppet::Type.type(:java_ks) do
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:absent)).to be_falsey
     end
 
-    it 'insync? should return true if md5 fingerprints match and state is :present' do
+    it 'insync? should return true if sha1 fingerprints match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      @provider.stubs(:latest).returns('AF:61:1C:FF:C7:C0:B2:C6:37:C5:D1:6E:00:AB:7A:B2')
-      @provider.stubs(:current).returns('AF:61:1C:FF:C7:C0:B2:C6:37:C5:D1:6E:00:AB:7A:B2')
+      @provider.stubs(:latest).returns('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      @provider.stubs(:current).returns('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
       expect(Puppet::Type.type(:java_ks).new(jks).property(:ensure).insync?(:present)).to be_truthy
     end
   end

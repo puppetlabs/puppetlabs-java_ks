@@ -11,7 +11,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
-    pkey = OpenSSL::PKey::RSA.new File.read private_key
+    case private_key_type
+    when :rsa
+      pkey = OpenSSL::PKey::RSA.new File.read(private_key), get_password
+    when :ec
+      pkey = OpenSSL::PKey::EC.new File.read(private_key), get_password
+    end
+
     if chain
       x509_cert = OpenSSL::X509::Certificate.new File.read certificate
       chain_certs = get_chain(chain)
@@ -82,12 +88,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmpder = Tempfile.new("#{@resource[:name]}.")
     to_der(tmpder.path)
     cmd = [
-	command_keytool,
-	'-importcert', '-noprompt',
-	'-alias', @resource[:name],
-	'-file', tmpder.path,
-	'-keystore', @resource[:target],
-	'-storetype', storetype
+      command_keytool,
+      '-importcert', '-noprompt',
+      '-alias', @resource[:name],
+      '-file', tmpder.path,
+      '-keystore', @resource[:target],
+      '-storetype', storetype
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
     cmd += [ '-destkeypass', @resource[:destkeypass] ] unless @resource[:destkeypass].nil?
@@ -127,7 +133,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
           '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
-      latest = output.scan(/MD5:\s+(.*)/)[0][0]
+      latest = output.scan(/SHA1:\s+(.*)/)[0][0]
       return latest
     end
   end
@@ -148,7 +154,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
+      current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)/)[0][0]
       return current
     end
   end
@@ -201,6 +207,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def private_key
     @resource[:private_key]
+  end
+
+  def private_key_type
+    @resource[:private_key_type]
   end
 
   def chain
