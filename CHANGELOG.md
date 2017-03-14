@@ -1,14 +1,14 @@
 ## Supported Release 1.5.0
 ### Summary
-This release contains some small features and 1 bugfix which now makes the module environment safe.
+This release contains some small features and one bugfix which makes the module environment safe.
 
 #### Features
-- Add a new parameter "private_key_type" which defaults to "rsa" but can also be set to "ec" for ECDSA keys.
-- Add java_ks::config class with create_resources so hiera can be used to manage config
-- [MODULES-2495] Allow the provider to work with encrypted private keys.
+- Added a new parameter, `private_key_type` which defaults to `rsa` but can also be set to `ec` for ECDSA keys.
+- Added `java_ks::config` class with `create_resources` so that Hiera can be used to manage the config.
+- [MODULES-2495] Allows the provider to work with encrypted private keys.
 
 #### Bugfixes
-- [MODULES-4505] Fix `self.title_patterns` in java_ks type so it doesn't return a Proc so the module is environment safe
+- [MODULES-4505] Fixed `self.title_patterns` in java_ks type so it doesn't return a Proc so the module is environment safe.
 
 ## Supported Release 1.4.1
 ### Summary
