@@ -129,6 +129,10 @@ Set the type of the private key. Usually this is RSA but EC (Elliptic Curve) key
 #####`trustcacerts`
 Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to 'true'. Valid options: 'true' or 'false'. Default: 'false'.
 
+#####`keytool_timeout`
+Timeout in seconds for all keytool commands. Default: 0 (no timeout is used).
+
+
 ### `storetype`
 
 The storetype parameter allows you to use 'jceks' format if desired.

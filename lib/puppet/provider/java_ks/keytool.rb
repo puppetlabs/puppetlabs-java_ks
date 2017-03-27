@@ -1,4 +1,5 @@
 require 'openssl'
+require 'timeout'
 require 'puppet/util/filetype'
 
 Puppet::Type.type(:java_ks).provide(:keytool) do
@@ -267,11 +268,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     options = {:failonfail => true, :combine => true}
     output = if stdinfile
                withenv.call(env) do
-                 exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+               	 Timeout::timeout(@resource[:keytool_timeout]) {
+                 	exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+                 }
                end
              else
                withenv.call(env) do
-                 exec_method.call(cmd, options)
+                 Timeout::timeout(@resource[:keytool_timeout]) {
+                 	exec_method.call(cmd, options)
+                 }
                end
              end
 
