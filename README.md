@@ -58,7 +58,7 @@ java_ks { 'broker.example.com:/etc/activemq/broker.ks':
 }
 ```
 
-You can also use hiera by passing params to the `java_ks::config` class
+You can also use Hiera by passing params to the java_ks::config class:
 
 ```yaml
 java_ks::config::params:
@@ -121,7 +121,7 @@ Sets a private key that encrypts traffic to a server application. Must be accomp
 
 ##### `private_key_type`
 
-Set the type of the private key. Usually this is RSA but EC (Elliptic Curve) keys are also supported. Valid options: `rsa` and `ec`. Default: `rsa`.
+Sets the type of the private key. Usually this is RSA but Elliptic Curve (EC) keys are also supported. Valid options: `rsa` and `ec`. Default: `rsa`.
 
 ##### `target`
 *Required.* Specifies a destination file for the keystore. Autorequires the parent directory of the file. Valid options: string. Default: undef.
@@ -153,6 +153,6 @@ Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 
 ## Development
 
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.
+Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
