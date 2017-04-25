@@ -1,4 +1,5 @@
 require 'openssl'
+require 'timeout'
 require 'puppet/util/filetype'
 
 Puppet::Type.type(:java_ks).provide(:keytool) do
@@ -265,15 +266,22 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
     # Now run the command
     options = {:failonfail => true, :combine => true}
-    output = if stdinfile
-               withenv.call(env) do
-                 exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
-               end
-             else
-               withenv.call(env) do
-                 exec_method.call(cmd, options)
-               end
-             end
+    output = nil
+    begin
+      Timeout::timeout(@resource[:keytool_timeout], Timeout::Error) do
+        output = if stdinfile
+                   withenv.call(env) do
+                     exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+                   end
+                 else
+                   withenv.call(env) do
+                     exec_method.call(cmd, options)
+                   end
+                 end
+      end
+    rescue Timeout::Error
+      raise Puppet::Error.new("Timed out waiting for '#{@resource[:name]}' to run keytool")
+    end
 
     # for previously empty files, restore the umask, mode, owner and group.
     # The funky double-take check is because on Suse defined? doesn't seem

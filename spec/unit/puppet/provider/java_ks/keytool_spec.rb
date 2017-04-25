@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
-  let(:params) do
+  let(:global_params) do
     {
       :title       => 'app.example.com:/tmp/application.jks',
       :name        => 'app.example.com',
@@ -14,6 +14,9 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       :storetype   => 'jceks',
       :provider    => described_class.name
     }
+  end
+  let(:params) do
+    global_params
   end
 
   let(:resource) do
@@ -63,6 +66,25 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         :combine    => true
       )
       provider.run_command(cmd)
+    end
+
+    context 'short timeout' do
+      let(:params) do
+        global_params.merge({:keytool_timeout => 0.1})
+      end
+
+      it "should error if timeout occurs" do
+        cmd = "sleep 1"
+
+        expect { provider.run_command(cmd) }.to raise_error Puppet::Error, ("Timed out waiting for 'app.example.com' to run keytool")
+      end
+    end
+
+    it "should normally timeout after 120 seconds" do
+      cmd = '/bin/echo testing 1 2 3'
+      Timeout.expects(:timeout).with(120, Timeout::Error).raises(Timeout::Error)
+
+      expect { provider.run_command(cmd) }.to raise_error Puppet::Error, ("Timed out waiting for 'app.example.com' to run keytool")
     end
   end
 
