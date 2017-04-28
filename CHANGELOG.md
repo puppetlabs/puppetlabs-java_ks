@@ -1,3 +1,10 @@
+## Supported Release 1.6.0
+### Summary
+The keytool would hang on occasion for unexplained reasons, so keytool executions are wrapped in a timeout that defaults to 120 seconds and is configurable by the `keytool_timeout` parameter.
+
+### Added
+- New parameter: `keytool_timeout`
+
 ## Supported Release 1.5.0
 ### Summary
 This release contains some small features and one bugfix which makes the module environment safe.
