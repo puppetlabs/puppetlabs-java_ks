@@ -91,6 +91,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
       it 'converts a certificate to a pkcs12 file' do
+        sleep 0.1 # due to https://github.com/mitchellh/vagrant/issues/5056
         testing_key = OpenSSL::PKey::RSA.new 1024
         testing_ca = OpenSSL::X509::Certificate.new
         testing_ca.serial = 1
