@@ -72,9 +72,9 @@ Puppet::Type.newtype(:java_ks) do
 
   newparam(:storetype) do
     desc 'Optional storetype
-      Valid options: <jceks>'
+      Valid options: <jceks>, <pkcs12>'
 
-    newvalues(:jceks)
+    newvalues(:jceks, :pkcs12)
   end
 
   newparam(:private_key) do
@@ -159,6 +159,10 @@ Puppet::Type.newtype(:java_ks) do
     defaultto 120
   end
 
+  newparam(:source_password) do
+    desc "The source keystore password"
+  end
+
   # Where we setup autorequires.
   autorequire(:file) do
     auto_requires = []
@@ -207,6 +211,10 @@ Puppet::Type.newtype(:java_ks) do
 
     unless value(:password) or value(:password_file)
       self.fail "You must pass one of 'password' or 'password_file'."
+    end
+
+    if value(:storetype) == :pkcs12 and value(:source_password).nil?
+      self.fail "You must provide 'source_password' when using a 'pkcs12' storetype."
     end
   end
 end

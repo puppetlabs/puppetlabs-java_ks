@@ -54,13 +54,23 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def password_file
     pword = get_password
+    source_pword = sourcepassword
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-      tmpfile.write("#{pword}\n#{pword}")
+      if !source_pword.nil?
+        contents = "#{pword}\n#{source_pword}"
+      else
+        contents = "#{pword}\n#{pword}"
+      end
     else
-      tmpfile.write("#{pword}\n#{pword}\n#{pword}")
+      if !source_pword.nil?
+        contents = "#{pword}\n#{pword}\n#{source_pword}"
+      else
+        contents = "#{pword}\n#{pword}\n#{pword}"
+      end
     end
+    tmpfile.write(contents)
     tmpfile.flush
     tmpfile
   end
@@ -83,6 +93,20 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     run_command(cmd, @resource[:target], pwfile)
     tmppk12.close!
     pwfile.close! if pwfile.is_a? Tempfile
+  end
+
+  def import_pkcs12
+    cmd = [
+        command_keytool,
+        '-importkeystore', '-srcstoretype', 'PKCS12',
+        '-destkeystore', @resource[:target],
+        '-srckeystore', certificate
+    ]
+
+    pwfile = password_file
+    run_command(cmd, @resource[:target], pwfile)
+    pwfile.close! if pwfile.is_a? Tempfile
+
   end
 
   def import_jceks
@@ -134,6 +158,15 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # Return value must be different to provider.current to signify a possible trigger event.
     if Puppet[:noop] and !File.exists?(certificate)
       return 'latest'
+    elsif storetype == :pkcs12
+      cmd = [
+          command_keytool,
+          '-list', '-keystore', certificate,
+          '-storetype', 'PKCS12', '-storepass', sourcepassword
+      ]
+      output = run_command(cmd)
+      latest = output.scan(/\(SHA1\):\s+(.*)/)[0][0]
+      return latest
     else
       cmd = [
           command_keytool,
@@ -173,8 +206,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       import_ks
     elsif certificate.nil? and !private_key.nil?
       raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
-    elsif storetype == "jceks"
+    elsif storetype == :jceks
       import_jceks
+    elsif storetype == :pkcs12
+      import_pkcs12
     else
       cmd = [
           command_keytool,
@@ -222,6 +257,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def chain
     @resource[:chain]
+  end
+
+  def sourcepassword
+    @resource[:source_password]
   end
 
   def storetype

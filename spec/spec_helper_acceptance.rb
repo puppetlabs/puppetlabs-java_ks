@@ -76,6 +76,8 @@ def create_certs(host, tmpdir)
   leaf.not_after = leaf.not_before + 360
   leaf.sign(key_chain2, OpenSSL::Digest::SHA256.new)
 
+  pkcs12 = OpenSSL::PKCS12.create("pkcs12pass", "Leaf Cert", key_leaf, leaf, [chain2, chain])
+
   create_remote_file(host, "#{tmpdir}/privkey.pem", key.to_pem)
   create_remote_file(host, "#{tmpdir}/ca.pem", ca.to_pem)
   create_remote_file(host, "#{tmpdir}/ca2.pem", ca2.to_pem)
@@ -83,6 +85,7 @@ def create_certs(host, tmpdir)
   create_remote_file(host, "#{tmpdir}/leafkey.pem", key_leaf.to_pem)
   create_remote_file(host, "#{tmpdir}/leaf.pem", leaf.to_pem)
   create_remote_file(host, "#{tmpdir}/leafchain.pem", leaf.to_pem + chain2.to_pem + chain.to_pem)
+  create_remote_file(host, "#{tmpdir}/leaf.p12", pkcs12.to_der)
 end
 
 
