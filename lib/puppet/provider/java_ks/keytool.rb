@@ -1,4 +1,5 @@
 require 'openssl'
+require 'timeout'
 require 'puppet/util/filetype'
 
 Puppet::Type.type(:java_ks).provide(:keytool) do
@@ -11,7 +12,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
-    pkey = OpenSSL::PKey::RSA.new File.read private_key
+    case private_key_type
+    when :rsa
+      pkey = OpenSSL::PKey::RSA.new File.read(private_key), get_password
+    when :ec
+      pkey = OpenSSL::PKey::EC.new File.read(private_key), get_password
+    end
+
     if chain
       x509_cert = OpenSSL::X509::Certificate.new File.read certificate
       chain_certs = get_chain(chain)
@@ -133,7 +140,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
           '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
-      latest = output.scan(/MD5:\s+(.*)/)[0][0]
+      latest = output.scan(/SHA1:\s+(.*)/)[0][0]
       return latest
     end
   end
@@ -154,7 +161,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = output.scan(/Certificate fingerprints:\n\s+MD5:  (.*)/)[0][0]
+      current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)/)[0][0]
       return current
     end
   end
@@ -209,6 +216,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     @resource[:private_key]
   end
 
+  def private_key_type
+    @resource[:private_key_type]
+  end
+
   def chain
     @resource[:chain]
   end
@@ -261,15 +272,22 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
     # Now run the command
     options = {:failonfail => true, :combine => true}
-    output = if stdinfile
-               withenv.call(env) do
-                 exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
-               end
-             else
-               withenv.call(env) do
-                 exec_method.call(cmd, options)
-               end
-             end
+    output = nil
+    begin
+      Timeout::timeout(@resource[:keytool_timeout], Timeout::Error) do
+        output = if stdinfile
+                   withenv.call(env) do
+                     exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+                   end
+                 else
+                   withenv.call(env) do
+                     exec_method.call(cmd, options)
+                   end
+                 end
+      end
+    rescue Timeout::Error
+      raise Puppet::Error.new("Timed out waiting for '#{@resource[:name]}' to run keytool")
+    end
 
     # for previously empty files, restore the umask, mode, owner and group.
     # The funky double-take check is because on Suse defined? doesn't seem

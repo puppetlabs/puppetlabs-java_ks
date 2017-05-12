@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
-  let(:params) do
+  let(:global_params) do
     {
       :title       => 'app.example.com:/tmp/application.jks',
       :name        => 'app.example.com',
@@ -14,6 +14,9 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       :storetype   => 'jceks',
       :provider    => described_class.name
     }
+  end
+  let(:params) do
+    global_params
   end
 
   let(:resource) do
@@ -64,11 +67,31 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       )
       provider.run_command(cmd)
     end
+
+    context 'short timeout' do
+      let(:params) do
+        global_params.merge({:keytool_timeout => 0.1})
+      end
+
+      it "should error if timeout occurs" do
+        cmd = "sleep 1"
+
+        expect { provider.run_command(cmd) }.to raise_error Puppet::Error, ("Timed out waiting for 'app.example.com' to run keytool")
+      end
+    end
+
+    it "should normally timeout after 120 seconds" do
+      cmd = '/bin/echo testing 1 2 3'
+      Timeout.expects(:timeout).with(120, Timeout::Error).raises(Timeout::Error)
+
+      expect { provider.run_command(cmd) }.to raise_error Puppet::Error, ("Timed out waiting for 'app.example.com' to run keytool")
+    end
   end
 
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
       it 'converts a certificate to a pkcs12 file' do
+        sleep 0.1 # due to https://github.com/mitchellh/vagrant/issues/5056
         testing_key = OpenSSL::PKey::RSA.new 1024
         testing_ca = OpenSSL::X509::Certificate.new
         testing_ca.serial = 1
@@ -83,7 +106,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         provider.stubs(:get_password).returns(resource[:password])
         File.stubs(:read).with(resource[:private_key]).returns('private key')
         File.stubs(:read).with(resource[:certificate]).returns(testing_ca.to_pem)
-        OpenSSL::PKey::RSA.expects(:new).with('private key').returns('priv_obj')
+        OpenSSL::PKey::RSA.expects(:new).with('private key', 'puppet').returns('priv_obj')
         OpenSSL::X509::Certificate.expects(:new).with(testing_ca.to_pem.chomp).returns('cert_obj')
 
         pkcs_double = BogusPkcs.new()

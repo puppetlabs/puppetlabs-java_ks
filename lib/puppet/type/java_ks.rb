@@ -5,7 +5,7 @@ Puppet::Type.newtype(:java_ks) do
   ensurable do
 
     desc 'Has three states: present, absent, and latest.  Latest
-      will compare the on disk MD5 fingerprint of the certificate to that
+      will compare the on disk SHA1 fingerprint of the certificate to that
       in keytool to determine if insync? returns true or false.  We redefine
       insync? for this paramerter to accomplish this.'
 
@@ -83,6 +83,16 @@ Puppet::Type.newtype(:java_ks) do
       accompanied by a signed certificate for the keytool provider. This will autorequire the specified file.'
   end
 
+  newparam(:private_key_type) do
+    desc 'The type of the private key. Usually the private key is of type RSA
+      key but it can also be an Elliptic Curve key (EC).
+      Valid options: <rsa>, <ec>. Defaults to <rsa>'
+
+    newvalues(:rsa, :ec)
+
+    defaultto :rsa
+  end
+
   newparam(:chain) do
     desc 'The intermediate certificate authorities, if they are to be taken
       from a file separate from the server certificate. This will autorequire the specified file.'
@@ -143,6 +153,12 @@ Puppet::Type.newtype(:java_ks) do
     end
   end
 
+  newparam(:keytool_timeout) do
+    desc "Timeout for the keytool command in seconds."
+
+    defaultto 120
+  end
+
   # Where we setup autorequires.
   autorequire(:file) do
     auto_requires = []
@@ -160,26 +176,25 @@ Puppet::Type.newtype(:java_ks) do
   # Our title_patterns method for mapping titles to namevars for supporting
   # composite namevars.
   def self.title_patterns
-    identity = lambda {|x| x}
     [
       [
         /^([^:]+)$/,
         [
-          [ :name, identity ]
+          [ :name ]
         ]
       ],
       [
         /^(.*):([a-z]:(\/|\\).*)$/i,
         [
-            [ :name, identity ],
-            [ :target, identity ]
+            [ :name ],
+            [ :target ]
         ]
       ],
       [
         /^(.*):(.*)$/,
         [
-          [ :name, identity ],
-          [ :target, identity ]
+          [ :name ],
+          [ :target ]
         ]
       ]
     ]
