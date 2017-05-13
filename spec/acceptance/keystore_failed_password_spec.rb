@@ -26,7 +26,7 @@ describe 'managing java keystores without a correct password', :unless => UNSUPP
   end
 
   it 'verifies the keystore' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ts -storepass coraline") do |r|
+    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore_failed_password.ts -storepass coraline") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)
@@ -50,7 +50,7 @@ describe 'managing java keystores without a correct password', :unless => UNSUPP
   end
 
   it 'verifies the keystore' do
-    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore.ts -storepass bobinsky") do |r|
+    shell("#{keytool_path}keytool -list -v -keystore /etc/keystore_failed_password.ts -storepass bobinsky") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Your keystore contains 1 entry/)
       expect(r.stdout).to match(/Alias name: puppetca/)
