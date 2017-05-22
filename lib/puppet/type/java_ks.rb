@@ -114,6 +114,16 @@ Puppet::Type.newtype(:java_ks) do
       keystore. This cannot be used together with :password, but you must pass at least one of these parameters.'
   end
 
+  newparam(:password_fail_reset) do
+    desc "If the supplied password does not succeed in unlocking the
+      keystore file, then delete the keystore file and create a new one.
+      Default: false."
+
+    newvalues(:true, :false)
+
+    defaultto :false
+  end
+
   newparam(:destkeypass) do
     desc 'The password used to protect the key in keystore.'
 

@@ -51,10 +51,11 @@ java_ks { 'puppetca:keystore':
 }
 
 java_ks { 'broker.example.com:/etc/activemq/broker.ks':
-  ensure      => latest,
-  certificate => '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem',
-  private_key => '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem',
-  password    => 'puppet',
+  ensure              => latest,
+  certificate         => '/etc/puppet/ssl/certs/broker.example.com.pe-internal-broker.pem',
+  private_key         => '/etc/puppet/ssl/private_keys/broker.example.com.pe-internal-broker.pem',
+  password            => 'albatros',
+  password_fail_reset => true,
 }
 ```
 
@@ -109,6 +110,10 @@ This password is used to protect the keystore. If private keys are also protecte
 
 ##### `password_file`
 Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef.
+
+#### `password_fail_reset`
+
+If the supplied password does not succeed in unlocking the keystore file, then **delete** the keystore file and create a new one. Default: `false`
 
 ##### `destkeypass`
 The password you want to set to protect the key in the keystore.
