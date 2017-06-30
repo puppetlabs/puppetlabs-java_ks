@@ -28,7 +28,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
     end
 
     it 'verifies the keystore' do
-      shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
         expect(r.stdout).to match(/Your keystore contains 1 entry/)
         expect(r.stdout).to match(/Alias name: puppetca/)
@@ -77,7 +77,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
     end
 
     it 'verifies the keystore' do
-      shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
         expect(r.stdout).to match(/Your keystore contains 2 entries/)
         expect(r.stdout).to match(/Alias name: puppetca/)
