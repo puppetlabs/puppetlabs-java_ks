@@ -16,7 +16,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
         java_ks { 'puppetca:keystore':
           ensure       => latest,
           certificate  => "#{@temp_dir}ca.pem",
-          target       => '#{target}',
+          target       => '#{@target}',
           password     => 'puppet',
           trustcacerts => true,
           path         => #{@resource_path},
@@ -28,7 +28,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
     end
 
     it 'verifies the keystore' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{@target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
         expect(r.stdout).to match(/Your keystore contains 1 entry/)
         expect(r.stdout).to match(/Alias name: puppetca/)
@@ -45,7 +45,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
         java_ks { 'puppetca2:keystore':
           ensure        => latest,
           certificate   => "#{@temp_dir}ca2.pem",
-          target        => '#{target}',
+          target        => '#{@target}',
           password_file => '#{@temp_dir}password',
           trustcacerts  => true,
           path          => #{@resource_path},
@@ -64,7 +64,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
         java_ks { 'puppetca:keystore':
           ensure       => latest,
           certificate  => "#{@temp_dir}ca.pem",
-          target       => '#{target}',
+          target       => '#{@target}',
           password     => 'puppet',
           trustcacerts => true,
           path         => #{@resource_path},
@@ -77,7 +77,7 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
     end
 
     it 'verifies the keystore' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{@target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
         expect(r.stdout).to match(/Your keystore contains 2 entries/)
         expect(r.stdout).to match(/Alias name: puppetca/)

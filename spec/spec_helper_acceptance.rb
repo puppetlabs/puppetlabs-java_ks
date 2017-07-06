@@ -139,8 +139,6 @@ RSpec.shared_context 'common variables' do
         @target = '/etc/truststore.ts'
       when 'windows'
         @ensure_ks = 'present'
-        #                C:/Program Files/Java/jdk1.8.0_131/bin/keytool -list -v -keystore c:/chain_key.ks -storepass puppet
-        #                C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/
         @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
         @target = 'c:/truststore.ts'
         @temp_dir = 'C:/tmp/'
