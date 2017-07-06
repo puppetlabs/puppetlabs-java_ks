@@ -1,19 +1,8 @@
 require 'spec_helper_acceptance'
 
-hostname = default.node_name
-
 describe 'password protected java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-
-  let(:confdir)    { default['puppetpath']    }
-  let(:modulepath) { default['distmoduledir'] }
-
-  case fact('osfamily')
-    when "windows"
-      target = 'c:/private_key.ks'
-    else
-      target = '/etc/private_key.ks'
-  end
+  target = "#{@target_dir}destkeypass.ks"
 
   it 'creates a password protected private key' do
     pp = <<-EOS
@@ -43,5 +32,4 @@ describe 'password protected java private keys', :unless => UNSUPPORTED_PLATFORM
      "-keystore #{target} -storepass testpass -keypass qwert",
      :acceptable_exit_codes => 1)
   end
-
 end

@@ -125,26 +125,22 @@ RSpec.shared_context 'common variables' do
   before {
     java_major, java_minor = (ENV['JAVA_VERSION'] || '8u131').split('u')
     @ensure_ks = 'latest'
-    @temp_dir = '/tmp/'
     @resource_path = "undef"
-    @target = '/etc/truststore.ts'
+    @target_dir = '/etc/'
+    @temp_dir = '/tmp/'
     case fact('osfamily')
       when "Solaris"
         @keytool_path = '/usr/java/bin/'
         @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
-        @target = '/etc/truststore.ts'
       when "AIX"
         @keytool_path = '/usr/java6/bin/'
         @resource_path = "['/usr/java6/bin/','/usr/bin/']"
-        @target = '/etc/truststore.ts'
       when 'windows'
         @ensure_ks = 'present'
-        #                C:/Program Files/Java/jdk1.8.0_131/bin/keytool -list -v -keystore c:/chain_key.ks -storepass puppet
-        #                C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/
         @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
-        @target = 'c:/truststore.ts'
-        @temp_dir = 'C:/tmp/'
         @resource_path = "['C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
+        @target_dir = 'c:/'
+        @temp_dir = 'C:/tmp/'
     end
   }
 end

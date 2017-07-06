@@ -1,15 +1,8 @@
 require 'spec_helper_acceptance'
 
-hostname = default.node_name
-
 describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-  case fact('osfamily')
-    when 'windows'
-      target = 'c:/private_key.ts'
-    else
-      target = '/etc/private_key.ts'
-  end
+  target = "#{@target_dir}private_key.ts"
 
   it 'creates a private key' do
     pp = <<-EOS

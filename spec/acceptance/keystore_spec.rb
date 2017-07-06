@@ -2,13 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-
-  case fact('osfamily')
-    when 'windows'
-      target = 'c:/tmp/keystore.ks'
-    else
-      target = '/etc/keystore.ks'
-  end
+  target = "#{@target_dir}keystore.ks"
 
   describe 'basic tests' do
     it 'should create a keystore' do

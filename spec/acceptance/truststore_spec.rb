@@ -2,20 +2,14 @@ require 'spec_helper_acceptance'
 
 describe 'managing java truststores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   include_context 'common variables'
-
-  case fact('osfamily')
-    when "windows"
-      target = 'c:/truststore.ts'
-    else
-      target = '/etc/truststore.ts'
-  end
+  target = "#{@target_dir}truststore.ts"
 
   it 'creates a truststore' do
     pp = <<-EOS
       java_ks { 'puppetca:truststore':
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
-        target       => '#{target}',
+        target       => "#{target}",
         password     => 'puppet',
         trustcacerts => true,
         path         => #{@resource_path},
