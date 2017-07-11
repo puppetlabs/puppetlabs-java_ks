@@ -26,7 +26,7 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
   end
 
   it 'verifies the private key' do
-    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: broker\.example\.com/)
       expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)

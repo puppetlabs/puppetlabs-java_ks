@@ -31,7 +31,7 @@ describe 'password protected java private keys', :unless => UNSUPPORTED_PLATFORM
   end
 
   it 'can make a cert req with the right password' do
-    shell("#{@keytool_path}keytool -certreq -alias broker.example.com -v "\
+    shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
      "-keystore #{target} -storepass testpass -keypass testkeypass") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/-BEGIN NEW CERTIFICATE REQUEST-/)
@@ -39,7 +39,7 @@ describe 'password protected java private keys', :unless => UNSUPPORTED_PLATFORM
   end
 
   it 'cannot make a cert req with the wrong password' do
-    shell("#{@keytool_path}keytool -certreq -alias broker.example.com -v "\
+    shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
      "-keystore #{target} -storepass testpass -keypass qwert",
      :acceptable_exit_codes => 1)
   end

@@ -101,9 +101,21 @@ RSpec.configure do |c|
       copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
       #install java if windows
       if host['platform'] =~ /windows/i
-        on host, puppet('module install cyberious-windows_java')
+        on host, puppet('module install puppetlabs-chocolatey')
+    pp = <<-EOS
+include chocolatey
+package { 'jdk8':
+  ensure   => installed,
+  provider => 'chocolatey'
+}
+    EOS
+        apply_manifest_on(host, pp)
       else
         on host, puppet('module', 'install', 'puppetlabs-java'), {:acceptable_exit_codes => [0, 1]}
+    pp = <<-EOS
+class { 'java': }
+    EOS
+        apply_manifest_on(host, pp)
       end
     end
   end
@@ -111,7 +123,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before {
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '7u67').split('u')
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u131').split('u')
     @ensure_ks = 'latest'
     @temp_dir = '/tmp/'
     @resource_path = "undef"
@@ -127,10 +139,10 @@ RSpec.shared_context 'common variables' do
         @target = '/etc/truststore.ts'
       when 'windows'
         @ensure_ks = 'present'
-        @keytool_path = "C:/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
+        @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
         @target = 'c:/truststore.ts'
         @temp_dir = 'C:/tmp/'
-        @resource_path = "['C:/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
+        @resource_path = "['C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
     end
   }
 end
