@@ -105,7 +105,7 @@ RSpec.configure do |c|
     pp = <<-EOS
 include chocolatey
 package { 'jdk8':
-  ensure   => installed,
+  ensure   => '8.0.144',
   provider => 'chocolatey'
 }
     EOS
@@ -123,7 +123,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before {
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u131').split('u')
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u144').split('u')
     @ensure_ks = 'latest'
     @resource_path = "undef"
     @target_dir = '/etc/'
