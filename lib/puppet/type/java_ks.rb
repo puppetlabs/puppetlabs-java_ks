@@ -3,7 +3,6 @@ Puppet::Type.newtype(:java_ks) do
   accomplish the same alias spread across multiple target keystores.'
 
   ensurable do
-
     desc 'Has three states: present, absent, and latest.  Latest
       will compare the on disk SHA1 fingerprint of the certificate to that
       in keytool to determine if insync? returns true or false.  We redefine
@@ -26,7 +25,6 @@ Puppet::Type.newtype(:java_ks) do
     end
 
     def insync?(is)
-
       @should.each do |should|
         case should
         when :present
@@ -40,7 +38,7 @@ Puppet::Type.newtype(:java_ks) do
         end
       end
 
-      return false
+      false
     end
 
     defaultto :present
@@ -147,14 +145,14 @@ Puppet::Type.newtype(:java_ks) do
 
     # Support both arrays and colon-separated fields.
     def value=(*values)
-      @value = values.flatten.collect { |val|
+      @value = values.flatten.map { |val|
         val.split(File::PATH_SEPARATOR)
       }.flatten
     end
   end
 
   newparam(:keytool_timeout) do
-    desc "Timeout for the keytool command in seconds."
+    desc 'Timeout for the keytool command in seconds.'
 
     defaultto 120
   end
@@ -178,35 +176,35 @@ Puppet::Type.newtype(:java_ks) do
   def self.title_patterns
     [
       [
-        /^([^:]+)$/,
+        %r{^([^:]+)$},
         [
-          [ :name ]
-        ]
+          [:name],
+        ],
       ],
       [
-        /^(.*):([a-z]:(\/|\\).*)$/i,
+        %r{^(.*):([a-z]:(/|\\).*)$}i,
         [
-            [ :name ],
-            [ :target ]
-        ]
+          [:name],
+          [:target],
+        ],
       ],
       [
-        /^(.*):(.*)$/,
+        %r{^(.*):(.*)$},
         [
-          [ :name ],
-          [ :target ]
-        ]
-      ]
+          [:name],
+          [:target],
+        ],
+      ],
     ]
   end
 
   validate do
-    if value(:password) and value(:password_file)
-      self.fail "You must pass either 'password' or 'password_file', not both."
+    if value(:password) && value(:password_file)
+      raise Puppet::Error, "You must pass either 'password' or 'password_file', not both."
     end
 
-    unless value(:password) or value(:password_file)
-      self.fail "You must pass one of 'password' or 'password_file'."
+    unless value(:password) || value(:password_file)
+      raise Puppet::Error, "You must pass one of 'password' or 'password_file'."
     end
   end
 end
