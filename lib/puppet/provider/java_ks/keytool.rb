@@ -161,7 +161,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)/)[0][0]
+      if output.include? 'MD5:'
+        current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)/)[0][0]
+      else
+        current = output.scan(/Certificate fingerprints:\n\s+SHA1: (.*)/)[0][0]
+      end
       return current
     end
   end
