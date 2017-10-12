@@ -5,16 +5,16 @@ describe Puppet::Type.type(:java_ks) do
 
   before do
     @app_example_com = {
-      :title       => 'app.example.com:/tmp/application.jks',
-      :name        => 'app.example.com',
-      :target      => '/tmp/application.jks',
-      :password    => 'puppet',
-      :destkeypass => 'keypass',
-      :certificate => '/tmp/app.example.com.pem',
-      :private_key => '/tmp/private/app.example.com.pem',
+      :title            => 'app.example.com:/tmp/application.jks',
+      :name             => 'app.example.com',
+      :target           => '/tmp/application.jks',
+      :password         => 'puppet',
+      :destkeypass      => 'keypass',
+      :certificate      => '/tmp/app.example.com.pem',
+      :private_key      => '/tmp/private/app.example.com.pem',
       :private_key_type => 'rsa',
-      :storetype   => 'jceks',
-      :provider    => :keytool
+      :storetype        => 'jceks',
+      :provider         => :keytool
     }
     @provider = stub('provider', :class => Puppet::Type.type(:java_ks).defaultprovider, :clear => nil)
     Puppet::Type.type(:java_ks).defaultprovider.stubs(:new).returns(@provider)
@@ -30,7 +30,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
 
-    [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass, :password_fail_reset].each do |param|
+    [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password].each do |param|
       it "should have a #{param} parameter" do
         expect(Puppet::Type.type(:java_ks).attrtype(param)).to eq(:param)
       end
@@ -136,6 +136,14 @@ describe Puppet::Type.type(:java_ks) do
 
     it 'should have :false value to :password_fail_reset when parameter not provided' do
       expect(Puppet::Type.type(:java_ks).new(jks_resource)[:password_fail_reset]).to eq(:false)
+    end
+
+    it 'should fail if :source_password is not provided for pkcs12 :storetype' do
+      jks = jks_resource.dup
+      jks[:storetype] = 'pkcs12'
+      expect {
+        Puppet::Type.type(:java_ks).new(jks)
+      }.to raise_error(Puppet::Error, /You must provide 'source_password' when using a 'pkcs12' storetype/)
     end
   end
 

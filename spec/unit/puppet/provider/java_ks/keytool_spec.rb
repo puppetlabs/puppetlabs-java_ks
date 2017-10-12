@@ -142,6 +142,44 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         )
         provider.import_ks
       end
+
+    end
+  end
+
+  describe 'when importing a pkcs12 file' do
+    let(:params) do
+      {
+        :title           => 'app.example.com:/tmp/testing.jks',
+        :name            => 'app.example.com',
+        :target          => '/tmp/application.jks',
+        :password        => 'puppet',
+        :certificate     => '/tmp/testing.p12',
+        :storetype       => 'pkcs12',
+        :source_password => 'password',
+        :provider        => described_class.name
+      }
+    end
+
+    let(:resource) do
+      Puppet::Type.type(:java_ks).new(params)
+    end
+
+    let(:provider) do
+      resource.provider
+    end
+
+    describe '#import_pkcs12' do
+      it 'should support pkcs12 source' do
+        pkcs12 = resource.dup
+        pkcs12[:storetype] = 'pkcs12'
+        provider.expects(:run_command).with([
+            'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
+            '-destkeystore', pkcs12[:target],
+            '-srckeystore', '/tmp/testing.p12'
+          ], any_parameters
+        )
+        provider.import_pkcs12
+      end
     end
   end
 
