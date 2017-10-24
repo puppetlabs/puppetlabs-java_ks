@@ -47,7 +47,6 @@
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
-        "10 SP4",
         "11 SP1",
         "12"
       ]
@@ -55,9 +54,9 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "6",
         "7",
-        "8"
+        "8",
+        "9"
       ]
     },
     {
@@ -84,7 +83,6 @@
     {
       "operatingsystem": "Windows",
       "operatingsystemrelease": [
-        "Server 2003 R2",
         "Server 2008 R2",
         "Server 2012",
         "Server 2012 R2",
