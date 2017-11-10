@@ -2,7 +2,8 @@ require 'spec_helper_acceptance'
 
 hostname = default.node_name
 
-describe 'managing java pkcs12', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+# SLES by default does not support this form of encyrption.
+describe 'managing java pkcs12', :unless => (UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) || fact('operatingsystem') == 'SLES') do
   include_context 'common variables'
   case fact('osfamily')
     when 'windows'
