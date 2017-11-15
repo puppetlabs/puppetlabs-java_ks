@@ -4,14 +4,20 @@ require 'spec_helper'
 describe Puppet::Type.type(:java_ks) do
 
   before do
+    if Puppet.features.microsoft_windows?
+      @temp_dir = ENV['TEMP']
+    else
+      @temp_dir = '/tmp/'
+    end
+
     @app_example_com = {
-      :title            => 'app.example.com:/tmp/application.jks',
+      :title            => "app.example.com:#{@temp_dir}application.jks",
       :name             => 'app.example.com',
-      :target           => '/tmp/application.jks',
+      :target           => "#{@temp_dir}application.jks",
       :password         => 'puppet',
       :destkeypass      => 'keypass',
-      :certificate      => '/tmp/app.example.com.pem',
-      :private_key      => '/tmp/private/app.example.com.pem',
+      :certificate      => "#{@temp_dir}app.example.com.pem",
+      :private_key      => "#{@temp_dir}private/app.example.com.pem",
       :private_key_type => 'rsa',
       :storetype        => 'jceks',
       :provider         => :keytool
@@ -66,9 +72,9 @@ describe Puppet::Type.type(:java_ks) do
 
     it "second half of title should not map to target parameter when target is supplied" do
       jks = jks_resource.dup
-      jks[:target] = '/tmp/some_other_app.jks'
+      jks[:target] = "#{@temp_dir}some_other_app.jks"
       expect(Puppet::Type.type(:java_ks).new(jks)[:target]).not_to eq(jks_resource[:target])
-      expect(Puppet::Type.type(:java_ks).new(jks)[:target]).to eq('/tmp/some_other_app.jks')
+      expect(Puppet::Type.type(:java_ks).new(jks)[:target]).to eq("#{@temp_dir}some_other_app.jks")
     end
 
     it 'title components should map to namevar parameters' do

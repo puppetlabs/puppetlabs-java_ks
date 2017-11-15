@@ -28,7 +28,7 @@ describe 'managing java pkcs12', :unless => (UNSUPPORTED_PLATFORMS.include?(fact
   end
 
   it 'verifies the private key and chain' do
-    shell("#{@keytool_path}keytool -list -v -keystore #{target} -storepass puppet") do |r|
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
       expect(r.stdout).to match(/Alias name: leaf cert/)
       expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
