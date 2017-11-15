@@ -3,14 +3,22 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
+  let(:temp_dir) do
+    if Puppet.features.microsoft_windows?
+      ENV['TEMP']
+    else
+      '/tmp/'
+    end
+  end
+  
   let(:global_params) do
     {
-      :title       => 'app.example.com:/tmp/application.jks',
+      :title       => "app.example.com:#{temp_dir}application.jks",
       :name        => 'app.example.com',
-      :target      => '/tmp/application.jks',
+      :target      => "#{temp_dir}application.jks",
       :password    => 'puppet',
-      :certificate => '/tmp/app.example.com.pem',
-      :private_key => '/tmp/private/app.example.com.pem',
+      :certificate => "#{temp_dir}app.example.com.pem",
+      :private_key => "#{temp_dir}private/app.example.com.pem",
       :storetype   => 'jceks',
       :provider    => described_class.name
     }
@@ -38,7 +46,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                 :write => true,
                 :flush => true,
                 :close! => true,
-                :path => '/tmp/testing.stuff'
+                :path => "#{temp_dir}testing.stuff"
                )
     Tempfile.stubs(:new).returns(tempfile)
   end
@@ -51,7 +59,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
   end
 
-  describe 'when running keystore commands' do
+  describe 'when running keystore commands', :if => ! Puppet.features.microsoft_windows? do
     it 'should call the passed command' do
       cmd = '/bin/echo testing 1 2 3'
 
@@ -112,17 +120,17 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         pkcs_double = BogusPkcs.new()
         pkcs_double.expects(:to_der)
         OpenSSL::PKCS12.expects(:create).with(resource[:password],resource[:name],'priv_obj','cert_obj',[]).returns(pkcs_double)
-        provider.to_pkcs12('/tmp/testing.stuff')
+        provider.to_pkcs12("#{temp_dir}testing.stuff")
       end
     end
 
     describe "#import_ks" do
       it 'should execute openssl and keytool with specific options' do
-        provider.expects(:to_pkcs12).with('/tmp/testing.stuff')
+        provider.expects(:to_pkcs12).with("#{temp_dir}testing.stuff")
         provider.expects(:run_command).with([
             'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
             '-destkeystore', resource[:target],
-            '-srckeystore', '/tmp/testing.stuff',
+            '-srckeystore', "#{temp_dir}testing.stuff",
             '-alias', resource[:name],
           ], any_parameters
         )
@@ -132,11 +140,11 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       it 'should use destkeypass when provided' do
         dkp = resource.dup
         dkp[:destkeypass] = 'keypass'
-        provider.expects(:to_pkcs12).with('/tmp/testing.stuff')
+        provider.expects(:to_pkcs12).with("#{temp_dir}testing.stuff")
         provider.expects(:run_command).with([
             'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
             '-destkeystore', dkp[:target],
-            '-srckeystore', '/tmp/testing.stuff',
+            '-srckeystore', "#{temp_dir}testing.stuff",
             '-alias', dkp[:name], '-destkeypass', dkp[:destkeypass]
           ], any_parameters
         )
@@ -149,11 +157,11 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   describe 'when importing a pkcs12 file' do
     let(:params) do
       {
-        :title           => 'app.example.com:/tmp/testing.jks',
+        :title           => "app.example.com:#{temp_dir}testing.jks",
         :name            => 'app.example.com',
-        :target          => '/tmp/application.jks',
+        :target          => "#{temp_dir}application.jks",
         :password        => 'puppet',
-        :certificate     => '/tmp/testing.p12',
+        :certificate     => "#{temp_dir}testing.p12",
         :storetype       => 'pkcs12',
         :source_password => 'password',
         :provider        => described_class.name
@@ -175,7 +183,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         provider.expects(:run_command).with([
             'mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12',
             '-destkeystore', pkcs12[:target],
-            '-srckeystore', '/tmp/testing.p12'
+            '-srckeystore', "#{temp_dir}testing.p12"
           ], any_parameters
         )
         provider.import_pkcs12
@@ -186,12 +194,12 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   describe 'when creating entires in a keystore' do
     let(:params) do
       {
-        :title       => 'app.example.com:/tmp/application.jks',
+        :title       => "app.example.com:#{temp_dir}application.jks",
         :name        => 'app.example.com',
-        :target      => '/tmp/application.jks',
+        :target      => "#{temp_dir}application.jks",
         :password    => 'puppet',
-        :certificate => '/tmp/app.example.com.pem',
-        :private_key => '/tmp/private/app.example.com.pem',
+        :certificate => "#{temp_dir}app.example.com.pem",
+        :private_key => "#{temp_dir}private/app.example.com.pem",
         :provider    => described_class.name
       }
     end
