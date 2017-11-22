@@ -161,6 +161,10 @@ Puppet::Type.newtype(:java_ks) do
     desc "The source keystore password"
   end
 
+  newparam(:source_alias) do
+    desc "The source certificate alias"
+  end
+
   # Where we setup autorequires.
   autorequire(:file) do
     auto_requires = []
