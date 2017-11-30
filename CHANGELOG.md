@@ -1,3 +1,34 @@
+## Supported Release [2.0.0]
+### Summary
+This is a roll up of maintainence changes, features and compatibility updates from throughout the year. This release is backwards incompatible because the Puppet version requirements have now changed with the lower Puppet version boundary jumping from 3.0.0 to 4.7.0 and we have removed vulnerable puppet3 support dependencies.
+
+### Added
+- Debian 9 entry in 'metadata.json'
+- Support for importing pkcs12 files by introducing a function called `import pkcs12`
+- Support for removal of key store file on invalid password by introducing `password_fail_reset`
+
+### Changed
+- Appveyor testing has been enabled
+- General maintainence changes via modulessync
+- Java-ks is now being managed in modulesync as a cross-platform module
+- [FM-6547](https://tickets.puppetlabs.com/browse/FM-6547) - Pin JDK installation package to 8.0.152 for Windows
+- pkcs12 acceptance tests no longer run on SLES
+- CONTRIBUTING.md updates
+- Travis ruby version to 2.4.0 and 2.1.9
+- Upper Puppet boundary to Puppet 6.0.0
+- Lower Puppet boundary to Puppet 4.7.0
+
+### Fixed
+- Unit test failures on Windows
+- Java 9 support
+
+### Removed
+- SLES 10 SP4 entry in 'metadata.json'
+- Debian 6 entry in 'metadata.json'
+- Windows Server 2003 R2 and Windows 8 entry in 'metadata.json'
+- Ubuntu 10.04 and 12.04 entry in 'metadata.json'
+- [FM-6588](https://tickets.puppetlabs.com/browse/FM-6588) - Remove vulnerable puppet3 support dependencies
+
 ## Supported Release 1.6.0
 ### Summary
 The keytool would hang on occasion for unexplained reasons, so keytool executions are wrapped in a timeout that defaults to 120 seconds and is configurable by the `keytool_timeout` parameter.
@@ -167,3 +198,5 @@ Travis-CI support has also been added to improve testing.
 
 
 Fixes an issue with ibm java handling input from stdin on SLES
+
+[2.0.0]:https://github.com/puppetlabs/puppetlabs-java_ks/compare/1.6.0...2.0.0
