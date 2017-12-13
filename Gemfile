@@ -71,16 +71,6 @@ gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])
 gem 'facter', *location_for(ENV['FACTER_GEM_VERSION']) if ENV['FACTER_GEM_VERSION']
 gem 'hiera', *location_for(ENV['HIERA_GEM_VERSION']) if ENV['HIERA_GEM_VERSION']
 
-if Gem::Platform.local.os == 'mingw32'
-  # If we're using a Puppet gem on windows, which handles its own win32-xxx gem dependencies (Pup 3.5.0 and above), set maximum versions
-  # Required due to PUP-6445
-  gem "win32-dir", "<= 0.4.9",        :require => false
-  gem "win32-eventlog", "<= 0.6.5",   :require => false
-  gem "win32-process", "<= 0.7.5",    :require => false
-  gem "win32-security", "<= 0.2.5",   :require => false
-  gem "win32-service", "<= 0.8.8",    :require => false
-end
-
 # Evaluate Gemfile.local if it exists
 if File.exists? "#{__FILE__}.local"
   eval(File.read("#{__FILE__}.local"), binding)
