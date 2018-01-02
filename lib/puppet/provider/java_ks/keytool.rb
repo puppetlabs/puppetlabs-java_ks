@@ -103,6 +103,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-srckeystore', certificate
     ]
 
+    if @resource[:source_alias]
+      cmd.concat([
+        '-srcalias', @resource[:source_alias],
+        '-destalias', @resource[:name]
+      ])
+    end
+
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
     pwfile.close! if pwfile.is_a? Tempfile
