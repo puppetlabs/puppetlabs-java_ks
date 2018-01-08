@@ -14,9 +14,9 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def to_pkcs12(path)
     case private_key_type
     when :rsa
-      pkey = OpenSSL::PKey::RSA.new File.read(private_key), get_password
+      pkey = OpenSSL::PKey::RSA.new File.read(private_key), password
     when :ec
-      pkey = OpenSSL::PKey::EC.new File.read(private_key), get_password
+      pkey = OpenSSL::PKey::EC.new File.read(private_key), password
     end
 
     if chain
@@ -26,26 +26,26 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       chain_certs = get_chain(certificate)
       x509_cert = chain_certs.shift
     end
-    pkcs12 = OpenSSL::PKCS12.create(get_password, @resource[:name], pkey, x509_cert, chain_certs)
-    File.open(path, "wb") { |f| f.print pkcs12.to_der }
+    pkcs12 = OpenSSL::PKCS12.create(password, @resource[:name], pkey, x509_cert, chain_certs)
+    File.open(path, 'wb') { |f| f.print pkcs12.to_der }
   end
 
   # Keytool can only import a jceks keystore if the format is der.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_der(path)
     x509_cert = OpenSSL::X509::Certificate.new File.read certificate
-    File.open(path, "wb") { |f| f.print x509_cert.to_der }
+    File.open(path, 'wb') { |f| f.print x509_cert.to_der }
   end
 
   def get_chain(path)
-    File.read(path).scan(/-----BEGIN [^\n]*CERTIFICATE.*?-----END [^\n]*CERTIFICATE-----/m).map {|cert| OpenSSL::X509::Certificate.new cert}
+    File.read(path).scan(%r{-----BEGIN [^\n]*CERTIFICATE.*?-----END [^\n]*CERTIFICATE-----}m).map { |cert| OpenSSL::X509::Certificate.new cert }
   end
 
-  def get_password
+  def password
     if @resource[:password_file].nil?
       @resource[:password]
     else
-      file = File.open(@resource[:password_file], "r")
+      file = File.open(@resource[:password_file], 'r')
       pword = file.read
       file.close
       pword.chomp
@@ -53,23 +53,21 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def password_file
-    pword = get_password
+    pword = password
     source_pword = sourcepassword
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
-    if File.exists?(@resource[:target]) and not File.zero?(@resource[:target])
-      if !source_pword.nil?
-        contents = "#{pword}\n#{source_pword}"
-      else
-        contents = "#{pword}\n#{pword}"
-      end
-    else
-      if !source_pword.nil?
-        contents = "#{pword}\n#{pword}\n#{source_pword}"
-      else
-        contents = "#{pword}\n#{pword}\n#{pword}"
-      end
-    end
+    contents = if File.exist?(@resource[:target]) && !File.zero?(@resource[:target])
+                 if !source_pword.nil?
+                   "#{pword}\n#{source_pword}"
+                 else
+                   "#{pword}\n#{pword}"
+                 end
+               elsif !source_pword.nil?
+                 "#{pword}\n#{pword}\n#{source_pword}"
+               else
+                 "#{pword}\n#{pword}\n#{pword}"
+               end
     tmpfile.write(contents)
     tmpfile.flush
     tmpfile
@@ -80,14 +78,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     tmppk12 = Tempfile.new("#{@resource[:name]}.")
     to_pkcs12(tmppk12.path)
     cmd = [
-        command_keytool,
-        '-importkeystore', '-srcstoretype', 'PKCS12',
-        '-destkeystore', @resource[:target],
-        '-srckeystore', tmppk12.path,
-        '-alias', @resource[:name]
+      command_keytool,
+      '-importkeystore', '-srcstoretype', 'PKCS12',
+      '-destkeystore', @resource[:target],
+      '-srckeystore', tmppk12.path,
+      '-alias', @resource[:name]
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-    cmd += [ '-destkeypass', @resource[:destkeypass] ] unless @resource[:destkeypass].nil?
+    cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
 
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
@@ -97,23 +95,22 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def import_pkcs12
     cmd = [
-        command_keytool,
-        '-importkeystore', '-srcstoretype', 'PKCS12',
-        '-destkeystore', @resource[:target],
-        '-srckeystore', certificate
+      command_keytool,
+      '-importkeystore', '-srcstoretype', 'PKCS12',
+      '-destkeystore', @resource[:target],
+      '-srckeystore', certificate
     ]
 
     if @resource[:source_alias]
       cmd.concat([
-        '-srcalias', @resource[:source_alias],
-        '-destalias', @resource[:name]
-      ])
+                   '-srcalias', @resource[:source_alias],
+                   '-destalias', @resource[:name]
+                 ])
     end
 
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
     pwfile.close! if pwfile.is_a? Tempfile
-
   end
 
   def import_jceks
@@ -128,7 +125,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-storetype', storetype
     ]
     cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
-    cmd += [ '-destkeypass', @resource[:destkeypass] ] unless @resource[:destkeypass].nil?
+    cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
 
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
@@ -137,19 +134,19 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def exists?
     cmd = [
-        command_keytool,
-        '-list',
-        '-keystore', @resource[:target],
-        '-alias', @resource[:name]
+      command_keytool,
+      '-list',
+      '-keystore', @resource[:target],
+      '-alias', @resource[:name]
     ]
-    cmd += [ '-storetype', storetype ] if storetype == "jceks"
+    cmd += ['-storetype', storetype] if storetype == 'jceks'
     begin
       tmpfile = password_file
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       return true
     rescue => e
-      if e.message =~ /password was incorrect/i
+      if e.message =~ %r{password was incorrect}i
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
         if @resource[:password_fail_reset] == :true
           File.delete(@resource[:target])
@@ -163,59 +160,59 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def latest
     # The certificate file may not exist during a puppet noop run as it's managed by puppet.
     # Return value must be different to provider.current to signify a possible trigger event.
-    if Puppet[:noop] and !File.exists?(certificate)
-      return 'latest'
+    if Puppet[:noop] && !File.exist?(certificate)
+      'latest'
     elsif storetype == :pkcs12
       cmd = [
-          command_keytool,
-          '-list', '-keystore', certificate,
-          '-storetype', 'PKCS12', '-storepass', sourcepassword
+        command_keytool,
+        '-list', '-keystore', certificate,
+        '-storetype', 'PKCS12', '-storepass', sourcepassword
       ]
       output = run_command(cmd)
-      latest = output.scan(/\(SHA1\):\s+(.*)/)[0][0]
-      return latest
+      latest = output.scan(%r{\(SHA1\):\s+(.*)})[0][0]
+      latest
     else
       cmd = [
-          command_keytool,
-          '-v', '-printcert', '-file', certificate
+        command_keytool,
+        '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
-      latest = output.scan(/SHA1:\s+(.*)/)[0][0]
-      return latest
+      latest = output.scan(%r{SHA1:\s+(.*)})[0][0]
+      latest
     end
   end
 
   # Reading the fingerprint of the certificate currently in the keystore.
   def current
     # The keystore file may not exist during a puppet noop run as it's managed by puppet.
-    if Puppet[:noop] and !File.exists?(@resource[:target])
-      return 'current'
+    if Puppet[:noop] && !File.exist?(@resource[:target])
+      'current'
     else
       cmd = [
-          command_keytool,
-          '-list', '-v',
-          '-keystore', @resource[:target],
-          '-alias', @resource[:name]
+        command_keytool,
+        '-list', '-v',
+        '-keystore', @resource[:target],
+        '-alias', @resource[:name]
       ]
-      cmd += [ '-storetype', storetype ] if storetype == "jceks"
+      cmd += ['-storetype', storetype] if storetype == 'jceks'
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      if output.include? 'MD5:'
-        current = output.scan(/Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)/)[0][0]
-      else
-        current = output.scan(/Certificate fingerprints:\n\s+SHA1: (.*)/)[0][0]
-      end
-      return current
+      current = if output.include? 'MD5:'
+                  output.scan(%r{Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)})[0][0]
+                else
+                  output.scan(%r{Certificate fingerprints:\n\s+SHA1: (.*)})[0][0]
+                end
+      current
     end
   end
 
   # Determine if we need to do an import of a private_key and certificate pair
   # or just add a signed certificate, then do it.
   def create
-    if !certificate.nil? and !private_key.nil?
+    if !certificate.nil? && !private_key.nil?
       import_ks
-    elsif certificate.nil? and !private_key.nil?
+    elsif certificate.nil? && !private_key.nil?
       raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
     elsif storetype == :jceks
       import_jceks
@@ -223,11 +220,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       import_pkcs12
     else
       cmd = [
-          command_keytool,
-          '-importcert', '-noprompt',
-          '-alias', @resource[:name],
-          '-file', certificate,
-          '-keystore', @resource[:target]
+        command_keytool,
+        '-importcert', '-noprompt',
+        '-alias', @resource[:name],
+        '-file', certificate,
+        '-keystore', @resource[:target]
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       tmpfile = password_file
@@ -238,10 +235,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   def destroy
     cmd = [
-        command_keytool,
-        '-delete',
-        '-alias', @resource[:name],
-        '-keystore', @resource[:target]
+      command_keytool,
+      '-delete',
+      '-alias', @resource[:name],
+      '-keystore', @resource[:target]
     ]
     tmpfile = password_file
     run_command(cmd, false, tmpfile)
@@ -278,30 +275,29 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     @resource[:storetype]
   end
 
-  def run_command(cmd, target=false, stdinfile=false, env={})
-
+  def run_command(cmd, target = false, stdinfile = false, env = {})
     env[:PATH] = @resource[:path].join(File::PATH_SEPARATOR) if resource[:path]
 
     # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
     # but we need this to work on 2.7.x too.
-    if Puppet::Util::Execution.respond_to?(:execute)
-      exec_method = Puppet::Util::Execution.method(:execute)
-    else
-      exec_method = Puppet::Util.method(:execute)
-    end
+    exec_method = if Puppet::Util::Execution.respond_to?(:execute)
+                    Puppet::Util::Execution.method(:execute)
+                  else
+                    Puppet::Util.method(:execute)
+                  end
 
-    if Puppet::Util::Execution.respond_to?(:withenv)
-      withenv = Puppet::Util::Execution.method(:withenv)
-    else
-      withenv = Puppet::Util.method(:withenv)
-    end
+    withenv = if Puppet::Util::Execution.respond_to?(:withenv)
+                Puppet::Util::Execution.method(:withenv)
+              else
+                Puppet::Util.method(:withenv)
+              end
 
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
     # owner and group, temporarily raise the umask, and delete the empty file.
-    if target and (File.exists?(target) and File.zero?(target))
+    if target && (File.exist?(target) && File.zero?(target))
       stat = File.stat(target)
-      umask = File.umask(0077)
+      umask = File.umask(0o077)
       File.delete(target)
     end
 
@@ -312,8 +308,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # From a best practice standpoint the keystore should be protected by file
     # permissions and not just the passphrase so "making it work on SLES"
     # trumps.
-    if Facter.value('osfamily') == 'Suse' and @resource[:password]
-      cmd_to_run = cmd.is_a?(String) ? cmd.split(/\s/).first : cmd.first
+    if Facter.value('osfamily') == 'Suse' && @resource[:password]
+      cmd_to_run = cmd.is_a?(String) ? cmd.split(%r{\s}).first : cmd.first
       if cmd_to_run == command_keytool
         cmd << '-srcstorepass' << @resource[:password]
         cmd << '-deststorepass' << @resource[:password]
@@ -321,13 +317,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
 
     # Now run the command
-    options = {:failonfail => true, :combine => true}
+    options = { failonfail: true, combine: true }
     output = nil
     begin
-      Timeout::timeout(@resource[:keytool_timeout], Timeout::Error) do
+      Timeout.timeout(@resource[:keytool_timeout], Timeout::Error) do
         output = if stdinfile
                    withenv.call(env) do
-                     exec_method.call(cmd, options.merge(:stdinfile => stdinfile.path))
+                     exec_method.call(cmd, options.merge(stdinfile: stdinfile.path))
                    end
                  else
                    withenv.call(env) do
@@ -336,13 +332,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
                  end
       end
     rescue Timeout::Error
-      raise Puppet::Error.new("Timed out waiting for '#{@resource[:name]}' to run keytool")
+      raise Puppet::Error, "Timed out waiting for '#{@resource[:name]}' to run keytool"
     end
 
     # for previously empty files, restore the umask, mode, owner and group.
     # The funky double-take check is because on Suse defined? doesn't seem
     # to behave quite the same as on Debian, RedHat
-    if target and (defined? stat and stat)
+    if target and (defined? stat and stat) # rubocop:disable Style/AndOr : Changing 'and' to '&&' causes test failures.
       File.umask(umask)
       # Need to change group ownership before mode to prevent making the file
       # accessible to the wrong group.
@@ -350,7 +346,6 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       File.chmod(stat.mode, target)
     end
 
-    return output
+    output
   end
-
 end

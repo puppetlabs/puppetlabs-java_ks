@@ -1,8 +1,9 @@
 require 'spec_helper_acceptance'
 
-describe 'unsupported distributions and OSes', :if => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'unsupported distributions and OSes', if: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
-  it 'should fail' do
+  it 'fails' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
     pp = <<-EOS
     java_ks { 'puppetca:keystore':
       ensure       => latest,
@@ -13,6 +14,6 @@ describe 'unsupported distributions and OSes', :if => UNSUPPORTED_PLATFORMS.incl
       path         => #{@resource_path},
     }
     EOS
-    expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/unsupported os/)
+    expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{unsupported os})
   end
 end
