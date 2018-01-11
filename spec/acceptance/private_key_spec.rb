@@ -1,11 +1,12 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java private keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}private_key.ts"
 
-  it 'creates a private key' do
-    pp = <<-EOS
+  it 'creates a private key' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    pp = <<-MANIFEST
       java_ks { 'broker.example.com:#{target}':
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
@@ -13,17 +14,26 @@ describe 'managing java private keys', :unless => UNSUPPORTED_PLATFORMS.include?
         password     => 'puppet',
         path         => #{@resource_path},
       }
-    EOS
+    MANIFEST
 
-    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, catch_failures: true)
   end
 
-  it 'verifies the private key' do
+  expectations = [
+    %r{Alias name: broker\.example\.com},
+    %r{Entry type: (keyEntry|PrivateKeyEntry)},
+    %r{CN=Test CA},
+  ]
+  it 'verifies the private key #zero' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
-      expect(r.stdout).to match(/Alias name: broker\.example\.com/)
-      expect(r.stdout).to match(/Entry type: (keyEntry|PrivateKeyEntry)/)
-      expect(r.stdout).to match(/CN=Test CA/)
+    end
+  end
+  it 'verifies the private key #expected' do
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+      expectations.each do |expect|
+        expect(r.stdout).to match(expect)
+      end
     end
   end
 end

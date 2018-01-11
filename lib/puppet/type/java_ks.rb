@@ -158,11 +158,11 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   newparam(:source_password) do
-    desc "The source keystore password"
+    desc 'The source keystore password'
   end
 
   newparam(:source_alias) do
-    desc "The source certificate alias"
+    desc 'The source certificate alias'
   end
 
   # Where we setup autorequires.
@@ -215,8 +215,8 @@ Puppet::Type.newtype(:java_ks) do
       raise Puppet::Error, "You must pass one of 'password' or 'password_file'."
     end
 
-    if value(:storetype) == :pkcs12 and value(:source_password).nil?
-      self.fail "You must provide 'source_password' when using a 'pkcs12' storetype."
+    if value(:storetype) == :pkcs12 && value(:source_password).nil?
+      fail "You must provide 'source_password' when using a 'pkcs12' storetype." # rubocop:disable Style/SignalException : Associated test fails if 'raise' is used
     end
   end
 end

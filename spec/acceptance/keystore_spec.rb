@@ -1,12 +1,13 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}keystore.ks"
 
   describe 'basic tests' do
-    it 'should create a keystore' do
-      pp = <<-EOS
+    it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+      pp_one = <<-MANIFEST
         java_ks { 'puppetca:keystore':
           ensure       => latest,
           certificate  => "#{@temp_dir}ca.pem",
@@ -15,23 +16,32 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
           trustcacerts => true,
           path         => #{@resource_path},
         }
-      EOS
+      MANIFEST
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_manifest(pp_one, catch_failures: true)
+      apply_manifest(pp_one, catch_changes: true)
     end
 
-    it 'verifies the keystore' do
+    expectations = [
+      %r{Your keystore contains 1 entry},
+      %r{Alias name: puppetca},
+      %r{CN=Test CA},
+    ]
+    it 'verifies the keystore #zero' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-        expect(r.stdout).to match(/Your keystore contains 1 entry/)
-        expect(r.stdout).to match(/Alias name: puppetca/)
-        expect(r.stdout).to match(/CN=Test CA/)
+      end
+    end
+    it 'verifies the keytore #expected' do
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
       end
     end
 
-    it 'uses password_file' do
-      pp = <<-EOS
+    it 'uses password_file' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+      pp_two = <<-MANIFEST
         file { '#{@temp_dir}password':
           ensure  => file,
           content => 'puppet',
@@ -45,16 +55,16 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
           path          => #{@resource_path},
           require       => File['#{@temp_dir}password']
         }
-      EOS
+      MANIFEST
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_manifest(pp_two, catch_failures: true)
+      apply_manifest(pp_two, catch_changes: true)
     end
   end
 
   describe 'storetype' do
-    it 'should create a keystore' do
-      pp = <<-EOS
+    it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+      pp = <<-MANIFEST
         java_ks { 'puppetca:keystore':
           ensure       => latest,
           certificate  => "#{@temp_dir}ca.pem",
@@ -64,20 +74,28 @@ describe 'managing java keystores', :unless => UNSUPPORTED_PLATFORMS.include?(fa
           path         => #{@resource_path},
           storetype    => 'jceks',
         }
-      EOS
+      MANIFEST
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
-    it 'verifies the keystore' do
+    expectations = [
+      %r{Your keystore contains 2 entries},
+      %r{Alias name: puppetca},
+      %r{CN=Test CA},
+    ]
+    it 'verifies the keystore #zero' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-        expect(r.stdout).to match(/Your keystore contains 2 entries/)
-        expect(r.stdout).to match(/Alias name: puppetca/)
-        expect(r.stdout).to match(/CN=Test CA/)
+      end
+    end
+    it 'verifies the keytore #expected' do
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
       end
     end
   end
-
 end

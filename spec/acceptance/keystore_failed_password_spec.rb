@@ -1,11 +1,12 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores without a correct password', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java keystores without a correct password', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}keystore_failed_password.ts"
 
-  it 'creates a keystore' do
-    pp = <<-EOS
+  it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    pp_one = <<-MANIFEST
       java_ks { 'puppetca:keystore':
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
@@ -14,21 +15,32 @@ describe 'managing java keystores without a correct password', :unless => UNSUPP
         trustcacerts => true,
         path         => #{@resource_path},
     }
-    EOS
-    apply_manifest(pp, :catch_failures => true)
+    MANIFEST
+
+    apply_manifest(pp_one, catch_failures: true)
   end
 
-  it 'verifies the keystore' do
+  expectations = [
+    %r{Your keystore contains 1 entry},
+    %r{Alias name: puppetca},
+    %r{CN=Test CA},
+  ]
+  it 'verifies the keystore #zero' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass coraline") do |r|
       expect(r.exit_code).to be_zero
-      expect(r.stdout).to match(/Your keystore contains 1 entry/)
-      expect(r.stdout).to match(/Alias name: puppetca/)
-      expect(r.stdout).to match(/CN=Test CA/)
+    end
+  end
+  it 'verifies the keytore #expected' do
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass coraline") do |r|
+      expectations.each do |expect|
+        expect(r.stdout).to match(expect)
+      end
     end
   end
 
-  it 'recreates a keystore if password fails' do
-    pp = <<-EOS
+  it 'recreates a keystore if password fails' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    pp_two = <<-MANIFEST
+
       java_ks { 'puppetca:keystore':
         ensure              => #{@ensure_ks},
         certificate         => "#{@temp_dir}ca.pem",
@@ -38,16 +50,21 @@ describe 'managing java keystores without a correct password', :unless => UNSUPP
         trustcacerts        => true,
         path                => #{@resource_path},
     }
-    EOS
-    apply_manifest(pp, :catch_failures => true)
+    MANIFEST
+
+    apply_manifest(pp_two, catch_failures: true)
   end
 
-  it 'verifies the keystore' do
+  it 'verifies the keystore again #zero' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
       expect(r.exit_code).to be_zero
-      expect(r.stdout).to match(/Your keystore contains 1 entry/)
-      expect(r.stdout).to match(/Alias name: puppetca/)
-      expect(r.stdout).to match(/CN=Test CA/)
+    end
+  end
+  it 'verifies the keytore again #expected' do
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
+      expectations.each do |expect|
+        expect(r.stdout).to match(expect)
+      end
     end
   end
 end

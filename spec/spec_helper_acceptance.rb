@@ -3,13 +3,13 @@ require 'beaker-rspec/helpers/serverspec'
 require 'beaker/puppet_install_helper'
 
 run_puppet_install_helper
-install_ca_certs_on default if default['platform'] =~ /windows/i
+install_ca_certs_on default if default['platform'] =~ %r{windows}i
 
-UNSUPPORTED_PLATFORMS = []
+UNSUPPORTED_PLATFORMS = [].freeze
 
 def create_keys_for_test(host)
   # Generate private key and CA for keystore
-  if host['platform'] =~ /windows/i
+  if host['platform'] =~ %r{windows}i
     temp_dir = 'C:\\tmp\\'
     on host, 'mkdir /cygdrive/c/tmp'
   else
@@ -76,7 +76,7 @@ def create_certs(host, tmpdir)
   leaf.not_after = leaf.not_before + 360
   leaf.sign(key_chain2, OpenSSL::Digest::SHA256.new)
 
-  pkcs12 = OpenSSL::PKCS12.create("pkcs12pass", "Leaf Cert", key_leaf, leaf, [chain2, chain])
+  pkcs12 = OpenSSL::PKCS12.create('pkcs12pass', 'Leaf Cert', key_leaf, leaf, [chain2, chain])
 
   create_remote_file(host, "#{tmpdir}/privkey.pem", key.to_pem)
   create_remote_file(host, "#{tmpdir}/ca.pem", ca.to_pem)
@@ -87,7 +87,6 @@ def create_certs(host, tmpdir)
   create_remote_file(host, "#{tmpdir}/leafchain.pem", leaf.to_pem + chain2.to_pem + chain.to_pem)
   create_remote_file(host, "#{tmpdir}/leaf.p12", pkcs12.to_der)
 end
-
 
 RSpec.configure do |c|
   # Project root
@@ -101,49 +100,51 @@ RSpec.configure do |c|
     # Install module and dependencies
     hosts.each do |host|
       create_keys_for_test(host)
-      copy_module_to(host, :source => proj_root, :module_name => 'java_ks')
-      #install java if windows
-      if host['platform'] =~ /windows/i
+      copy_module_to(host, source: proj_root, module_name: 'java_ks')
+      # install java if windows
+      if host['platform'] =~ %r{windows}i
         on host, puppet('module install puppetlabs-chocolatey')
-    pp = <<-EOS
+        # rubocop:disable Layout/IndentHeredoc : Indent must be as it is
+        pp_one = <<-MANIFEST
 include chocolatey
 package { 'jdk8':
   ensure   => '8.0.152',
   provider => 'chocolatey'
 }
-    EOS
-        apply_manifest_on(host, pp)
+    MANIFEST
+        apply_manifest_on(host, pp_one)
       else
-        on host, puppet('module', 'install', 'puppetlabs-java'), {:acceptable_exit_codes => [0, 1]}
-    pp = <<-EOS
+        on host, puppet('module', 'install', 'puppetlabs-java'), acceptable_exit_codes: [0, 1]
+        pp_two = <<-MANIFEST
 class { 'java': }
-    EOS
-        apply_manifest_on(host, pp)
+    MANIFEST
+        # rubocop:enable Layout/IndentHeredoc : Indent must be as it is
+        apply_manifest_on(host, pp_two)
       end
     end
   end
 end
 
 RSpec.shared_context 'common variables' do
-  before {
+  before(:each) do
     java_major, java_minor = (ENV['JAVA_VERSION'] || '8u152').split('u')
     @ensure_ks = 'latest'
-    @resource_path = "undef"
+    @resource_path = 'undef'
     @target_dir = '/etc/'
     @temp_dir = '/tmp/'
     case fact('osfamily')
-      when "Solaris"
-        @keytool_path = '/usr/java/bin/'
-        @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
-      when "AIX"
-        @keytool_path = '/usr/java6/bin/'
-        @resource_path = "['/usr/java6/bin/','/usr/bin/']"
-      when 'windows'
-        @ensure_ks = 'present'
-        @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
-        @resource_path = "['C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
-        @target_dir = 'c:/'
-        @temp_dir = 'C:/tmp/'
+    when 'Solaris'
+      @keytool_path = '/usr/java/bin/'
+      @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
+    when 'AIX'
+      @keytool_path = '/usr/java6/bin/'
+      @resource_path = "['/usr/java6/bin/','/usr/bin/']"
+    when 'windows'
+      @ensure_ks = 'present'
+      @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
+      @resource_path = "['C:/Program\ Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
+      @target_dir = 'c:/'
+      @temp_dir = 'C:/tmp/'
     end
-  }
+  end
 end
