@@ -156,6 +156,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     end
   end
 
+  # Extract's the fingerprint of a given output
+  def extract_fingerprint(output)
+    return output.scan(%r{Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)})[0][0] if output.include? 'MD5:'
+    output.scan(%r{Certificate fingerprints:\n\s+SHA1: (.*)})[0][0]
+  end
+
   # Reading the fingerprint of the certificate on disk.
   def latest
     # The certificate file may not exist during a puppet noop run as it's managed by puppet.
@@ -164,12 +170,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       'latest'
     elsif storetype == :pkcs12
       cmd = [
-        command_keytool,
+        command_keytool, '-v',
         '-list', '-keystore', certificate,
         '-storetype', 'PKCS12', '-storepass', sourcepassword
       ]
       output = run_command(cmd)
-      latest = output.scan(%r{\(SHA1\):\s+(.*)})[0][0]
+      latest = extract_fingerprint(output)
       latest
     else
       cmd = [
@@ -198,11 +204,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = if output.include? 'MD5:'
-                  output.scan(%r{Certificate fingerprints:\n\s+MD5:  .*\n\s+SHA1: (.*)})[0][0]
-                else
-                  output.scan(%r{Certificate fingerprints:\n\s+SHA1: (.*)})[0][0]
-                end
+      current = extract_fingerprint(output)
       current
     end
   end
