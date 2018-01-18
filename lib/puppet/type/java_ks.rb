@@ -2,6 +2,9 @@ Puppet::Type.newtype(:java_ks) do
   @doc = 'Manages the entries in a java keystore, and uses composite namevars to
   accomplish the same alias spread across multiple target keystores.'
 
+  feature :refreshable, "The provider can refresh the keystore",
+    :methods => [:update]
+
   ensurable do
     desc 'Has three states: present, absent, and latest.  Latest
       will compare the on disk SHA1 fingerprint of the certificate to that
@@ -177,6 +180,10 @@ Puppet::Type.newtype(:java_ks) do
       auto_requires << ::File.dirname(@parameters[:target].value)
     end
     auto_requires
+  end
+
+  def refresh
+    provider.update
   end
 
   # Our title_patterns method for mapping titles to namevars for supporting

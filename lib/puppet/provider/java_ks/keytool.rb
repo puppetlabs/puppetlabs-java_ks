@@ -9,6 +9,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     'keytool'
   end
 
+  has_feature :refreshable
+
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
   # importing a keystore is used to add private_key and certifcate pairs.
   def to_pkcs12(path)
