@@ -1,3 +1,16 @@
+## Supported Release [2.1.0]
+### Summary
+The main purpose of this module is to release Rubocop changes, with some other minor updates included.
+
+### Added
+- Support added for the specifying of source cert alias.
+
+### Changed
+- The module has been changed to comply with the set rubocop guidelines.
+- JDK updated to 8u161.
+- Fingerprint extraction in keytool.rb has been improved upon.
+- Modulesync changes.
+
 ## Supported Release [2.0.0]
 ### Summary
 This is a roll up of maintainence changes, features and compatibility updates from throughout the year. This release is backwards incompatible because the Puppet version requirements have now changed with the lower Puppet version boundary jumping from 3.0.0 to 4.7.0 and we have removed vulnerable puppet3 support dependencies.
@@ -199,4 +212,5 @@ Travis-CI support has also been added to improve testing.
 
 Fixes an issue with ibm java handling input from stdin on SLES
 
+[2.1.0]:https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.0.0...2.1.0
 [2.0.0]:https://github.com/puppetlabs/puppetlabs-java_ks/compare/1.6.0...2.0.0
