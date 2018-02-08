@@ -5,7 +5,7 @@ describe 'managing java truststores without a correct password', unless: UNSUPPO
   include_context 'common variables'
   target = "#{@target_dir}truststore_failed_password.ts"
 
-  it 'creates a truststore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'creates a truststore' do
     pp = <<-MANIFEST
       java_ks { 'puppetca:truststore':
         ensure       => latest,
@@ -37,7 +37,7 @@ describe 'managing java truststores without a correct password', unless: UNSUPPO
     end
   end
 
-  it 'recreates a truststore if password fails' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'recreates a truststore if password fails' do
     pp = <<-MANIFEST
       java_ks { 'puppetca:truststore':
         ensure              => latest,

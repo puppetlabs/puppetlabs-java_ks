@@ -11,24 +11,31 @@ init:
 environment:
   PUPPET_GEM_VERSION: ~> 4.0
   matrix:
-    -
-      RUBY_VERSION: 24-x64
+    - RUBY_VERSION: 24-x64
       CHECK: syntax lint
-    -
-      RUBY_VERSION: 24-x64
+    - RUBY_VERSION: 24-x64
       CHECK: metadata_lint
-    -
-      RUBY_VERSION: 24-x64
+    - RUBY_VERSION: 24-x64
       CHECK: rubocop
-    -
+    - RUBY_VERSION: 24-x64
+      CHECK: spec
+    - RUBY_VERSION: 21-x64
+      CHECK: spec
+    - PUPPET_GEM_VERSION: ~> 5.0
       RUBY_VERSION: 24-x64
       CHECK: spec
-    -
-      RUBY_VERSION: 21-x64
+    - RUBY_VERSION: 24
       CHECK: spec
-    -
-      PUPPET_GEM_VERSION: ~> 5.0
-      RUBY_VER: 24-x64
+    - RUBY_VERSION: 21
+      CHECK: spec
+    - PUPPET_GEM_VERSION: ~> 5.0
+      RUBY_VERSION: 24
+      CHECK: spec
+    - PUPPET_GEM_VERSION: ~> 5.0
+      RUBY_VERSION: 21
+      CHECK: spec
+    - PUPPET_GEM_VERSION: ~> 5.0
+      RUBY_VERSION: 21-x64
       CHECK: spec
 matrix:
   fast_finish: true

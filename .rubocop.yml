@@ -63,6 +63,7 @@ Style/TrailingCommaInLiteral:
 Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
+inherit_from: ".rubocop_todo.yml"
 Style/CollectionMethods:
   Enabled: true
 Style/MethodCalledOnDoEndBlock:

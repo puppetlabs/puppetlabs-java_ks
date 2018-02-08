@@ -5,7 +5,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(fac
   include_context 'common variables'
   target = "#{@target_dir}truststore.ts"
 
-  it 'creates a truststore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'creates a truststore' do
     pp = <<-EOS
       java_ks { 'puppetca:truststore':
         ensure       => #{@ensure_ks},
