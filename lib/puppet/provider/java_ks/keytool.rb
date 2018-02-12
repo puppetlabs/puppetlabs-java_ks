@@ -110,8 +110,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
     if @resource[:destkeypass]
       cmd.concat([
-        '-destkeypass', @resource[:destkeypass]
-      ])
+                   '-destkeypass', @resource[:destkeypass]
+                 ])
     end
 
     pwfile = password_file

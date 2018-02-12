@@ -143,5 +143,4 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
       end
     end
   end # context 'with a destkeypass'
-
 end
