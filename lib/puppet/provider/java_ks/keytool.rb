@@ -108,6 +108,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
                  ])
     end
 
+    if @resource[:destkeypass]
+      cmd.concat([
+                   '-destkeypass', @resource[:destkeypass]
+                 ])
+    end
+
     pwfile = password_file
     run_command(cmd, @resource[:target], pwfile)
     pwfile.close! if pwfile.is_a? Tempfile
