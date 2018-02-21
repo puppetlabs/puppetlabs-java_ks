@@ -112,11 +112,10 @@ This password is used to protect the keystore. If private keys are also protecte
 Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef.
 
 #### `password_fail_reset`
-
 If the supplied password does not succeed in unlocking the keystore file, then **delete** the keystore file and create a new one. Default: `false`
 
 ##### `destkeypass`
-The password you want to set to protect the key in the keystore.
+The password you want to set to protect the key in the keystore. Can be used with `pkcs12` stores to change the source password.
 
 ##### `path`
 Used for command (keytool, openssl) execution. Valid options: array or file path separated list (for example : in linux). Default: undef.
@@ -125,7 +124,6 @@ Used for command (keytool, openssl) execution. Valid options: array or file path
 Sets a private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 ##### `private_key_type`
-
 Sets the type of the private key. Usually this is RSA but Elliptic Curve (EC) keys are also supported. Valid options: `rsa` and `ec`. Default: `rsa`.
 
 ##### `target`
@@ -138,8 +136,7 @@ Certificate authorities input into a keystore aren’t trusted by default, so if
 Timeout in seconds for all keytool commands. Can be disabled by passing 0. Default: 120
 
 ##### `storetype`
-
-The storetype parameter allows you to use 'jceks' format if desired.
+The storetype parameter allows you to use 'jceks' or 'pkcs12' format certificates if desired.
 
 ```puppet
 java_ks { 'puppetca:/opt/puppet/truststore.jceks':
@@ -150,6 +147,12 @@ java_ks { 'puppetca:/opt/puppet/truststore.jceks':
   trustcacerts => true,
 }
 ```
+
+##### `source_alias`
+The source certificate alias to import. Only supported by `pkcs12` certs.
+
+##### `source_password`
+The source keystore password. Required if using `storetype => pkcs12`.
 
 ## Limitations
 
