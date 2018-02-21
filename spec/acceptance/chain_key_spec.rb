@@ -6,7 +6,7 @@ describe 'managing combined java chain keys' do
     include_context 'common variables'
     target = "#{@target_dir}chain_combined_key.ks"
 
-    it 'creates a private key with chain certs' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a private key with chain certs' do
       pp = <<-MANIFEST
         java_ks { 'broker.example.com:#{target}':
           ensure       => latest,
@@ -44,7 +44,7 @@ describe 'managing combined java chain keys' do
     include_context 'common variables'
     let(:target) { "#{@target_dir}chain_key.ks" }
 
-    it 'creates a private key with chain certs' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a private key with chain certs' do
       pp = <<-MANIFEST
         java_ks { 'broker.example.com:#{target}':
           ensure       => latest,
@@ -83,7 +83,7 @@ describe 'managing combined java chain keys' do
     include_context 'common variables'
     target = "#{@target_dir}noop_chain_key.ks"
 
-    it 'does not create a new keystore in noop' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'does not create a new keystore in noop' do
       pp = <<-MANIFEST
         $filenames = ["#{@temp_dir}noop_ca.pem",
                       "#{@temp_dir}noop_chain.pem",
@@ -124,7 +124,7 @@ describe 'managing combined java chain keys' do
     include_context 'common variables'
     target = "#{@target_dir}noop2_chain_key.ks"
 
-    it 'does not create a new keystore in noop' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'does not create a new keystore in noop' do
       pp = <<-MANIFEST
         java_ks { 'broker.example.com:#{target}':
           ensure       => latest,

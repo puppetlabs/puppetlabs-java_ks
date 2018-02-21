@@ -193,7 +193,7 @@ describe Puppet::Type.type(:java_ks) do
     end
 
     [:private_key, :certificate].each do |file|
-      it "should autorequire for #{file} #file" do # rubocop:disable RSpec/ExampleLength
+      it "should autorequire for #{file} #file" do
         test_jks = Puppet::Type.type(:java_ks).new(jks_resource)
         test_file = Puppet::Type.type(:file).new(title: jks_resource[file])
 
@@ -204,7 +204,7 @@ describe Puppet::Type.type(:java_ks) do
         rel = test_jks.autorequire[0]
         expect(rel.source.ref).to eq(test_file.ref)
       end
-      it "should autorequire for #{file} #jks" do # rubocop:disable RSpec/ExampleLength
+      it "should autorequire for #{file} #jks" do
         test_jks = Puppet::Type.type(:java_ks).new(jks_resource)
         test_file = Puppet::Type.type(:file).new(title: jks_resource[file])
 
@@ -217,7 +217,7 @@ describe Puppet::Type.type(:java_ks) do
       end
     end
 
-    it 'autorequires for the :target directory #file' do # rubocop:disable RSpec/ExampleLength
+    it 'autorequires for the :target directory #file' do
       test_jks = Puppet::Type.type(:java_ks).new(jks_resource)
       test_file = Puppet::Type.type(:file).new(title: ::File.dirname(jks_resource[:target]))
 
@@ -228,7 +228,7 @@ describe Puppet::Type.type(:java_ks) do
       rel = test_jks.autorequire[0]
       expect(rel.source.ref).to eq(test_file.ref)
     end
-    it 'autorequires for the :target directory #jks' do # rubocop:disable RSpec/ExampleLength
+    it 'autorequires for the :target directory #jks' do
       test_jks = Puppet::Type.type(:java_ks).new(jks_resource)
       test_file = Puppet::Type.type(:file).new(title: ::File.dirname(jks_resource[:target]))
 
