@@ -17,10 +17,7 @@ appveyor.yml:
       RUBY_VERSION: 24
       CHECK: spec
     - PUPPET_GEM_VERSION: ~> 5.0
-      RUBY_VERSION: 21
-      CHECK: spec
-    - PUPPET_GEM_VERSION: ~> 5.0
-      RUBY_VERSION: 21-x64
+      RUBY_VERSION: 24-x64
       CHECK: spec
 
 .travis.yml:
@@ -67,3 +64,7 @@ Gemfile:
 Rakefile:
   requires:
     - puppet_blacksmith/rake_tasks
+
+.rubocop.yml:
+  default_configs:
+    inherit_from: .rubocop_todo.yml

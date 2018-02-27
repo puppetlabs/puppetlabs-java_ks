@@ -6,7 +6,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
   target = "#{@target_dir}keystore.ks"
 
   describe 'basic tests' do
-    it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a keystore' do
       pp_one = <<-MANIFEST
         java_ks { 'puppetca:keystore':
           ensure       => latest,
@@ -40,7 +40,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
       end
     end
 
-    it 'uses password_file' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'uses password_file' do
       pp_two = <<-MANIFEST
         file { '#{@temp_dir}password':
           ensure  => file,
@@ -63,7 +63,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
   end
 
   describe 'storetype' do
-    it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a keystore' do
       pp = <<-MANIFEST
         java_ks { 'puppetca:keystore':
           ensure       => latest,

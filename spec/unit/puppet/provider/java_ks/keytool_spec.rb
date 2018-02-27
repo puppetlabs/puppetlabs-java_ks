@@ -1,4 +1,4 @@
-#!/usr/bin/env rspec # rubocop:disable Lint/ScriptPermission
+#!/usr/bin/env rspec
 require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
@@ -58,7 +58,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 
   describe 'when running keystore commands', if: !Puppet.features.microsoft_windows? do
-    it 'calls the passed command' do # rubocop:disable RSpec/ExampleLength
+    it 'calls the passed command' do
       cmd = '/bin/echo testing 1 2 3'
 
       exec_class = if Puppet::Util::Execution.respond_to?(:execute)
@@ -96,7 +96,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
-      it 'converts a certificate to a pkcs12 file' do # rubocop:disable RSpec/ExampleLength
+      it 'converts a certificate to a pkcs12 file' do
         sleep 0.1 # due to https://github.com/mitchellh/vagrant/issues/5056
         testing_key = OpenSSL::PKey::RSA.new 1024
         testing_ca = OpenSSL::X509::Certificate.new
@@ -130,7 +130,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         provider.import_ks
       end
 
-      it 'uses destkeypass when provided' do # rubocop:disable RSpec/ExampleLength
+      it 'uses destkeypass when provided' do
         dkp = resource.dup
         dkp[:destkeypass] = 'keypass'
         provider.expects(:to_pkcs12).with("#{temp_dir}testing.stuff")

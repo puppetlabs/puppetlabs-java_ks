@@ -5,7 +5,7 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
   include_context 'common variables'
   target = "#{@target_dir}destkeypass.ks"
 
-  it 'creates a password protected private key' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'creates a password protected private key' do
     pp = <<-MANIFEST
       java_ks { 'broker.example.com:#{target}':
         ensure       => latest,
