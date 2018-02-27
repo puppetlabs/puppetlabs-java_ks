@@ -1,3 +1,4 @@
+#
 class java_ks::config (
     $params = {},
 ){
