@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
   let(:temp_dir) do
-    if Puppet.features.microsoft_windows?
+    if Puppet::Util::Platform.windows?
       ENV['TEMP']
     else
       '/tmp/'
@@ -57,7 +57,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
   end
 
-  describe 'when running keystore commands', if: !Puppet.features.microsoft_windows? do
+  describe 'when running keystore commands', if: !Puppet::Util::Platform.windows? do
     it 'calls the passed command' do # rubocop:disable RSpec/ExampleLength
       cmd = '/bin/echo testing 1 2 3'
 

@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks) do
   let(:temp_dir) do
-    if Puppet.features.microsoft_windows?
+    if Puppet::Util::Platform.windows?
       ENV['TEMP']
     else
       '/tmp/'
