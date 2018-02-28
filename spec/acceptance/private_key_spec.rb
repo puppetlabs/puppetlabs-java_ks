@@ -5,7 +5,7 @@ describe 'managing java private keys', unless: UNSUPPORTED_PLATFORMS.include?(fa
   include_context 'common variables'
   target = "#{@target_dir}private_key.ts"
 
-  it 'creates a private key' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'creates a private key' do
     pp = <<-MANIFEST
       java_ks { 'broker.example.com:#{target}':
         ensure       => #{@ensure_ks},

@@ -12,7 +12,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
                '/etc/pkcs12.ks'
              end
 
-    it 'creates a private key with chain' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a private key with chain' do
       pp = <<-MANIFEST
         java_ks { 'Leaf Cert:#{target}':
           ensure          => #{@ensure_ks},
@@ -56,7 +56,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
                '/etc/pkcs12-2.ks'
              end
 
-    it 'creates a private key with chain' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a private key with chain' do
       pp = <<-MANIFEST
         java_ks { 'Leaf_Cert:#{target}':
           ensure          => #{@ensure_ks},
@@ -101,7 +101,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
                '/etc/pkcs12-3.ks'
              end
 
-    it 'creates a private key with chain' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+    it 'creates a private key with chain' do
       pp = <<-MANIFEST
         java_ks { 'Leaf_Cert:#{target}':
           ensure          => #{@ensure_ks},

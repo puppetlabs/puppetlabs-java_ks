@@ -5,7 +5,7 @@ describe 'managing java keystores without a correct password', unless: UNSUPPORT
   include_context 'common variables'
   target = "#{@target_dir}keystore_failed_password.ts"
 
-  it 'creates a keystore' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'creates a keystore' do
     pp_one = <<-MANIFEST
       java_ks { 'puppetca:keystore':
         ensure       => #{@ensure_ks},
@@ -38,7 +38,7 @@ describe 'managing java keystores without a correct password', unless: UNSUPPORT
     end
   end
 
-  it 'recreates a keystore if password fails' do # rubocop:disable RSpec/ExampleLength : Variable assignments must be within 'it do'
+  it 'recreates a keystore if password fails' do
     pp_two = <<-MANIFEST
 
       java_ks { 'puppetca:keystore':
