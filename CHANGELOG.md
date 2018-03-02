@@ -1,3 +1,14 @@
+## Supported Release [2.2.0]
+### Summary
+A release that converts the module to the PDK version 1.3.2, alongside an additional parameter added.
+
+### Added
+- Add support for `destkeypass` when importing PKCS12 keystores.
+
+### Changed
+- Module has been converted to the PDK with version 1.3.2.
+
+
 ## Supported Release [2.1.0]
 ### Summary
 The main purpose of this module is to release Rubocop changes, with some other minor updates included.
