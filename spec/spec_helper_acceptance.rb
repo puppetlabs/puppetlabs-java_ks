@@ -108,7 +108,7 @@ RSpec.configure do |c|
         pp_one = <<-MANIFEST
 include chocolatey
 package { 'jdk8':
-  ensure   => '8.0.162',
+  ensure   => '8.0.172',
   provider => 'chocolatey'
 }
     MANIFEST
