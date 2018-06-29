@@ -46,6 +46,36 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         end
       end
     end
+
+    it 'updates the chain' do
+      pp = <<-MANIFEST
+        java_ks { 'Leaf Cert:#{target}':
+            ensure          => #{@ensure_ks},
+            certificate     => "#{@temp_dir}leaf2.p12",
+            storetype       => 'pkcs12',
+            password        => 'puppet',
+            path            => #{@resource_path},
+            source_password => 'pkcs12pass'
+        }
+      MANIFEST
+
+      apply_manifest(pp, catch_failures: true)
+
+      expectations = [
+        %r{Alias name: leaf cert},
+        %r{Entry type: (keyEntry|PrivateKeyEntry)},
+        %r{Certificate chain length: 2},
+        %r{^Serial number: 5$.*^Serial number: 6$}m,
+      ]
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expect(r.exit_code).to be_zero
+      end
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
+    end
   end # context 'with defaults'
 
   context 'with a different alias' do
