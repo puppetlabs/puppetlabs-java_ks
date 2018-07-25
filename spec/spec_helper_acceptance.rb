@@ -104,11 +104,10 @@ RSpec.configure do |c|
       # install java if windows
       if host['platform'] =~ %r{windows}i
         on host, puppet('module install puppetlabs-chocolatey')
-        # rubocop:disable Layout/IndentHeredoc : Indent must be as it is
         pp_one = <<-MANIFEST
 include chocolatey
 package { 'jdk8':
-  ensure   => '8.0.172',
+  ensure   => '8.0.181',
   provider => 'chocolatey'
 }
     MANIFEST
@@ -127,7 +126,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before(:each) do
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u172').split('u')
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u181').split('u')
     @ensure_ks = 'latest'
     @resource_path = 'undef'
     @target_dir = '/etc/'
