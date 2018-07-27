@@ -37,3 +37,6 @@ Gemfile:
 
 .gitlab-ci.yml:
   unmanaged: true
+
+appveyor.yml:
+  spec_type: spec
