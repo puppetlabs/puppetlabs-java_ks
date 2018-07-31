@@ -162,6 +162,18 @@ Java 7 is supported as of 1.0.0.
 
 Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 
+This module has been tested on the following platforms:
+
+* CentOS 5, 6, 7
+* Debian 8, 9
+* Oracle 5, 6, 7
+* Red Hat Enterprise Linux (RHEL) 5, 6, 7
+* SLES 11 SP1, 12
+* Ubuntu 14.04, 16.04, 18.04
+* Windows 2008, 2008 R2, 2012 R2, 7, 8.1
+* AIX 7.1
+* Solaris 10, 11
+
 ## Development
 
 Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve.

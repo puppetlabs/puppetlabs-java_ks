@@ -60,7 +60,8 @@
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "14.04",
-        "16.04"
+        "16.04",
+        "18.04"
       ]
     },
     {
@@ -73,7 +74,6 @@
     {
       "operatingsystem": "AIX",
       "operatingsystemrelease": [
-        "6.1",
         "7.1"
       ]
     },
