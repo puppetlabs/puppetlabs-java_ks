@@ -38,6 +38,35 @@ describe 'managing combined java chain keys' do
         end
       end
     end
+
+    it 'updates the chain' do
+      pp = <<-MANIFEST
+        java_ks { 'broker.example.com:#{target}':
+          ensure       => latest,
+          certificate  => "#{@temp_dir}leafchain2.pem",
+          private_key  => "#{@temp_dir}leafkey.pem",
+          password     => 'puppet',
+          path         => #{@resource_path},
+        }
+      MANIFEST
+
+      apply_manifest(pp, catch_failures: true)
+
+      expectations = [
+        %r{Alias name: broker\.example\.com},
+        %r{Entry type: (keyEntry|PrivateKeyEntry)},
+        %r{Certificate chain length: 2},
+        %r{^Serial number: 5$.*^Serial number: 6$}m,
+      ]
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expect(r.exit_code).to be_zero
+      end
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
+    end
   end
 
   describe 'managing separate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
@@ -71,6 +100,36 @@ describe 'managing combined java chain keys' do
       end
     end
     it 'verifies the private key #expected' do
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
+    end
+
+    it 'updates the chain' do
+      pp = <<-MANIFEST
+        java_ks { 'broker.example.com:#{target}':
+          ensure       => latest,
+          certificate  => "#{@temp_dir}leaf.pem",
+          chain        => "#{@temp_dir}chain2.pem",
+          private_key  => "#{@temp_dir}leafkey.pem",
+          password     => 'puppet',
+          path         => #{@resource_path},
+        }
+      MANIFEST
+
+      apply_manifest(pp, catch_failures: true)
+
+      expectations = [
+        %r{Alias name: broker\.example\.com},
+        %r{Entry type: (keyEntry|PrivateKeyEntry)},
+        %r{Certificate chain length: 2},
+        %r{^Serial number: 5$.*^Serial number: 6$}m,
+      ]
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        expect(r.exit_code).to be_zero
+      end
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)

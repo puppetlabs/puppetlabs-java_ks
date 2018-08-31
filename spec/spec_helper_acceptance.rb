@@ -76,16 +76,29 @@ def create_certs(host, tmpdir)
   leaf.not_after = leaf.not_before + 360
   leaf.sign(key_chain2, OpenSSL::Digest::SHA256.new)
 
+  chain3 = OpenSSL::X509::Certificate.new
+  chain3.serial = 6
+  chain3.public_key = key_chain2.public_key
+  chain3.subject = OpenSSL::X509::Name.parse chain2_subj
+  chain3.issuer = ca.subject
+  chain3.not_before = Time.now
+  chain3.not_after = chain3.not_before + 360
+  chain3.sign(key, OpenSSL::Digest::SHA256.new)
+
   pkcs12 = OpenSSL::PKCS12.create('pkcs12pass', 'Leaf Cert', key_leaf, leaf, [chain2, chain])
+  pkcs12_chain3 = OpenSSL::PKCS12.create('pkcs12pass', 'Leaf Cert', key_leaf, leaf, [chain3])
 
   create_remote_file(host, "#{tmpdir}/privkey.pem", key.to_pem)
   create_remote_file(host, "#{tmpdir}/ca.pem", ca.to_pem)
   create_remote_file(host, "#{tmpdir}/ca2.pem", ca2.to_pem)
   create_remote_file(host, "#{tmpdir}/chain.pem", chain2.to_pem + chain.to_pem)
+  create_remote_file(host, "#{tmpdir}/chain2.pem", chain3.to_pem)
   create_remote_file(host, "#{tmpdir}/leafkey.pem", key_leaf.to_pem)
   create_remote_file(host, "#{tmpdir}/leaf.pem", leaf.to_pem)
   create_remote_file(host, "#{tmpdir}/leafchain.pem", leaf.to_pem + chain2.to_pem + chain.to_pem)
+  create_remote_file(host, "#{tmpdir}/leafchain2.pem", leaf.to_pem + chain3.to_pem)
   create_remote_file(host, "#{tmpdir}/leaf.p12", pkcs12.to_der)
+  create_remote_file(host, "#{tmpdir}/leaf2.p12", pkcs12_chain3.to_der)
 end
 
 RSpec.configure do |c|
