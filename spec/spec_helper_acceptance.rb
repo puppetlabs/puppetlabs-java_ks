@@ -1,8 +1,11 @@
+require 'beaker-pe'
+require 'beaker-puppet'
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
 require 'beaker/puppet_install_helper'
 
 run_puppet_install_helper
+configure_type_defaults_on(hosts)
 install_ca_certs_on default if default['platform'] =~ %r{windows}i
 
 UNSUPPORTED_PLATFORMS = [].freeze
