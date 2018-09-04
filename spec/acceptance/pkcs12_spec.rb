@@ -61,12 +61,23 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
 
       apply_manifest(pp, catch_failures: true)
 
-      expectations = [
-        %r{Alias name: leaf cert},
-        %r{Entry type: (keyEntry|PrivateKeyEntry)},
-        %r{Certificate chain length: 2},
-        %r{^Serial number: 5$.*^Serial number: 6$}m,
-      ]
+      expectations = if fact('osfamily') == 'windows'
+                       [
+                         %r{Alias name: leaf cert},
+                         %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                         %r{Certificate chain length: 3},
+                         %r{^Serial number: 3$}m,
+                         %r{^Serial number: 4$}m,
+                         %r{^Serial number: 5$}m,
+                       ]
+                     else
+                       [
+                         %r{Alias name: leaf cert},
+                         %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                         %r{Certificate chain length: 2},
+                         %r{^Serial number: 5$.*^Serial number: 6$}m,
+                       ]
+                     end
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
       end
