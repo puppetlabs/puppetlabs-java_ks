@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'managing combined java chain keys' do
+describe 'managing intermediate certificates' do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   describe 'managing combined java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
     include_context 'common variables'
@@ -18,6 +18,7 @@ describe 'managing combined java chain keys' do
       MANIFEST
 
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     expectations = [
@@ -51,6 +52,7 @@ describe 'managing combined java chain keys' do
       MANIFEST
 
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
 
       expectations = [
         %r{Alias name: broker\.example\.com},
@@ -86,6 +88,7 @@ describe 'managing combined java chain keys' do
       MANIFEST
 
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     expectations = [
@@ -120,6 +123,7 @@ describe 'managing combined java chain keys' do
       MANIFEST
 
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
 
       expectations = [
         %r{Alias name: broker\.example\.com},

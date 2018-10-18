@@ -60,6 +60,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
       MANIFEST
 
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
 
       expectations = if fact('osfamily') == 'windows'
                        [

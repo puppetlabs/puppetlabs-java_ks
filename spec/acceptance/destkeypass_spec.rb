@@ -18,6 +18,7 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
     MANIFEST
 
     apply_manifest(pp, catch_failures: true)
+    apply_manifest(pp, catch_changes: true)
   end
 
   it 'can make a cert req with the right password #zero' do

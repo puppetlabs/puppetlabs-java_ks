@@ -17,6 +17,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(fac
     }
     EOS
     apply_manifest(pp, catch_failures: true)
+    apply_manifest(pp, catch_changes: true)
   end
 
   expectations = [

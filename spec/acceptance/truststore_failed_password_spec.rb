@@ -50,6 +50,7 @@ describe 'managing java truststores without a correct password', unless: UNSUPPO
     }
     MANIFEST
     apply_manifest(pp, catch_failures: true)
+    apply_manifest(pp, catch_changes: true)
   end
 
   it 'verifies the truststore again #zero' do
