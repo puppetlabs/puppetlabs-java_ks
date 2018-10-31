@@ -188,7 +188,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
-      latest = output.scan(%r{SHA1:\s+(.*)})[0][0]
+      latest = extract_fingerprint(output)
       latest
     end
   end
