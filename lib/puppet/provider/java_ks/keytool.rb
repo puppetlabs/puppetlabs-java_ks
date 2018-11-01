@@ -188,6 +188,13 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-v', '-printcert', '-file', certificate
       ]
       output = run_command(cmd)
+      if chain
+        cmd = [
+          command_keytool,
+          '-v', '-printcert', '-file', chain
+        ]
+        output += run_command(cmd)
+      end
       latest = extract_fingerprint(output)
       latest
     end
