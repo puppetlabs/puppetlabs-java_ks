@@ -123,7 +123,7 @@ RSpec.configure do |c|
         pp_one = <<-MANIFEST
 include chocolatey
 package { 'jdk8':
-  ensure   => '8.0.191',
+  ensure   => '8.0.201',
   provider => 'chocolatey'
 }
     MANIFEST
@@ -142,7 +142,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before(:each) do
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u191').split('u')
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u201').split('u')
     @ensure_ks = 'latest'
     @resource_path = 'undef'
     @target_dir = '/etc/'
