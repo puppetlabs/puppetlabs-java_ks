@@ -36,7 +36,7 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
 
   it 'cannot make a cert req with the wrong password' do
     shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
-     "-keystore #{target} -storepass testpass -keypass qwert",
+     "-keystore #{target} -storepass qwert -keypass qwert",
           acceptable_exit_codes: 1)
   end
 end

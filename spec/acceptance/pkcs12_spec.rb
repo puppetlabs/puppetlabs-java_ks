@@ -179,9 +179,12 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         end
       end
     end
-    it 'verifies the private key password' do
-      shell("\"#{@keytool_path}keytool\" -keypasswd -keystore #{target} -storepass puppet -alias leaf_cert -keypass abcdef123456 -new pass1234") do |r|
-        expect(r.exit_code).to be_zero
+    # -keypasswd commands not supported if -storetype is PKCS12 on ubuntu 18.04 with current java version
+    unless fact('operatingsystemmajrelease') == '18.04'
+      it 'verifies the private key password' do
+        shell("\"#{@keytool_path}keytool\" -keypasswd -keystore #{target} -storepass puppet -alias leaf_cert -keypass abcdef123456 -new pass1234") do |r|
+          expect(r.exit_code).to be_zero
+        end
       end
     end
   end # context 'with a destkeypass'
