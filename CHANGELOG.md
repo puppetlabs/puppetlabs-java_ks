@@ -2,33 +2,40 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.4.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/2.4.0) (2019-02-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.3.0...2.4.0)
+
+### Added
+
+- \(MODULES-8146\) - Add SLES 15 support [\#255](https://github.com/puppetlabs/puppetlabs-java_ks/pull/255) ([eimlav](https://github.com/eimlav))
+
+### Fixed
+
+- \(MODULES-8549\) - Bump of Java version used for test [\#260](https://github.com/puppetlabs/puppetlabs-java_ks/pull/260) ([david22swan](https://github.com/david22swan))
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#257](https://github.com/puppetlabs/puppetlabs-java_ks/pull/257) ([tphoney](https://github.com/tphoney))
+- Fix provider so "latest" gets the MD5 AND SHA1 hashes for comparing [\#252](https://github.com/puppetlabs/puppetlabs-java_ks/pull/252) ([absltkaos](https://github.com/absltkaos))
+- \(FM-7505\) - Bumping Windows jdk version to 8.0.191 [\#251](https://github.com/puppetlabs/puppetlabs-java_ks/pull/251) ([pmcmaw](https://github.com/pmcmaw))
+- \(MODULES-8125\) Fix unnecessary change when using intermediate certificates [\#250](https://github.com/puppetlabs/puppetlabs-java_ks/pull/250) ([johngmyers](https://github.com/johngmyers))
+
 ## [2.3.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/2.3.0) (2018-09-27)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.2.0...2.3.0)
 
+### Changed
+
+- \[FM-6966\] Removal of unsupported OS from java\_ks [\#230](https://github.com/puppetlabs/puppetlabs-java_ks/pull/230) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
+- pdksync - \(MODULES-6805\) metadata.json shows support for puppet 6 [\#246](https://github.com/puppetlabs/puppetlabs-java_ks/pull/246) ([tphoney](https://github.com/tphoney))
 - \(FM-7238\) - Addition of support for Ubuntu 18.04 [\#237](https://github.com/puppetlabs/puppetlabs-java_ks/pull/237) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
-- \(MODULES-1997\) - Update the target when the cert chain changes [\#233](https://github.com/puppetlabs/puppetlabs-java_ks/pull/233) ([johngmyers](https://github.com/johngmyers))
-
-### UNCATEGORIZED PRS; GO LABEL THEM
-
-- pdksync - \(FM-7392\) - Puppet 6 Testing Changes [\#247](https://github.com/puppetlabs/puppetlabs-java_ks/pull/247) ([pmcmaw](https://github.com/pmcmaw))
-- pdksync - \(MODULES-6805\) metadata.json shows support for puppet 6 [\#246](https://github.com/puppetlabs/puppetlabs-java_ks/pull/246) ([tphoney](https://github.com/tphoney))
-- \(FM-7345\) - Update to test output to account for windows changes [\#243](https://github.com/puppetlabs/puppetlabs-java_ks/pull/243) ([david22swan](https://github.com/david22swan))
-- pdksync - \(MODULES-7658\) use beaker4 in puppet-module-gems [\#242](https://github.com/puppetlabs/puppetlabs-java_ks/pull/242) ([tphoney](https://github.com/tphoney))
 - \(MODULES-7632\) - Update README Limitations section [\#239](https://github.com/puppetlabs/puppetlabs-java_ks/pull/239) ([eimlav](https://github.com/eimlav))
-- \(FM-7277\) Fix incorrect reference [\#238](https://github.com/puppetlabs/puppetlabs-java_ks/pull/238) ([beergeek](https://github.com/beergeek))
-- \(FM-7218\) Bump to java test version on windows. [\#234](https://github.com/puppetlabs/puppetlabs-java_ks/pull/234) ([david22swan](https://github.com/david22swan))
-- PDK Update 1.5.0 [\#232](https://github.com/puppetlabs/puppetlabs-java_ks/pull/232) ([david22swan](https://github.com/david22swan))
+- \(MODULES-1997\) - Update the target when the cert chain changes [\#233](https://github.com/puppetlabs/puppetlabs-java_ks/pull/233) ([johngmyers](https://github.com/johngmyers))
 - \(MODULES-6342\) Update pathing for new java in \#229 [\#231](https://github.com/puppetlabs/puppetlabs-java_ks/pull/231) ([hunner](https://github.com/hunner))
-- \[FM-6966\] Removal of unsupported OS from java\_ks [\#230](https://github.com/puppetlabs/puppetlabs-java_ks/pull/230) ([david22swan](https://github.com/david22swan))
-- \(MODULES-6918\) update jdk version in spec\_helper\_acceptance [\#229](https://github.com/puppetlabs/puppetlabs-java_ks/pull/229) ([eputnam](https://github.com/eputnam))
-- \(MODULES-7153\) - Run release\_checks againt 2.4.1 and unmanage gitlabs-ci [\#227](https://github.com/puppetlabs/puppetlabs-java_ks/pull/227) ([pmcmaw](https://github.com/pmcmaw))
-- Release mergeback 2.2.0 [\#225](https://github.com/puppetlabs/puppetlabs-java_ks/pull/225) ([pmcmaw](https://github.com/pmcmaw))
 
 ## 2.2.0
 ### Summary
