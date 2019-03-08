@@ -35,24 +35,24 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 
   before(:each) do
-    provider.stubs(:command).with(:keytool).returns('mykeytool')
-    provider.stubs(:command).with(:openssl).returns('myopenssl')
+    allow(provider).to receive(:command).with(:keytool).and_return('mykeytool')
+    allow(provider).to receive(:command).with(:openssl).and_return('myopenssl')
 
-    provider.stubs(:command_keytool).returns 'mykeytool'
-    provider.stubs(:command_openssl).returns 'myopenssl'
+    allow(provider).to receive(:command_keytool).and_return('mykeytool')
+    allow(provider).to receive(:command_openssl).and_return('myopenssl')
 
-    tempfile = stub('tempfile', class: Tempfile,
-                                write: true,
-                                flush: true,
-                                close!: true,
-                                path: "#{temp_dir}testing.stuff")
-    Tempfile.stubs(:new).returns(tempfile)
+    tempfile = class_double('tempfile', class: Tempfile,
+                                        write: true,
+                                        flush: true,
+                                        close!: true,
+                                        path: "#{temp_dir}testing.stuff")
+    allow(Tempfile).to receive(:new).and_return(tempfile)
   end
 
   describe 'when updating a certificate' do
     it 'calls destroy and create' do
-      provider.expects(:destroy)
-      provider.expects(:create)
+      expect(provider).to receive(:destroy)
+      expect(provider).to receive(:create)
       provider.update
     end
   end
@@ -66,7 +66,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                    else
                      Puppet::Util
                    end
-      exec_class.expects(:execute).with(
+      expect(exec_class).to receive(:execute).with(
         cmd,
         failonfail: true,
         combine: true,
@@ -88,7 +88,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
     it 'normallies timeout after 120 seconds' do
       cmd = '/bin/echo testing 1 2 3'
-      Timeout.expects(:timeout).with(120, Timeout::Error).raises(Timeout::Error)
+      expect(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
 
       expect { provider.run_command(cmd) }.to raise_error Puppet::Error, "Timed out waiting for 'app.example.com' to run keytool"
     end
@@ -109,33 +109,33 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         testing_ca.not_after = testing_ca.not_before + 360
         testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
 
-        provider.stubs(:password).returns(resource[:password])
-        File.stubs(:read).with(resource[:private_key]).returns('private key')
-        File.stubs(:read).with(resource[:certificate]).returns(testing_ca.to_pem)
-        OpenSSL::PKey::RSA.expects(:new).with('private key', 'puppet').returns('priv_obj')
-        OpenSSL::X509::Certificate.expects(:new).with(testing_ca.to_pem.chomp).returns('cert_obj')
+        allow(provider).to receive(:password).and_return(resource[:password])
+        allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
+        allow(File).to receive(:read).with(resource[:certificate]).and_return(testing_ca.to_pem)
+        expect(OpenSSL::PKey::RSA).to receive(:new).with('private key', 'puppet').and_return('priv_obj')
+        expect(OpenSSL::X509::Certificate).to receive(:new).with(testing_ca.to_pem.chomp).and_return('cert_obj')
 
         pkcs_double = BogusPkcs.new
-        pkcs_double.expects(:to_der)
-        OpenSSL::PKCS12.expects(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).returns(pkcs_double)
+        expect(pkcs_double).to receive(:to_der)
+        expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
         provider.to_pkcs12("#{temp_dir}testing.stuff")
       end
     end
 
     describe '#import_ks' do
       it 'executes openssl and keytool with specific options' do
-        provider.expects(:to_pkcs12).with("#{temp_dir}testing.stuff")
-        provider.expects(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
-                                             resource[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', resource[:name]], any_parameters)
+        expect(provider).to receive(:to_pkcs12).with("#{temp_dir}testing.stuff")
+        expect(provider).to receive(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
+                                                        resource[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', resource[:name]], any_args)
         provider.import_ks
       end
 
       it 'uses destkeypass when provided' do
         dkp = resource.dup
         dkp[:destkeypass] = 'keypass'
-        provider.expects(:to_pkcs12).with("#{temp_dir}testing.stuff")
-        provider.expects(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
-                                             dkp[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', dkp[:name], '-destkeypass', dkp[:destkeypass]], any_parameters)
+        expect(provider).to receive(:to_pkcs12).with("#{temp_dir}testing.stuff")
+        expect(provider).to receive(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
+                                                        dkp[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', dkp[:name], '-destkeypass', dkp[:destkeypass]], any_args)
         provider.import_ks
       end
     end
@@ -167,7 +167,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       it 'supports pkcs12 source' do
         pkcs12 = resource.dup
         pkcs12[:storetype] = 'pkcs12'
-        provider.expects(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore', pkcs12[:target], '-srckeystore', "#{temp_dir}testing.p12"], any_parameters)
+        expect(provider).to receive(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype',
+                                                        'PKCS12', '-destkeystore', pkcs12[:target], '-srckeystore', "#{temp_dir}testing.p12"], any_args)
         provider.import_pkcs12
       end
     end
@@ -195,22 +196,22 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
 
     it 'calls import_ks if private_key and certificate are provided' do
-      provider.expects(:import_ks)
+      expect(provider).to receive(:import_ks)
       provider.create
     end
 
     it 'calls keytool with specific options if only certificate is provided' do
       no_pk = resource.dup
       no_pk.delete(:private_key)
-      provider.expects(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target]], any_parameters)
-      no_pk.provider.expects(:import_ks).never
+      expect(provider).to receive(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target]], any_args)
+      expect(no_pk.provider).to receive(:import_ks).never
       no_pk.provider.create
     end
   end
 
   describe 'when removing entries from keytool' do
     it 'executes keytool with a specific set of options' do
-      provider.expects(:run_command).with(['mykeytool', '-delete', '-alias', resource[:name], '-keystore', resource[:target]], any_parameters)
+      expect(provider).to receive(:run_command).with(['mykeytool', '-delete', '-alias', resource[:name], '-keystore', resource[:target]], any_args)
       provider.destroy
     end
   end
