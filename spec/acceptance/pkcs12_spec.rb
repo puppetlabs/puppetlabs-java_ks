@@ -33,13 +33,9 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(host_in
       %r{Certificate chain length: 3},
       %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
     ]
-    it 'verifies the private key and chain #zero' do
+    it 'verifies the private key and chain' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the private key and chain #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -79,8 +75,6 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(host_in
                      end
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -118,13 +112,9 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(host_in
       %r{Certificate chain length: 3},
       %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
     ]
-    it 'verifies the private key and chain #zero' do
+    it 'verifies the private key and chain' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the private key and chain #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -163,13 +153,9 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(host_in
       %r{Certificate chain length: 3},
       %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
     ]
-    it 'verifies the private key and chain #zero' do
+    it 'verifies the private key and chain' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the private key and chain #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end

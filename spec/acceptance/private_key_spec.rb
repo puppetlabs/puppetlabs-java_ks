@@ -24,13 +24,9 @@ describe 'managing java private keys', unless: UNSUPPORTED_PLATFORMS.include?(ho
     %r{Entry type: (keyEntry|PrivateKeyEntry)},
     %r{CN=Test CA},
   ]
-  it 'verifies the private key #zero' do
+  it 'verifies the private key' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
-    end
-  end
-  it 'verifies the private key #expected' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
       end

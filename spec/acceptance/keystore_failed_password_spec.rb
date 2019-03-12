@@ -25,13 +25,9 @@ describe 'managing java keystores without a correct password', unless: UNSUPPORT
     %r{Alias name: puppetca},
     %r{CN=Test CA},
   ]
-  it 'verifies the keystore #zero' do
+  it 'verifies the keystore' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass coraline") do |r|
       expect(r.exit_code).to be_zero
-    end
-  end
-  it 'verifies the keytore #expected' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass coraline") do |r|
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
       end
@@ -55,13 +51,9 @@ describe 'managing java keystores without a correct password', unless: UNSUPPORT
     idempotent_apply(default, pp_two)
   end
 
-  it 'verifies the keystore again #zero' do
+  it 'verifies the keystore again' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
       expect(r.exit_code).to be_zero
-    end
-  end
-  it 'verifies the keytore again #expected' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
       end

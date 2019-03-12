@@ -26,13 +26,9 @@ describe 'managing intermediate certificates' do
       %r{Certificate chain length: 3},
       %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
     ]
-    it 'verifies the private key #zero' do
+    it 'verifies the private key' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the private key #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -60,8 +56,6 @@ describe 'managing intermediate certificates' do
       ]
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -94,13 +88,9 @@ describe 'managing intermediate certificates' do
       %r{Certificate chain length: 3},
       %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
     ]
-    it 'verifies the private key #zero' do
+    it 'verifies the private key' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the private key #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -129,8 +119,6 @@ describe 'managing intermediate certificates' do
       ]
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -174,32 +162,6 @@ describe 'managing intermediate certificates' do
     end
 
     # verifies the keystore is not created
-    describe file(target.to_s) do
-      it { is_expected.not_to be_file }
-    end
-  end
-
-  describe 'managing existing java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
-    include_context 'common variables'
-    target = "#{@target_dir}noop2_chain_key.ks"
-
-    it 'does not create a new keystore in noop' do
-      pp = <<-MANIFEST
-        java_ks { 'broker.example.com:#{target}':
-          ensure       => latest,
-          certificate  => "#{@temp_dir}leaf.pem",
-          chain        => "#{@temp_dir}chain.pem",
-          private_key  => "#{@temp_dir}leafkey.pem",
-          password     => 'puppet',
-          path         => #{@resource_path},
-        }
-      MANIFEST
-
-      apply_manifest(pp, catch_failures: true, noop: true)
-    end
-
-    # in noop mode, when the dependent certificate files are present in the system,
-    # java_ks will invoke openssl to validate their status, but will not create the keystore
     describe file(target.to_s) do
       it { is_expected.not_to be_file }
     end

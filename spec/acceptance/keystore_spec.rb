@@ -26,13 +26,9 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
       %r{Alias name: puppetca},
       %r{CN=Test CA},
     ]
-    it 'verifies the keystore #zero' do
+    it 'verifies the keytore' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the keytore #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -83,13 +79,9 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
         %r{Alias name: puppetca},
         %r{CN=Test CA},
       ]
-      it 'verifies the keystore #zero' do
+      it 'verifies the keytore' do
         shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
           expect(r.exit_code).to be_zero
-        end
-      end
-      it 'verifies the keytore #expected' do
-        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
           expectations.each do |expect|
             expect(r.stdout).to match(expect)
           end

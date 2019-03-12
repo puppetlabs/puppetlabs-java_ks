@@ -24,13 +24,33 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(hos
     %r{Alias name: puppetca},
     %r{CN=Test CA},
   ]
-  it 'verifies the truststore #zero' do
+  it 'verifies the truststore' do
     shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
       expect(r.exit_code).to be_zero
+      expectations.each do |expect|
+        expect(r.stdout).to match(expect)
+      end
     end
   end
-  it 'verifies the truststore #expected' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+
+  it 'recreates a truststore if password fails' do
+    pp = <<-MANIFEST
+      java_ks { 'puppetca:truststore':
+        ensure              => latest,
+        certificate         => "#{@temp_dir}ca.pem",
+        target              => "#{target}",
+        password            => 'bobinsky',
+        password_fail_reset => true,
+        trustcacerts        => true,
+        path                => #{@resource_path},
+    }
+    MANIFEST
+    idempotent_apply(default, pp)
+  end
+
+  it 'verifies the truststore again' do
+    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
+      expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
       end

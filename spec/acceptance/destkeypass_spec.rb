@@ -20,15 +20,10 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
     idempotent_apply(default, pp)
   end
 
-  it 'can make a cert req with the right password #zero' do
+  it 'can make a cert req with the right password' do
     shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
      "-keystore #{target} -storepass testpass -keypass testkeypass") do |r|
       expect(r.exit_code).to be_zero
-    end
-  end
-  it 'can make a cert req with the right password #regex' do
-    shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
-     "-keystore #{target} -storepass testpass -keypass testkeypass") do |r|
       expect(r.stdout).to match(%r{-BEGIN NEW CERTIFICATE REQUEST-})
     end
   end
