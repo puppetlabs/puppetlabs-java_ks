@@ -2,7 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'managing intermediate certificates' do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
-  describe 'managing combined java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  describe 'managing combined java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
     include_context 'common variables'
     target = "#{@target_dir}chain_combined_key.ks"
 
@@ -69,7 +69,7 @@ describe 'managing intermediate certificates' do
     end
   end
 
-  describe 'managing separate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  describe 'managing separate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
     include_context 'common variables'
     let(:target) { "#{@target_dir}chain_key.ks" }
 
@@ -138,7 +138,7 @@ describe 'managing intermediate certificates' do
     end
   end
 
-  describe 'managing non existent java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  describe 'managing non existent java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
     include_context 'common variables'
     target = "#{@target_dir}noop_chain_key.ks"
 
@@ -179,7 +179,7 @@ describe 'managing intermediate certificates' do
     end
   end
 
-  describe 'managing existing java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  describe 'managing existing java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
     include_context 'common variables'
     target = "#{@target_dir}noop2_chain_key.ks"
 

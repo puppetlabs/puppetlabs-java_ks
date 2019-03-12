@@ -161,11 +161,11 @@ RSpec.shared_context 'common variables' do
     @resource_path = 'undef'
     @target_dir = '/etc/'
     @temp_dir = '/tmp/'
-    case fact('osfamily')
-    when 'Solaris'
+    case os[:family]
+    when 'solaris'
       @keytool_path = '/usr/java/bin/'
       @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
-    when 'AIX'
+    when 'aix'
       @keytool_path = '/usr/java6/bin/'
       @resource_path = "['/usr/java6/bin/','/usr/bin/']"
     when 'windows'

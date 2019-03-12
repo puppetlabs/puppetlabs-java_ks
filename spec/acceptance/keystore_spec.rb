@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}keystore.ks"
@@ -60,7 +60,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
     end
   end
 
-  unless fact('operatingsystemmajrelease') == '18.04'
+  unless os[:family] == 'debian' && os[:release].start_with?('18.04')
     describe 'storetype' do
       it 'creates a keystore' do
         pp = <<-MANIFEST
