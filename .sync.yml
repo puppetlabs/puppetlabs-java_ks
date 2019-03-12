@@ -3,6 +3,13 @@
   required:
     - ---.project
 
+.gitlab-ci.yml:
+  unmanaged: true
+
+.rubocop.yml:
+  default_configs:
+    inherit_from: .rubocop_todo.yml
+
 .travis.yml:
   docker_sets:
     - set: docker/centos-7
@@ -13,6 +20,9 @@
   branches:
     - release
  
+appveyor.yml:
+  spec_type: spec
+
 Gemfile:
   required:
     ':system_tests':
@@ -30,12 +40,6 @@ Gemfile:
         ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
         condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 
-.rubocop.yml:
-  default_configs:
-    inherit_from: .rubocop_todo.yml
-
-.gitlab-ci.yml:
-  unmanaged: true
-
-appveyor.yml:
-  spec_type: spec
+spec/spec_helper.rb:
+  mock_with: ':rspec'
+  coverage_report: true
