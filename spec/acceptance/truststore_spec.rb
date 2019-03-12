@@ -16,8 +16,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(fac
         path         => #{@resource_path},
     }
     EOS
-    apply_manifest(pp, catch_failures: true)
-    apply_manifest(pp, catch_changes: true)
+    idempotent_apply(default, pp)
   end
 
   expectations = [

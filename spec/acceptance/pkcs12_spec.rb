@@ -24,8 +24,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
     end
 
     expectations = [
@@ -59,8 +58,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
 
       expectations = if fact('osfamily') == 'windows'
                        [
@@ -111,8 +109,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
     end
 
     expectations = [
@@ -157,8 +154,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(fact('o
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
     end
 
     expectations = [

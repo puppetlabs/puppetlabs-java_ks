@@ -16,8 +16,7 @@ describe 'managing java private keys', unless: UNSUPPORTED_PLATFORMS.include?(fa
       }
     MANIFEST
 
-    apply_manifest(pp, catch_failures: true)
-    apply_manifest(pp, catch_changes: true)
+    idempotent_apply(default, pp)
   end
 
   expectations = [

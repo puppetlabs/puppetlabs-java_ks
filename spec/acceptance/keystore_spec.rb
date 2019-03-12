@@ -18,8 +18,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
         }
       MANIFEST
 
-      apply_manifest(pp_one, catch_failures: true)
-      apply_manifest(pp_one, catch_changes: true)
+      idempotent_apply(default, pp_one)
     end
 
     expectations = [
@@ -57,8 +56,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
         }
       MANIFEST
 
-      apply_manifest(pp_two, catch_failures: true)
-      apply_manifest(pp_two, catch_changes: true)
+      idempotent_apply(default, pp_two)
     end
   end
 
@@ -77,8 +75,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
           }
         MANIFEST
 
-        apply_manifest(pp, catch_failures: true)
-        apply_manifest(pp, catch_changes: true)
+        idempotent_apply(default, pp)
       end
 
       expectations = [

@@ -52,8 +52,7 @@ describe 'managing java keystores without a correct password', unless: UNSUPPORT
     }
     MANIFEST
 
-    apply_manifest(pp_two, catch_failures: true)
-    apply_manifest(pp_two, catch_changes: true)
+    idempotent_apply(default, pp_two)
   end
 
   it 'verifies the keystore again #zero' do

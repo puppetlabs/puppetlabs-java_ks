@@ -17,8 +17,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
     end
 
     expectations = [
@@ -51,8 +50,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
 
       expectations = [
         %r{Alias name: broker\.example\.com},
@@ -87,8 +85,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
     end
 
     expectations = [
@@ -122,8 +119,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp)
 
       expectations = [
         %r{Alias name: broker\.example\.com},

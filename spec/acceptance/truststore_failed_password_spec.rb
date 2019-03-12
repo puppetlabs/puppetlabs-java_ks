@@ -49,8 +49,7 @@ describe 'managing java truststores without a correct password', unless: UNSUPPO
         path                => #{@resource_path},
     }
     MANIFEST
-    apply_manifest(pp, catch_failures: true)
-    apply_manifest(pp, catch_changes: true)
+    idempotent_apply(default, pp)
   end
 
   it 'verifies the truststore again #zero' do
