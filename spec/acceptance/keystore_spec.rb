@@ -54,17 +54,46 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
 
       idempotent_apply(default, pp_two)
     end
+
+    it 'recreates a keystore if password fails' do
+      pp_three = <<-MANIFEST
+
+        java_ks { 'puppetca:keystore':
+          ensure              => latest,
+          certificate         => "#{@temp_dir}ca.pem",
+          target              => '#{target}',
+          password            => 'pepput',
+          password_fail_reset => true,
+          trustcacerts        => true,
+          path                => #{@resource_path},
+      }
+      MANIFEST
+
+      idempotent_apply(default, pp_three)
+    end
+
+    it 'verifies the keystore again' do
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass pepput") do |r|
+        expect(r.exit_code).to be_zero
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
+    end
   end
 
   unless os[:family] == 'debian' && os[:release].start_with?('18.04')
     describe 'storetype' do
+      target = "#{@target_dir}storetypekeystore.ks"
+
       it 'creates a keystore' do
         pp = <<-MANIFEST
           java_ks { 'puppetca:keystore':
             ensure       => latest,
             certificate  => "#{@temp_dir}ca.pem",
             target       => '#{target}',
-            password     => 'puppet',
+            password     => 'pepput',
+            password_fail_reset => true,
             trustcacerts => true,
             path         => #{@resource_path},
             storetype    => 'jceks',
@@ -75,12 +104,12 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
       end
 
       expectations = [
-        %r{Your keystore contains 2 entries},
+        %r{Your keystore contains 1 entry},
         %r{Alias name: puppetca},
         %r{CN=Test CA},
       ]
       it 'verifies the keytore' do
-        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass pepput") do |r|
           expect(r.exit_code).to be_zero
           expectations.each do |expect|
             expect(r.stdout).to match(expect)
