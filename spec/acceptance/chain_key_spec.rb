@@ -68,7 +68,7 @@ describe 'managing intermediate certificates' do
           password     => 'puppet',
           path         => #{@resource_path},
         }
-        
+
         java_ks { 'seperate.example.com:#{target_seperate}':
           ensure       => latest,
           certificate  => "#{@temp_dir}leaf.pem",
