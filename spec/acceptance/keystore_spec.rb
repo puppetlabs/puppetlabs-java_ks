@@ -82,7 +82,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
     end
   end
 
-  unless os[:family] == 'debian' && os[:release].start_with?('18.04')
+  unless os[:family] == 'ubuntu' && os[:release].start_with?('18.04')
     describe 'storetype' do
       target = "#{@target_dir}storetypekeystore.ks"
 
@@ -93,7 +93,6 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
             certificate  => "#{@temp_dir}ca.pem",
             target       => '#{target}',
             password     => 'pepput',
-            password_fail_reset => true,
             trustcacerts => true,
             path         => #{@resource_path},
             storetype    => 'jceks',

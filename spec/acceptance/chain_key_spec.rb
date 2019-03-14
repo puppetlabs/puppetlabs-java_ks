@@ -7,7 +7,7 @@ describe 'managing intermediate certificates' do
     target_combined = "#{@target_dir}chain_combined_key.ks"
     target_seperate = "#{@target_dir}chain_key.ks"
 
-    it 'creates a private key with chain certs' do
+    it 'creates two private key with chain certs' do
       pp = <<-MANIFEST
         java_ks { 'combined.example.com:#{target_combined}':
           ensure       => latest,
@@ -16,6 +16,7 @@ describe 'managing intermediate certificates' do
           password     => 'puppet',
           path         => #{@resource_path},
         }
+
         java_ks { 'seperate.example.com:#{target_seperate}':
           ensure       => latest,
           certificate  => "#{@temp_dir}leaf.pem",
@@ -58,7 +59,7 @@ describe 'managing intermediate certificates' do
       end
     end
 
-    it 'updates the chain' do
+    it 'updates the two key chains' do
       pp = <<-MANIFEST
         java_ks { 'combined.example.com:#{target_combined}':
           ensure       => latest,
@@ -67,6 +68,7 @@ describe 'managing intermediate certificates' do
           password     => 'puppet',
           path         => #{@resource_path},
         }
+        
         java_ks { 'seperate.example.com:#{target_seperate}':
           ensure       => latest,
           certificate  => "#{@temp_dir}leaf.pem",
