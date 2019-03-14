@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}destkeypass.ks"
@@ -17,19 +17,13 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
       }
     MANIFEST
 
-    apply_manifest(pp, catch_failures: true)
-    apply_manifest(pp, catch_changes: true)
+    idempotent_apply(default, pp)
   end
 
-  it 'can make a cert req with the right password #zero' do
+  it 'can make a cert req with the right password' do
     shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
      "-keystore #{target} -storepass testpass -keypass testkeypass") do |r|
       expect(r.exit_code).to be_zero
-    end
-  end
-  it 'can make a cert req with the right password #regex' do
-    shell("\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
-     "-keystore #{target} -storepass testpass -keypass testkeypass") do |r|
       expect(r.stdout).to match(%r{-BEGIN NEW CERTIFICATE REQUEST-})
     end
   end

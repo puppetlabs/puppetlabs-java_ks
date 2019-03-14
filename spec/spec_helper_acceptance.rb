@@ -104,6 +104,20 @@ def create_certs(host, tmpdir)
   create_remote_file(host, "#{tmpdir}/leaf2.p12", pkcs12_chain3.to_der)
 end
 
+def idempotent_apply(hosts, manifest, opts = {}, &block)
+  block_on hosts, opts do |host|
+    file_path = host.tmpfile('apply_manifest.pp')
+    create_remote_file(host, file_path, manifest + "\n")
+
+    puppet_apply_opts = { :verbose => nil, 'detailed-exitcodes' => nil }
+    on_options = { acceptable_exit_codes: [0, 2] }
+    on host, puppet('apply', file_path, puppet_apply_opts), on_options, &block
+    puppet_apply_opts2 = { :verbose => nil, 'detailed-exitcodes' => nil }
+    on_options2 = { acceptable_exit_codes: [0] }
+    on host, puppet('apply', file_path, puppet_apply_opts2), on_options2, &block
+  end
+end
+
 RSpec.configure do |c|
   # Project root
   proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
@@ -147,11 +161,11 @@ RSpec.shared_context 'common variables' do
     @resource_path = 'undef'
     @target_dir = '/etc/'
     @temp_dir = '/tmp/'
-    case fact('osfamily')
-    when 'Solaris'
+    case os[:family]
+    when 'solaris'
       @keytool_path = '/usr/java/bin/'
       @resource_path = "['/usr/java/bin/','/opt/puppet/bin/']"
-    when 'AIX'
+    when 'aix'
       @keytool_path = '/usr/java6/bin/'
       @resource_path = "['/usr/java6/bin/','/usr/bin/']"
     when 'windows'

@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   target = "#{@target_dir}keystore.ks"
@@ -18,8 +18,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
         }
       MANIFEST
 
-      apply_manifest(pp_one, catch_failures: true)
-      apply_manifest(pp_one, catch_changes: true)
+      idempotent_apply(default, pp_one)
     end
 
     expectations = [
@@ -27,13 +26,9 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
       %r{Alias name: puppetca},
       %r{CN=Test CA},
     ]
-    it 'verifies the keystore #zero' do
+    it 'verifies the keytore' do
       shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expect(r.exit_code).to be_zero
-      end
-    end
-    it 'verifies the keytore #expected' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -57,42 +52,64 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(fact(
         }
       MANIFEST
 
-      apply_manifest(pp_two, catch_failures: true)
-      apply_manifest(pp_two, catch_changes: true)
+      idempotent_apply(default, pp_two)
+    end
+
+    it 'recreates a keystore if password fails' do
+      pp_three = <<-MANIFEST
+
+        java_ks { 'puppetca:keystore':
+          ensure              => latest,
+          certificate         => "#{@temp_dir}ca.pem",
+          target              => '#{target}',
+          password            => 'pepput',
+          password_fail_reset => true,
+          trustcacerts        => true,
+          path                => #{@resource_path},
+      }
+      MANIFEST
+
+      idempotent_apply(default, pp_three)
+    end
+
+    it 'verifies the keystore again' do
+      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass pepput") do |r|
+        expect(r.exit_code).to be_zero
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
     end
   end
 
-  unless fact('operatingsystemmajrelease') == '18.04'
+  unless os[:family] == 'ubuntu' && os[:release].start_with?('18.04')
     describe 'storetype' do
+      target = "#{@target_dir}storetypekeystore.ks"
+
       it 'creates a keystore' do
         pp = <<-MANIFEST
           java_ks { 'puppetca:keystore':
             ensure       => latest,
             certificate  => "#{@temp_dir}ca.pem",
             target       => '#{target}',
-            password     => 'puppet',
+            password     => 'pepput',
             trustcacerts => true,
             path         => #{@resource_path},
             storetype    => 'jceks',
           }
         MANIFEST
 
-        apply_manifest(pp, catch_failures: true)
-        apply_manifest(pp, catch_changes: true)
+        idempotent_apply(default, pp)
       end
 
       expectations = [
-        %r{Your keystore contains 2 entries},
+        %r{Your keystore contains 1 entry},
         %r{Alias name: puppetca},
         %r{CN=Test CA},
       ]
-      it 'verifies the keystore #zero' do
-        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+      it 'verifies the keytore' do
+        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass pepput") do |r|
           expect(r.exit_code).to be_zero
-        end
-      end
-      it 'verifies the keytore #expected' do
-        shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
           expectations.each do |expect|
             expect(r.stdout).to match(expect)
           end
