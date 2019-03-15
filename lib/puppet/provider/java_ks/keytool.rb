@@ -176,7 +176,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     elsif storetype == :pkcs12
       cmd = [
         command_keytool, '-v',
-        '-list', '-keystore', certificate,
+        '-list', '-keystore', @resource[:target],
         '-storetype', 'PKCS12', '-storepass', sourcepassword
       ]
       output = run_command(cmd)
