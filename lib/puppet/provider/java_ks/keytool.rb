@@ -177,7 +177,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       cmd = [
         command_keytool, '-v',
         '-list', '-keystore', @resource[:target],
-        '-storetype', 'PKCS12', '-storepass', sourcepassword
+        '-storepass', sourcepassword
       ]
       output = run_command(cmd)
       latest = extract_fingerprint(output)
