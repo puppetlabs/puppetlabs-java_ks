@@ -83,10 +83,10 @@ Puppet::Type.newtype(:java_ks) do
 
   newparam(:private_key_type) do
     desc 'The type of the private key. Usually the private key is of type RSA
-      key but it can also be an Elliptic Curve key (EC).
-      Valid options: <rsa>, <ec>. Defaults to <rsa>'
+      key but it can also be an Elliptic Curve key (EC) or DSA.
+      Valid options: <rsa>, <dsa>, <ec>. Defaults to <rsa>'
 
-    newvalues(:rsa, :ec)
+    newvalues(:rsa, :dsa, :ec)
 
     defaultto :rsa
   end

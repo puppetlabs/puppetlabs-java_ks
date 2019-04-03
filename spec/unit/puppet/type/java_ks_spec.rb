@@ -107,7 +107,7 @@ describe Puppet::Type.type(:java_ks) do
       expect(described_class.new(jks_resource)[:private_key_type]).to eq(:rsa)
     end
 
-    it 'fails if :private_key_type is neither :rsa nor :ec' do
+    it 'fails if :private_key_type is neither :rsa nor :ec nor :dsa' do
       jks = jks_resource.dup
       jks[:private_key_type] = 'nosuchkeytype'
 

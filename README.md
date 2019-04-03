@@ -124,7 +124,7 @@ Used for command (keytool, openssl) execution. Valid options: array or file path
 Sets a private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
 
 ##### `private_key_type`
-Sets the type of the private key. Usually this is RSA but Elliptic Curve (EC) keys are also supported. Valid options: `rsa` and `ec`. Default: `rsa`.
+Sets the type of the private key. Usually this is RSA but Elliptic Curve (EC) and DSA keys are also supported. Valid options: `rsa`, `dsa` and `ec`. Default: `rsa`.
 
 ##### `target`
 *Required.* Specifies a destination file for the keystore. Autorequires the parent directory of the file. Valid options: string. Default: undef.
