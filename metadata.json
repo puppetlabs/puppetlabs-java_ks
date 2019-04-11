@@ -7,9 +7,7 @@
   "source": "https://github.com/puppetlabs/puppetlabs-java_ks.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
-  "dependencies": [
-
-  ],
+  "dependencies": [],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -94,7 +92,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 7.0.0"
+      "version_requirement": ">= 5.5.10 < 7.0.0"
     }
   ],
   "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
