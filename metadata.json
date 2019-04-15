@@ -7,7 +7,9 @@
   "source": "https://github.com/puppetlabs/puppetlabs-java_ks.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
-  "dependencies": [],
+  "dependencies": [
+
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -96,7 +98,7 @@
     }
   ],
   "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
-  "template-url": "https://github.com/puppetlabs/pdk-templates",
-  "template-ref": "heads/master-0-gfde5699",
-  "pdk-version": "1.9.0"
+  "template-url": "https://github.com/puppetlabs/pdk-templates#master",
+  "template-ref": "heads/master-0-gf778803",
+  "pdk-version": "1.10.0"
 }
