@@ -156,7 +156,7 @@ end
 
 RSpec.shared_context 'common variables' do
   before(:each) do
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u201').split('u')
+    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u211').split('u')
     @ensure_ks = 'latest'
     @resource_path = 'undef'
     @target_dir = '/etc/'
