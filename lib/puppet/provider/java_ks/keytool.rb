@@ -15,6 +15,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     case private_key_type
     when :rsa
       pkey = OpenSSL::PKey::RSA.new File.read(private_key), password
+    when :dsa
+      pkey = OpenSSL::PKey::DSA.new File.read(private_key), password
     when :ec
       pkey = OpenSSL::PKey::EC.new File.read(private_key), password
     end
