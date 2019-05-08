@@ -4,13 +4,17 @@
 
 #### Table of Contents
 
-1. [Overview - What is the java_ks module?](#overview)
-2. [Module Description - What does the module do?](#module-description)
-3. [Setup - The basics of getting started with java_ks](#setup)
-4. [Usage - The parameters available for configuration](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing](#reference)
-6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
+1. [Overview](#overview)
+2. [Module Description](#module-description)
+     * [Beginning with the module](#beginning-with-the-module)
+3. [Setup](#setup)
+4. [Usage](#usage)
+     * [Certificates](#certificates)
+     * [Namevars](#namevars)
+     * [Windows task](#windows-task)
+5. [Reference](#reference)
+6. [Limitations](#limitations)
+7. [Development](#development)
 
 ## Overview
 
@@ -22,7 +26,7 @@ The java_ks module contains a type called `java_ks` and a single provider named 
 
 ## Setup
 
-### Beginning with java_ks
+### Beginning with the module
 
 To get started with java_ks, declare each `java_ks` resource you need.
 
@@ -84,75 +88,7 @@ broker.ks keystore with the alias of broker.example.com.
 
 ## Reference
 
-### Public Types
-* `java_ks`: This resource manages the entries in a Java keystore, and uses composite namevars to allow the same alias across multiple target keystores.
-
-### Public Providers
-* `keytool`: Manages Java keystores by using a combination of the `openssl` and `keytool` commands.
-
-#### Parameters
-All parameters, except where specified, are optional.
-
-##### `certificate`
-*Required.* A server certificate, followed by zero or more intermediate certificate authorities. Places the certificates in the keystore. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
-
-##### `chain`
-Takes intermediate certificate authorities from a separate file from the server certificate. This autorequires the file of the same path and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
-
-##### `ensure`
-Valid options: absent, present, latest. Latest verifies sha1 certificate fingerprints for the stored certificate and the source file. Default: present.
-
-##### `name`
-*Required.* Identifies the entry in the keystore. This will be converted to lowercase. Valid options: string. Default: undef.
-
-##### `password`
-This password is used to protect the keystore. If private keys are also protected, this password will be used to attempt to unlock them. Valid options: String. Must be 6 or more characters. This cannot be used together with `password_file`, but *you must pass at least one of these parameters.* Default: undef.
-
-##### `password_file`
-Sets a plaintext file where the password is stored. Used as an alternative to `password`. This cannot be used together with `password`, but *you must pass at least one of these parameters.* Valid options: String to the plaintext file. Default: undef.
-
-#### `password_fail_reset`
-If the supplied password does not succeed in unlocking the keystore file, then **delete** the keystore file and create a new one. Default: `false`
-
-##### `destkeypass`
-The password you want to set to protect the key in the keystore. Can be used with `pkcs12` stores to change the source password.
-
-##### `path`
-Used for command (keytool, openssl) execution. Valid options: array or file path separated list (for example : in linux). Default: undef.
-
-##### `private_key`
-Sets a private key that encrypts traffic to a server application. Must be accompanied by a signed certificate for the keytool provider. This autorequires the specified file and must be present on the node before java_ks{} is run. Valid options: string. Default: undef.
-
-##### `private_key_type`
-Sets the type of the private key. Usually this is RSA but Elliptic Curve (EC) and DSA keys are also supported. Valid options: `rsa`, `dsa` and `ec`. Default: `rsa`.
-
-##### `target`
-*Required.* Specifies a destination file for the keystore. Autorequires the parent directory of the file. Valid options: string. Default: undef.
-
-##### `trustcacerts`
-Certificate authorities input into a keystore aren’t trusted by default, so if you are adding a CA you need to set this parameter to 'true'. Valid options: 'true' or 'false'. Default: 'false'.
-
-##### `keytool_timeout`
-Timeout in seconds for all keytool commands. Can be disabled by passing 0. Default: 120
-
-##### `storetype`
-The storetype parameter allows you to use 'jceks' or 'pkcs12' format certificates if desired.
-
-```puppet
-java_ks { 'puppetca:/opt/puppet/truststore.jceks':
-  ensure       => latest,
-  storetype    => 'jceks',
-  certificate  => '/etc/puppet/ssl/certs/ca.pem',
-  password     => 'puppet',
-  trustcacerts => true,
-}
-```
-
-##### `source_alias`
-The source certificate alias to import. Only supported by `pkcs12` certs.
-
-##### `source_password`
-The source keystore password. Required if using `storetype => pkcs12`.
+For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-java_ks/blob/master/REFERENCE.md).
 
 ## Limitations
 
