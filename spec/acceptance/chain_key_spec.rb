@@ -1,11 +1,19 @@
 require 'spec_helper_acceptance'
 
 describe 'managing intermediate certificates' do
+
+  def keystore_command(target)
+    command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet"
+    command.prepend("& ") if os[:family] == "windows"
+    command
+  end
+
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
-  describe 'managing combined and seperate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
+  describe 'managing combined and seperate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
     include_context 'common variables'
-    target_combined = "#{@target_dir}chain_combined_key.ks"
-    target_seperate = "#{@target_dir}chain_key.ks"
+
+    let(:target_combined){"#{@target_dir}chain_combined_key.ks"}
+    let(:target_seperate){"#{@target_dir}chain_key.ks"}
 
     it 'creates two private key with chain certs' do
       pp = <<-MANIFEST
@@ -27,18 +35,18 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      idempotent_apply(default, pp)
+      idempotent_apply(pp)
     end
 
     expectations_combined = [
       %r{Alias name: combined\.example\.com},
       %r{Entry type: (keyEntry|PrivateKeyEntry)},
-      %r{Certificate chain length: 3},
-      %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
+      %r{Certificate chain length: 1},
+      %r{Serial number: 5},
     ]
     it 'verifies the private key #combined' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target_combined} -storepass puppet") do |r|
-        expect(r.exit_code).to be_zero
+      run_shell((keystore_command target_combined), expect_failures: true) do |r|
+        expect(r.exit_code).to eq(@exit_code)
         expectations_combined.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -47,12 +55,12 @@ describe 'managing intermediate certificates' do
     expectations_seperate = [
       %r{Alias name: seperate\.example\.com},
       %r{Entry type: (keyEntry|PrivateKeyEntry)},
-      %r{Certificate chain length: 3},
-      %r{^Serial number: 5$.*^Serial number: 4$.*^Serial number: 3$}m,
+      %r{Certificate chain length: 2},
+      %r{^Serial number: 5(\n|\r|\r\n)}m,
     ]
     it 'verifies the private key #seperate' do
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target_seperate} -storepass puppet") do |r|
-        expect(r.exit_code).to be_zero
+      run_shell((keystore_command target_seperate), expect_failures: true) do |r|
+        expect(r.exit_code).to eq(@exit_code)
         expectations_seperate.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -79,16 +87,16 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      idempotent_apply(default, pp)
+      idempotent_apply(pp)
 
       expectations_combined = [
         %r{Alias name: combined\.example\.com},
         %r{Entry type: (keyEntry|PrivateKeyEntry)},
-        %r{Certificate chain length: 2},
-        %r{^Serial number: 5$.*^Serial number: 6$}m,
+        %r{Certificate chain length: 1},
+        %r{^Serial number: 5(\n|\r|\r\n)}m,
       ]
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target_combined} -storepass puppet") do |r|
-        expect(r.exit_code).to be_zero
+      run_shell((keystore_command target_combined), expect_failures: true) do |r|
+        expect(r.exit_code).to eq(@exit_code)
         expectations_combined.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -98,10 +106,10 @@ describe 'managing intermediate certificates' do
         %r{Alias name: seperate\.example\.com},
         %r{Entry type: (keyEntry|PrivateKeyEntry)},
         %r{Certificate chain length: 2},
-        %r{^Serial number: 5$.*^Serial number: 6$}m,
+        %r{^Serial number: 5(\n|\r|\r\n)}m,
       ]
-      shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target_seperate} -storepass puppet") do |r|
-        expect(r.exit_code).to be_zero
+      run_shell((keystore_command target_seperate), expect_failures: true) do |r|
+        expect(r.exit_code).to eq(@exit_code)
         expectations_seperate.each do |expect|
           expect(r.stdout).to match(expect)
         end
@@ -109,7 +117,7 @@ describe 'managing intermediate certificates' do
     end
   end
 
-  describe 'managing non existent java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
+  describe 'managing non existent java chain keys in noop', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
     include_context 'common variables'
     target = "#{@target_dir}noop_chain_key.ks"
 
@@ -134,7 +142,7 @@ describe 'managing intermediate certificates' do
 
       # in noop mode, when the dependent certificate files are not present in the system,
       # java_ks will not invoke openssl to validate their status, thus noop will succeed
-      apply_manifest(pp, catch_failures: true, noop: true)
+      apply_manifest(pp, {expect_failures: false, noop: true})
     end
 
     # verifies the dependent files are missing

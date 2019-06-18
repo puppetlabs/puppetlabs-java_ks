@@ -1,9 +1,23 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
+describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
+
+  def keystore_command(target, pass = 'puppet')
+    command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass #{pass}"
+    command.prepend("& ") if os[:family] == "windows"
+    command
+  end
+
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
-  target = "#{@target_dir}truststore.ts"
+
+  let(:target){"#{@target_dir}truststore.ts"}
+
+  it 'ensures the working directory is clean' do
+    run_shell("#{@remove_command} #{target}") do |r|
+      expect(r.exit_code).to be_zero
+    end
+  end
 
   it 'creates a truststore' do
     pp = <<-EOS
@@ -16,7 +30,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(hos
         path         => #{@resource_path},
     }
     EOS
-    idempotent_apply(default, pp)
+    idempotent_apply(pp)
   end
 
   expectations = [
@@ -25,7 +39,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(hos
     %r{CN=Test CA},
   ]
   it 'verifies the truststore' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet") do |r|
+    run_shell((keystore_command target), expect_failures: true) do |r|
       expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
@@ -45,11 +59,11 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(hos
         path                => #{@resource_path},
     }
     MANIFEST
-    idempotent_apply(default, pp)
+    idempotent_apply(pp)
   end
 
   it 'verifies the truststore again' do
-    shell("\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass bobinsky") do |r|
+    run_shell((keystore_command(target, 'bobinsky')), expect_failures: true) do |r|
       expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)

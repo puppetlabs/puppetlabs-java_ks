@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'unsupported distributions and OSes', if: UNSUPPORTED_PLATFORMS.include?(host_inventory['facter']['os']['name']) do
+describe 'unsupported distributions and OSes', if: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
   it 'fails' do
