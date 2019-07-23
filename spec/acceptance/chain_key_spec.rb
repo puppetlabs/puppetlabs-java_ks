@@ -1,19 +1,19 @@
 require 'spec_helper_acceptance'
 
-describe 'managing intermediate certificates' do
+# rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
 
+describe 'managing intermediate certificates' do
   def keystore_command(target)
     command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet"
-    command.prepend("& ") if os[:family] == "windows"
+    command.prepend('& ') if os[:family] == 'windows'
     command
   end
 
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   describe 'managing combined and seperate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
     include_context 'common variables'
 
-    let(:target_combined){"#{@target_dir}chain_combined_key.ks"}
-    let(:target_seperate){"#{@target_dir}chain_key.ks"}
+    let(:target_combined) { "#{@target_dir}chain_combined_key.ks" }
+    let(:target_seperate) { "#{@target_dir}chain_key.ks" }
 
     it 'creates two private key with chain certs' do
       pp = <<-MANIFEST
@@ -142,7 +142,7 @@ describe 'managing intermediate certificates' do
 
       # in noop mode, when the dependent certificate files are not present in the system,
       # java_ks will not invoke openssl to validate their status, thus noop will succeed
-      apply_manifest(pp, {expect_failures: false, noop: true})
+      apply_manifest(pp, expect_failures: false, noop: true)
     end
 
     # verifies the dependent files are missing

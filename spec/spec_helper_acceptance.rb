@@ -7,7 +7,6 @@ include PuppetLitmus
 if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   puts 'Running tests against this machine !'
   if Gem.win_platform?
-    require 'pry'; binding.pry;
     set :backend, :cmd
   else
     set :backend, :exec

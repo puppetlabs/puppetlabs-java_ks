@@ -1,22 +1,20 @@
 require 'spec_helper_acceptance'
 
+# rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
+
 describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
+  let(:target) { "#{@target_dir}truststore.ts" }
 
   def keystore_command(target, pass = 'puppet')
     command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass #{pass}"
-    command.prepend("& ") if os[:family] == "windows"
+    command.prepend('& ') if os[:family] == 'windows'
     command
   end
 
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
 
-  let(:target){"#{@target_dir}truststore.ts"}
-
   it 'ensures the working directory is clean' do
-    run_shell("#{@remove_command} #{target}") do |r|
-      expect(r.exit_code).to be_zero
-    end
+    run_shell("#{@remove_command} #{target}", expect_failures: true)
   end
 
   it 'creates a truststore' do
@@ -63,7 +61,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[
   end
 
   it 'verifies the truststore again' do
-    run_shell((keystore_command(target, 'bobinsky')), expect_failures: true) do |r|
+    run_shell(keystore_command(target, 'bobinsky'), expect_failures: true) do |r|
       expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)

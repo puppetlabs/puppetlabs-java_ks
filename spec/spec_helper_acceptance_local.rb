@@ -3,9 +3,6 @@ require_relative 'support/functions/cert_functions'
 UNSUPPORTED_PLATFORMS = [].freeze
 
 RSpec.configure do |c|
-  # Project root
-  proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
   # Readable test descriptions
   c.formatter = :documentation
 
@@ -25,7 +22,7 @@ RSpec.configure do |c|
       MANIFEST
       # The Chocolatey module returns warning in it's output that fail the call
       # to apply_manifest if we don't expect failures.
-      apply_manifest(pp_one, {:expect_failures => true})
+      apply_manifest(pp_one, expect_failures: true)
     else
       run_shell('puppet module install puppetlabs-java')
       pp_two = <<-MANIFEST

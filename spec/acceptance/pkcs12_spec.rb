@@ -1,19 +1,19 @@
 require 'spec_helper_acceptance'
 
+# rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
+
 # SLES by default does not support this form of encyrption.
 describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:family]) || os[:family] == 'SLES') do
-
   def keystore_command(target)
     command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet"
-    command.prepend("& ") if os[:family] == "windows"
+    command.prepend('& ') if os[:family] == 'windows'
     command
   end
 
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
 
   context 'with defaults' do
-    let(:target){"#{@target_dir}pcks12.ks"}
+    let(:target) { "#{@target_dir}pcks12.ks" }
 
     it 'creates a private key with chain' do
       pp = <<-MANIFEST
@@ -37,7 +37,6 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
       %r{Serial number: 5}m,
     ]
     it 'verifies the private key and chain' do
-
       run_shell((keystore_command target), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations.each do |expect|
@@ -87,8 +86,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
   end # context 'with defaults'
 
   context 'with a different alias' do
-
-    let(:target){"#{@target_dir}pcks12-2.ks"}
+    let(:target) { "#{@target_dir}pcks12-2.ks" }
 
     it 'creates a private key with chain' do
       pp = <<-MANIFEST
@@ -125,8 +123,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
   end # context 'with a different alias'
 
   context 'with a destkeypass' do
-
-    let(:target){"#{@target_dir}pcks12-2.ks"}
+    let(:target) { "#{@target_dir}pcks12-2.ks" }
 
     it 'creates a private key with chain' do
       pp = <<-MANIFEST

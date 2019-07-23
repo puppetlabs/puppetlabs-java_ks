@@ -1,7 +1,7 @@
 def copy_certs_to_sut
   if os[:family] =~ %r{windows}i
     temp_dir = 'C:/tmp/'
-    run_shell('mkdir c:\\tmp', {:expect_failures => true})
+    run_shell('mkdir c:\\tmp', expect_failures: true)
   else
     temp_dir = '/tmp/'
   end
@@ -10,8 +10,8 @@ def copy_certs_to_sut
 
   Dir.foreach(certs_dir) do |cert|
     next if File.directory? cert
-    full_path = File.join(certs_dir,cert)
-    bolt_upload_file(full_path,"#{temp_dir}#{cert}")
+    full_path = File.join(certs_dir, cert)
+    bolt_upload_file(full_path, "#{temp_dir}#{cert}")
   end
 end
 

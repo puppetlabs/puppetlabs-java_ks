@@ -1,18 +1,17 @@
 require 'spec_helper_acceptance'
 
-describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
+# rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
 
+describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
   def keystore_command(target, storepass = 'testpass', keypass = 'testkeypass')
     command = "\"#{@keytool_path}keytool\" -certreq -alias broker.example.com -v "\
     "-keystore #{target} -storepass #{storepass} -keypass #{keypass}"
-    command.prepend("& ") if os[:family] == "windows"
+    command.prepend('& ') if os[:family] == 'windows'
     command
   end
 
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
-
-  let(:target){"#{@target_dir}destkeypass.ks"}
+  let(:target) { "#{@target_dir}destkeypass.ks" }
 
   it 'creates a password protected private key' do
     pp = <<-MANIFEST
@@ -37,6 +36,6 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
   end
 
   it 'cannot make a cert req with the wrong password' do
-    run_shell((keystore_command(target, 'qwert', 'qwert')), expect_failures: true)
+    run_shell(keystore_command(target, 'qwert', 'qwert'), expect_failures: true)
   end
 end

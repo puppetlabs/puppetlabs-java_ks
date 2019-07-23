@@ -1,20 +1,19 @@
 require 'spec_helper_acceptance'
 
-describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
+# rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
 
+describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
   def keystore_command(target, password = 'puppet')
     command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass #{password}"
-    command.prepend("& ") if os[:family] == "windows"
+    command.prepend('& ') if os[:family] == 'windows'
     command
   end
 
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'common variables'
 
-  let(:target){"#{@target_dir}keystore.ks"}
+  let(:target) { "#{@target_dir}keystore.ks" }
 
   describe 'basic tests' do
-
     it 'creates a keystore' do
       pp_one = <<-MANIFEST
         java_ks { 'puppetca:keystore':
@@ -31,7 +30,6 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
     end
 
     describe 'verifies' do
-
       expectations = [
         %r{Your keystore contains 1 entry},
         %r{Alias name: puppetca},
@@ -66,9 +64,8 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
       end
 
       it 'recreates a keystore if password fails' do
-
         pp_three = <<-MANIFEST
-  
+
           java_ks { 'puppetca:keystore':
             ensure              => latest,
             certificate         => "#{@temp_dir}ca.pem",
@@ -84,7 +81,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
       end
 
       it 'verifies the keystore again' do
-        run_shell((keystore_command(target,'pepput')), expect_failures: true) do |r|
+        run_shell(keystore_command(target, 'pepput'), expect_failures: true) do |r|
           expectations.each do |expect|
             expect(r.stdout).to match(expect)
           end
@@ -92,7 +89,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
       end
 
       it 'cleans up the test artifacts' do
-        run_shell("rm #{target}") do | r |
+        run_shell("rm #{target}") do |r|
           expect(r.exit_code).to be_zero
         end
       end
@@ -101,7 +98,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
 
   if os[:family] == 'ubuntu' && !os[:release].start_with?('18.04')
     describe 'storetype' do
-      let(:target){"#{@target_dir}storetypekeystore.ks"}
+      let(:target) { "#{@target_dir}storetypekeystore.ks" }
 
       it 'creates a keystore' do
         skip 'MODULES-9446'
@@ -127,7 +124,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(os[:f
       ]
       it 'verifies the keytore' do
         skip 'MODULES-9446'
-        run_shell((keystore_command(target,'pepput') + ' -storetype jceks'), expect_failures: true) do |r|
+        run_shell((keystore_command(target, 'pepput') + ' -storetype jceks'), expect_failures: true) do |r|
           expectations.each do |expect|
             expect(r.stdout).to match(expect)
           end
