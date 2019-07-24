@@ -3,12 +3,6 @@ require 'spec_helper_acceptance'
 # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
 
 describe 'managing intermediate certificates' do
-  def keystore_command(target)
-    command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet"
-    command.prepend('& ') if os[:family] == 'windows'
-    command
-  end
-
   describe 'managing combined and seperate java chain keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
     include_context 'common variables'
 
@@ -45,7 +39,7 @@ describe 'managing intermediate certificates' do
       %r{Serial number: 5},
     ]
     it 'verifies the private key #combined' do
-      run_shell((keystore_command target_combined), expect_failures: true) do |r|
+      run_shell((keystore_list target_combined), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations_combined.each do |expect|
           expect(r.stdout).to match(expect)
@@ -59,7 +53,7 @@ describe 'managing intermediate certificates' do
       %r{^Serial number: 5(\n|\r|\r\n)}m,
     ]
     it 'verifies the private key #seperate' do
-      run_shell((keystore_command target_seperate), expect_failures: true) do |r|
+      run_shell((keystore_list target_seperate), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations_seperate.each do |expect|
           expect(r.stdout).to match(expect)
@@ -95,7 +89,7 @@ describe 'managing intermediate certificates' do
         %r{Certificate chain length: 1},
         %r{^Serial number: 5(\n|\r|\r\n)}m,
       ]
-      run_shell((keystore_command target_combined), expect_failures: true) do |r|
+      run_shell((keystore_list target_combined), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations_combined.each do |expect|
           expect(r.stdout).to match(expect)
@@ -108,7 +102,7 @@ describe 'managing intermediate certificates' do
         %r{Certificate chain length: 2},
         %r{^Serial number: 5(\n|\r|\r\n)}m,
       ]
-      run_shell((keystore_command target_seperate), expect_failures: true) do |r|
+      run_shell((keystore_list target_seperate), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations_seperate.each do |expect|
           expect(r.stdout).to match(expect)

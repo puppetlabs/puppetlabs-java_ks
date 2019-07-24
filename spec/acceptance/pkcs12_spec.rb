@@ -4,12 +4,6 @@ require 'spec_helper_acceptance'
 
 # SLES by default does not support this form of encyrption.
 describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:family]) || os[:family] == 'SLES') do
-  def keystore_command(target)
-    command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass puppet"
-    command.prepend('& ') if os[:family] == 'windows'
-    command
-  end
-
   include_context 'common variables'
 
   context 'with defaults' do
@@ -37,7 +31,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
       %r{Serial number: 5}m,
     ]
     it 'verifies the private key and chain' do
-      run_shell((keystore_command target), expect_failures: true) do |r|
+      run_shell((keystore_list target), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
@@ -76,7 +70,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
                          %r{^Serial number: 5$.*^Serial number: 6$}m,
                        ]
                      end
-      run_shell((keystore_command target), expect_failures: true) do |r|
+      run_shell((keystore_list target), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
@@ -113,7 +107,7 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
       %r{Serial number: 3},
     ]
     it 'verifies the private key and chain' do
-      run_shell((keystore_command target), expect_failures: true) do |r|
+      run_shell((keystore_list target), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
@@ -151,19 +145,17 @@ describe 'managing java pkcs12', unless: (UNSUPPORTED_PLATFORMS.include?(os[:fam
       %r{Serial number: 3},
     ]
     it 'verifies the private key and chain' do
-      run_shell((keystore_command target), expect_failures: true) do |r|
+      run_shell((keystore_list target), expect_failures: true) do |r|
         expect(r.exit_code).to eq(@exit_code)
         expectations.each do |expect|
           expect(r.stdout).to match(expect)
         end
       end
     end
-    # -keypasswd commands not supported if -storetype is PKCS12 on ubuntu 18.04 with current java version
-    unless os[:family] == 'ubuntu' && os[:release].start_with?('18.04')
-      it 'verifies the private key password' do
-        run_shell((keystore_command target) + ' -alias leaf_cert -keypass abcdef123456 -new pass1234', expect_failures: true) do |r|
-          expect(r.exit_code).to eq(@exit_code)
-        end
+
+    it 'verifies the private key password' do
+      run_shell((keystore_list target) + ' -alias leaf_cert -keypass abcdef123456 -new pass1234', expect_failures: true) do |r|
+        expect(r.exit_code).to eq(@exit_code)
       end
     end
   end # context 'with a destkeypass'

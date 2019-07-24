@@ -2,6 +2,26 @@ require_relative 'support/functions/cert_functions'
 
 UNSUPPORTED_PLATFORMS = [].freeze
 
+def keystore_command
+  # The @keytool global does not exist right now as the function is defined.
+  # When the tests call the function, RSpec.shared_context below will have run
+  # by then and the variable will exist.
+  command = "\"#{@keytool_path}keytool\""
+  command.prepend('& ') if os[:family] == 'windows'
+  command
+end
+
+def keystore_list(target, pass = 'puppet', storetype = nil)
+  command = "#{keystore_command} -list -v -keystore #{target} -storepass #{pass}"
+  command << " -storetype #{storetype}" unless storetype.nil?
+  command
+end
+
+def keystore_certreq(target, storepass = 'testpass', keypass = 'testkeypass', alias_url = 'broker.example.com')
+  "#{keystore_command} -certreq -alias #{alias_url} -v " \
+  "-keystore #{target} -storepass #{storepass} -keypass #{keypass}"
+end
+
 RSpec.configure do |c|
   # Readable test descriptions
   c.formatter = :documentation

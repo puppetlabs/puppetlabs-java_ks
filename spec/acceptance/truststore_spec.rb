@@ -5,12 +5,6 @@ require 'spec_helper_acceptance'
 describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
   let(:target) { "#{@target_dir}truststore.ts" }
 
-  def keystore_command(target, pass = 'puppet')
-    command = "\"#{@keytool_path}keytool\" -list -v -keystore #{target} -storepass #{pass}"
-    command.prepend('& ') if os[:family] == 'windows'
-    command
-  end
-
   include_context 'common variables'
 
   it 'ensures the working directory is clean' do
@@ -37,7 +31,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[
     %r{CN=Test CA},
   ]
   it 'verifies the truststore' do
-    run_shell((keystore_command target), expect_failures: true) do |r|
+    run_shell((keystore_list target), expect_failures: true) do |r|
       expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
@@ -61,7 +55,7 @@ describe 'managing java truststores', unless: UNSUPPORTED_PLATFORMS.include?(os[
   end
 
   it 'verifies the truststore again' do
-    run_shell(keystore_command(target, 'bobinsky'), expect_failures: true) do |r|
+    run_shell(keystore_list(target, 'bobinsky'), expect_failures: true) do |r|
       expect(r.exit_code).to be_zero
       expectations.each do |expect|
         expect(r.stdout).to match(expect)
