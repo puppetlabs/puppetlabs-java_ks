@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.0.0) (2019-08-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.4.0...v3.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#276](https://github.com/puppetlabs/puppetlabs-java_ks/pull/276) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(FM-8155\) Add Window Server 2019 support [\#281](https://github.com/puppetlabs/puppetlabs-java_ks/pull/281) ([eimlav](https://github.com/eimlav))
+- \(FM-8042\) Add RedHat 8 support [\#280](https://github.com/puppetlabs/puppetlabs-java_ks/pull/280) ([eimlav](https://github.com/eimlav))
+- Add initial support for DSA private keys. [\#273](https://github.com/puppetlabs/puppetlabs-java_ks/pull/273) ([surcouf](https://github.com/surcouf))
+
+### Fixed
+
+- FM-7945 stringify java\_ks [\#279](https://github.com/puppetlabs/puppetlabs-java_ks/pull/279) ([lionce](https://github.com/lionce))
+- Modules 8962 - java\_ks - Windows 2012 failing smoke [\#278](https://github.com/puppetlabs/puppetlabs-java_ks/pull/278) ([lionce](https://github.com/lionce))
+
 ## [2.4.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/2.4.0) (2019-02-19)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.3.0...2.4.0)
