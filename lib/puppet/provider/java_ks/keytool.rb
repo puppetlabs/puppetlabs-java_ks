@@ -10,7 +10,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   # Keytool can only import a keystore if the format is pkcs12.  Generating and
-  # importing a keystore is used to add private_key and certifcate pairs.
+  # importing a keystore is used to add private_key and certificate pairs.
   def to_pkcs12(path)
     case private_key_type
     when :rsa
@@ -33,7 +33,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   # Keytool can only import a jceks keystore if the format is der.  Generating and
-  # importing a keystore is used to add private_key and certifcate pairs.
+  # importing a keystore is used to add private_key and certificate pairs.
   def to_der(path)
     x509_cert = OpenSSL::X509::Certificate.new File.read certificate
     File.open(path, 'wb') { |f| f.print x509_cert.to_der }
@@ -229,7 +229,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     if !certificate.nil? && !private_key.nil?
       import_ks
     elsif certificate.nil? && !private_key.nil?
-      raise Puppet::Error, 'Keytool is not capable of importing a private key without an accomapaning certificate.'
+      raise Puppet::Error, 'Keytool is not capable of importing a private key without an accompanying certificate.'
     elsif storetype == :jceks
       import_jceks
     elsif storetype == :pkcs12
@@ -294,7 +294,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def run_command(cmd, target = false, stdinfile = false, env = {})
     env[:PATH] = @resource[:path].join(File::PATH_SEPARATOR) if resource[:path]
 
-    # The Puppet::Util::Execution.execute method is deparcated in Puppet 3.x
+    # The Puppet::Util::Execution.execute method is deprecated in Puppet 3.x
     # but we need this to work on 2.7.x too.
     exec_method = if Puppet::Util::Execution.respond_to?(:execute)
                     Puppet::Util::Execution.method(:execute)

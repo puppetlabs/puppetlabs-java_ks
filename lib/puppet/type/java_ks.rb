@@ -6,7 +6,7 @@ Puppet::Type.newtype(:java_ks) do
     desc 'Has three states: present, absent, and latest.  Latest
       will compare the on disk SHA1 fingerprint of the certificate to that
       in keytool to determine if insync? returns true or false.  We redefine
-      insync? for this paramerter to accomplish this.'
+      insync? for this parameter to accomplish this.'
 
     newvalue(:present) do
       provider.create
