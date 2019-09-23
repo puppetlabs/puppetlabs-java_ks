@@ -95,7 +95,7 @@ describe 'managing java keystores', unless: UNSUPPORTED_PLATFORMS.include?(host_
             password     => 'pepput',
             trustcacerts => true,
             path         => #{@resource_path},
-            storetype    => 'jceks',
+            storetype    => 'jks',
           }
         MANIFEST
 

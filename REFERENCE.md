@@ -47,7 +47,7 @@ Valid values: present, absent, latest
 Has three states: present, absent, and latest.  Latest
 will compare the on disk SHA1 fingerprint of the certificate to that
 in keytool to determine if insync? returns true or false.  We redefine
-insync? for this paramerter to accomplish this.
+insync? for this parameter to accomplish this.
 
 Default value: present
 
@@ -75,10 +75,10 @@ All certificates will be placed in the keystore.  This will autorequire the spec
 
 ##### `storetype`
 
-Valid values: jceks, pkcs12
+Valid values: jceks, pkcs12, jks
 
 Optional storetype
-Valid options: <jceks>, <pkcs12>
+Valid options: <jceks>, <pkcs12>, <jks>
 
 ##### `private_key`
 
