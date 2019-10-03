@@ -86,7 +86,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       end
     end
 
-    it 'normallies timeout after 120 seconds' do
+    it 'normally times out after 120 seconds' do
       cmd = '/bin/echo testing 1 2 3'
       expect(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
 
@@ -174,7 +174,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
   end
 
-  describe 'when creating entires in a keystore' do
+  describe 'when creating entries in a keystore' do
     let(:params) do
       {
         title: "app.example.com:#{temp_dir}application.jks",
