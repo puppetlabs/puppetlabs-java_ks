@@ -1,38 +1,94 @@
 ---
-.gitignore:
-  required:
-    - ---.project
-
-.gitlab-ci.yml:
-  unmanaged: true
-
-.rubocop.yml:
+".gitlab-ci.yml":
+  delete: true
+".rubocop.yml":
   default_configs:
-    inherit_from: .rubocop_todo.yml
-
-.travis.yml:
-  unmanaged: true
- 
+    inherit_from: ".rubocop_todo.yml"
+".travis.yml":
+  simplecov: true
+  branches:
+  - release
+  includes:
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=deb_puppet5
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_deb]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=deb_puppet6
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_deb]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake 'litmus:install_agent[puppet6]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=el_puppet5
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el]'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=el_puppet6
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el]'
+      - bundle exec rake 'litmus:install_agent[puppet6]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
 appveyor.yml:
-  unmanaged: true
-
+  simplecov: true
+  use_litmus: true
+  matrix_extras:
+  - RUBY_VERSION: 25-x64
+    ACCEPTANCE: 'yes'
+    TARGET_HOST: localhost
+  - RUBY_VERSION: 25-x64
+    ACCEPTANCE: 'yes'
+    TARGET_HOST: localhost
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
 Gemfile:
   required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: 'puppet-module-win-system-r#{minor_version}'
-        platforms:
-          - mswin
-          - mingw
-          - x64_mingw
+    ":system_tests":
+    - gem: puppet-module-posix-system-r#{minor_version}
+      platforms: ruby
+    - gem: puppet-module-win-system-r#{minor_version}
+      platforms:
+      - mswin
+      - mingw
+      - x64_mingw
   optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-
+    ":development":
+    - gem: github_changelog_generator
+      git: https://github.com/skywinder/github-changelog-generator
+      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
+      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 spec/spec_helper.rb:
-  mock_with: ':rspec'
+  mock_with: ":rspec"
   coverage_report: true
