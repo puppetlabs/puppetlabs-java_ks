@@ -17,9 +17,6 @@ stages:
   - static
   - spec
   - acceptance
-  -
-    if: tag =~ ^v\d
-    name: deploy
 matrix:
   fast_finish: true
   include:
@@ -69,9 +66,6 @@ matrix:
       script: ["bundle exec rake litmus:acceptance:parallel"]
       services: docker
       sudo: required
-    -
-      env: DEPLOY_TO_FORGE=yes
-      stage: deploy
 branches:
   only:
     - master

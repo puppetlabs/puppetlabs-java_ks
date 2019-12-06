@@ -3,7 +3,6 @@
   "version": "3.0.0",
   "author": "puppetlabs",
   "summary": "Manage arbitrary Java keystore files",
-  "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-java_ks",
   "project_page": "https://github.com/puppetlabs/puppetlabs-java_ks",
@@ -102,7 +101,8 @@
       "version_requirement": ">= 5.5.10 < 7.0.0"
     }
   ],
+  "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
   "template-url": "https://github.com/puppetlabs/pdk-templates#master",
-  "template-ref": "heads/master-0-gfaf9e8b",
+  "template-ref": "heads/master-0-g643529a",
   "pdk-version": "1.14.1"
 }
