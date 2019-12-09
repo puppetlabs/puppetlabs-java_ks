@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.1.0) (2019-12-09)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v3.0.0...v3.1.0)
+
+### Added
+
+- \(FM-8224\) - Addition of support for CentOS 8 [\#294](https://github.com/puppetlabs/puppetlabs-java_ks/pull/294) ([david22swan](https://github.com/david22swan))
+- \(feat\) adding litmus support [\#292](https://github.com/puppetlabs/puppetlabs-java_ks/pull/292) ([tphoney](https://github.com/tphoney))
+- pdksync - "Add support on Debian10" [\#288](https://github.com/puppetlabs/puppetlabs-java_ks/pull/288) ([lionce](https://github.com/lionce))
+
 ## [v3.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.0.0) (2019-08-20)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.4.0...v3.0.0)
