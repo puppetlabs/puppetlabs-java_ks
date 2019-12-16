@@ -11,59 +11,58 @@
   branches:
   - release
   includes:
-    -
-      bundler_args:
-      dist: trusty
-      env: PLATFORMS=deb_puppet5
-      rvm: 2.5.3
-      before_script:
-      - bundle exec rake 'litmus:provision_list[travis_deb]'
-      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
-      - bundle exec rake 'litmus:install_agent[puppet5]'
-      - bundle exec rake litmus:install_module
-      script:
-      - bundle exec rake litmus:acceptance:parallel
-      services: docker
-      sudo: required
-    -
-      bundler_args:
-      dist: trusty
-      env: PLATFORMS=deb_puppet6
-      rvm: 2.5.3
-      before_script:
-      - bundle exec rake 'litmus:provision_list[travis_deb]'
-      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
-      - bundle exec rake 'litmus:install_agent[puppet6]'
-      - bundle exec rake litmus:install_module
-      script:
-      - bundle exec rake litmus:acceptance:parallel
-      services: docker
-    -
-      bundler_args:
-      dist: trusty
-      env: PLATFORMS=el_puppet5
-      rvm: 2.5.3
-      before_script:
-      - bundle exec rake 'litmus:provision_list[travis_el]'
-      - bundle exec rake 'litmus:install_agent[puppet5]'
-      - bundle exec rake litmus:install_module
-      script:
-      - bundle exec rake litmus:acceptance:parallel
-      services: docker
-      sudo: required
-    -
-      bundler_args:
-      dist: trusty
-      env: PLATFORMS=el_puppet6
-      rvm: 2.5.3
-      before_script:
-      - bundle exec rake 'litmus:provision_list[travis_el]'
-      - bundle exec rake 'litmus:install_agent[puppet6]'
-      - bundle exec rake litmus:install_module
-      script:
-      - bundle exec rake litmus:acceptance:parallel
-      services: docker
-      sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=deb_puppet5
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_deb]'
+    - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+    - bundle exec rake 'litmus:install_agent[puppet5]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=deb_puppet6
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_deb]'
+    - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+    - bundle exec rake 'litmus:install_agent[puppet6]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el_puppet5
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el]'
+    - bundle exec rake 'litmus:install_agent[puppet5]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el_puppet6
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el]'
+    - bundle exec rake 'litmus:install_agent[puppet6]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  notifications:
+    slack:
+      secure: A6h/CuKh9x1tYbifGg04I1Dr6Z6E7xCJjMWAj4XVvdXvooAcgQ+A8pZMCFcl9c7URkIj36XS8uzTTzq5Z+ZYiwyLVMJxkSYaRwl2PPxTb/XA3r2f8bxm++XMoMYecUJhy0WkVmEjNarpzHnSi3OWQq6Eup+dEpntJaHFlZptsM0=
 appveyor.yml:
   simplecov: true
   use_litmus: true
