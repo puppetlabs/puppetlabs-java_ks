@@ -38,10 +38,11 @@
     services: docker
   - bundler_args: 
     dist: trusty
-    env: PLATFORMS=el_puppet5
+    env: PLATFORMS=ub_puppet5
     rvm: 2.5.3
     before_script:
-    - bundle exec rake 'litmus:provision_list[travis_el]'
+    - bundle exec rake 'litmus:provision_list[travis_ub]'
+    - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
     - bundle exec rake 'litmus:install_agent[puppet5]'
     - bundle exec rake litmus:install_module
     script:
@@ -50,10 +51,58 @@
     sudo: required
   - bundler_args: 
     dist: trusty
-    env: PLATFORMS=el_puppet6
+    env: PLATFORMS=ub_puppet6
     rvm: 2.5.3
     before_script:
-    - bundle exec rake 'litmus:provision_list[travis_el]'
+    - bundle exec rake 'litmus:provision_list[travis_ub]'
+    - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+    - bundle exec rake 'litmus:install_agent[puppet6]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el6_puppet5
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el6]'
+    - bundle exec rake 'litmus:install_agent[puppet5]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el6_puppet6
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el6]'
+    - bundle exec rake 'litmus:install_agent[puppet6]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el7_puppet5
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el7]'
+    - bundle exec rake 'litmus:install_agent[puppet5]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el7_puppet6
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el7]'
     - bundle exec rake 'litmus:install_agent[puppet6]'
     - bundle exec rake litmus:install_module
     script:
@@ -86,6 +135,7 @@ Gemfile:
       - x64_mingw
   optional:
     ":development":
+    - gem: ruby-pwsh
     - gem: github_changelog_generator
       git: https://github.com/skywinder/github-changelog-generator
       ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
