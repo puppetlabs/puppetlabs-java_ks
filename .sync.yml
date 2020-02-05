@@ -5,6 +5,8 @@
   default_configs:
     inherit_from: ".rubocop_todo.yml"
 ".travis.yml":
+  global_env: 
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
   deploy_to_forge:
     enabled: false
   simplecov: true
@@ -113,6 +115,9 @@
     slack:
       secure: A6h/CuKh9x1tYbifGg04I1Dr6Z6E7xCJjMWAj4XVvdXvooAcgQ+A8pZMCFcl9c7URkIj36XS8uzTTzq5Z+ZYiwyLVMJxkSYaRwl2PPxTb/XA3r2f8bxm++XMoMYecUJhy0WkVmEjNarpzHnSi3OWQq6Eup+dEpntJaHFlZptsM0=
 appveyor.yml:
+  environment:
+    HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+    HONEYCOMB_DATASET: litmus tests
   simplecov: true
   use_litmus: true
   matrix_extras:
