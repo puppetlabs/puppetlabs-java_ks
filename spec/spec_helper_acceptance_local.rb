@@ -1,4 +1,10 @@
 UNSUPPORTED_PLATFORMS = [].freeze
+require 'singleton'
+
+class LitmusHelper
+  include Singleton
+  include PuppetLitmus
+end
 
 def keytool_command(arguments)
   # The @keytool global does not exist right now as the function is defined.
@@ -17,15 +23,15 @@ def interpolate_powershell(command)
 end
 
 def remote_windows_temp_dir
-  @remote_windows_temp_dir ||= run_shell(interpolate_powershell('echo "$ENV:TEMP"')).stdout.strip.tr('\\', '/') + '/'
+  @remote_windows_temp_dir ||= LitmusHelper.instance.run_shell(interpolate_powershell('echo "$ENV:TEMP"')).stdout.strip.tr('\\', '/') + '/'
   @remote_windows_temp_dir
 end
 
 def remote_file_exists?(filename)
   if os[:family] == 'windows'
-    run_shell(interpolate_powershell("Get-Item -Path '#{filename}' -ErrorAction SilentlyContinue"), expect_failures: true)
+    LitmusHelper.instance.run_shell(interpolate_powershell("Get-Item -Path '#{filename}' -ErrorAction SilentlyContinue"), expect_failures: true)
   else
-    run_shell("test -f '#{filename}'", expect_failures: true)
+    LitmusHelper.instance.run_shell("test -f '#{filename}'", expect_failures: true)
   end
 end
 
@@ -47,7 +53,7 @@ def create_and_upload_certs
       command = interpolate_powershell(command) if os[:family] == 'windows'
       Open3.capture3(command)
     else
-      bolt_upload_file("spec/acceptance/certs/#{cert_file}", "#{temp_dir}#{cert_file}")
+      LitmusHelper.instance.bolt_upload_file("spec/acceptance/certs/#{cert_file}", "#{temp_dir}#{cert_file}")
     end
   end
 end
@@ -146,7 +152,7 @@ RSpec.configure do |c|
     create_and_upload_certs
     # install java if windows
     if os[:family] == 'windows'
-      run_shell('puppet module install puppetlabs-chocolatey')
+      LitmusHelper.instance.run_shell('puppet module install puppetlabs-chocolatey')
       pp_one = <<-MANIFEST
 include chocolatey
 package { 'jdk8':
@@ -154,13 +160,13 @@ package { 'jdk8':
   provider => 'chocolatey'
 }
     MANIFEST
-      apply_manifest(pp_one)
+      LitmusHelper.instance.apply_manifest(pp_one)
     else
-      run_shell('puppet module install puppetlabs-java')
+      LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
       pp_two = <<-MANIFEST
 class { 'java': }
     MANIFEST
-      apply_manifest(pp_two)
+      LitmusHelper.instance.apply_manifest(pp_two)
     end
   end
 end
