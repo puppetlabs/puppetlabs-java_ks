@@ -41,7 +41,7 @@ def temp_dir
 end
 
 def create_and_upload_certs
-  cert_files = ['privkey.pem', 'ca.pem', 'ca2.pem', 'chain.pem', 'chain2.pem', 'leafkey.pem', 'leaf.pem', 'leafchain.pem', 'leafchain2.pem', 'leaf.p12', 'leaf2.p12']
+  cert_files = ['privkey.pem', 'ca.pem', 'ca.der', 'ca2.pem', 'chain.pem', 'chain2.pem', 'leafkey.pem', 'leaf.pem', 'leafchain.pem', 'leafchain2.pem', 'leaf.p12', 'leaf2.p12']
   recreate_certs = false
   cert_files.each do |cert_file|
     recreate_certs = true unless File.file?("spec/acceptance/certs/#{cert_file}")
@@ -129,6 +129,7 @@ def create_certs
 
   create_cert_file('privkey.pem', key.to_pem)
   create_cert_file('ca.pem', ca.to_pem)
+  create_cert_file('ca.der', ca.to_der)
   create_cert_file('ca2.pem', ca2.to_pem)
   create_cert_file('chain.pem', chain2.to_pem + chain.to_pem)
   create_cert_file('chain2.pem', chain3.to_pem)
