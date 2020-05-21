@@ -111,7 +111,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
         allow(provider).to receive(:password).and_return(resource[:password])
         allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
-        allow(File).to receive(:read).with(resource[:certificate], hash_including(:encoding => "ISO-8859-1")).and_return(testing_ca.to_pem)
+        allow(File).to receive(:read).with(resource[:certificate], hash_including(encoding: 'ISO-8859-1')).and_return(testing_ca.to_pem)
         expect(OpenSSL::PKey::RSA).to receive(:new).with('private key', 'puppet').and_return('priv_obj')
         expect(OpenSSL::X509::Certificate).to receive(:new).with(testing_ca.to_pem.chomp).and_return('cert_obj')
 
