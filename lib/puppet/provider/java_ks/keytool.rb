@@ -40,7 +40,12 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def get_chain(path)
-    File.read(path).scan(%r{-----BEGIN [^\n]*CERTIFICATE.*?-----END [^\n]*CERTIFICATE-----}m).map { |cert| OpenSSL::X509::Certificate.new cert }
+    chain_certs = File.read(path, encoding: 'ISO-8859-1').scan(%r{-----BEGIN [^\n]*CERTIFICATE.*?-----END [^\n]*CERTIFICATE-----}m)
+    if chain_certs.any?
+      chain_certs.map { |cert| OpenSSL::X509::Certificate.new cert }
+    else
+      chain_certs.append(OpenSSL::X509::Certificate.new File.read path)
+    end
   end
 
   def password
