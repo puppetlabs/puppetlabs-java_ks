@@ -44,7 +44,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     if chain_certs.any?
       chain_certs.map { |cert| OpenSSL::X509::Certificate.new cert }
     else
-      chain_certs << ((OpenSSL::X509::Certificate.new File.read path))
+      chain_certs << ((OpenSSL::X509::Certificate.new File.binread path))
     end
   end
 
