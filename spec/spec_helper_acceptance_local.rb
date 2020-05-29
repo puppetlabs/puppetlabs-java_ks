@@ -189,6 +189,8 @@ RSpec.shared_context 'common variables' do
       @ensure_ks = 'present'
       @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
       @resource_path = "['C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
+    when 'ubuntu'
+      @ensure_ks = 'present' if os[:release] == '20.04'
     end
   end
 end
