@@ -159,11 +159,33 @@ describe 'managing java keystores' do
       %r{Alias name: puppetcader_privkey},
       %r{CN=Test CA},
     ]
-    it 'verifies the keytore' do
-      run_shell(keytool_command("-list -v -keystore #{@temp_dir}keystore.ks -storepass puppet")) do |r|
-        expect(r.exit_code).to be_zero
-        expectations.each do |expect|
-          expect(r.stdout).to match(expect)
+
+    context 'when running on Linux', unless: os[:family] == 'windows' do
+      it 'verifies the keystore' do
+        run_shell(keytool_command("-list -v -keystore #{@temp_dir}keystore.ks -storepass puppet")) do |r|
+          expect(r.exit_code).to be_zero
+          expectations.each do |expect|
+            expect(r.stdout).to match(expect)
+          end
+        end
+      end
+    end
+
+    # On Windows, the keystore command warns about using a proprietary format when using DER formatted certs. We should
+    # not take this as a failure, but also, we should also not blindly ignore all STDERR from the result either. If we
+    # get an exit code of 1, we'll check to see if the STDERR message was the cert format warning and still pass the
+    # test. We will still catch any errors that occur and are not related
+    context 'when running on Linux', if: os[:family] == 'windows' do
+      it 'verifies the keystore', if: os[:family] == 'windows' do
+        run_shell(keytool_command("-list -v -keystore #{@temp_dir}keystore.ks -storepass puppet"), expect_failures: true) do |r|
+          expect(r.exit_code).to be_between(0, 1)
+          expectations.each do |expect|
+            expect(r.stdout).to match(expect)
+          end
+          # Pattern below ensures that it's the only warning printed out by anchoring to the end of line ($). This is to
+          # handle the case that multiple warnings should ever occur - a looser match could potentially hide additional
+          # errors
+          expect(r.stderr.chomp).to match(%r{The JKS keystore.*pkcs12"\.$}) if r.exit_code == 1
         end
       end
     end
