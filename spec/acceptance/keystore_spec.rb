@@ -117,4 +117,55 @@ describe 'managing java keystores' do
       end
     end
   end
+
+  describe 'with der certificates' do
+    it 'creates a keystore' do
+      command = "rm #{@temp_dir}keystore.ks"
+      command = interpolate_powershell(command) if os[:family] == 'windows'
+      run_shell(command, expect_failures: true)
+      pp_one = <<-MANIFEST
+        java_ks { 'puppetcader:keystore':
+          ensure       => latest,
+          certificate  => "#{@temp_dir}ca.der",
+          target       => '#{@temp_dir}keystore.ks',
+          password     => 'puppet',
+          trustcacerts => true,
+          path         => #{@resource_path},
+        }
+      MANIFEST
+
+      idempotent_apply(pp_one)
+    end
+
+    it 'adds a certificate and key' do
+      pp_two = <<-MANIFEST
+        java_ks { 'puppetcader_privkey:keystore':
+          ensure       => latest,
+          certificate  => "#{@temp_dir}ca.der",
+          private_key  => "#{@temp_dir}privkey.pem",
+          target       => '#{@temp_dir}keystore.ks',
+          password     => 'puppet',
+          trustcacerts => true,
+          path         => #{@resource_path},
+        }
+      MANIFEST
+
+      idempotent_apply(pp_two)
+    end
+
+    expectations = [
+      %r{Your keystore contains 2 entries},
+      %r{Alias name: puppetcader},
+      %r{Alias name: puppetcader_privkey},
+      %r{CN=Test CA},
+    ]
+    it 'verifies the keytore' do
+      run_shell(keytool_command("-list -v -keystore #{@temp_dir}keystore.ks -storepass puppet")) do |r|
+        expect(r.exit_code).to be_zero
+        expectations.each do |expect|
+          expect(r.stdout).to match(expect)
+        end
+      end
+    end
+  end
 end
