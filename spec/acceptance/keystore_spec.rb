@@ -175,8 +175,8 @@ describe 'managing java keystores' do
     # not take this as a failure, but also, we should also not blindly ignore all STDERR from the result either. If we
     # get an exit code of 1, we'll check to see if the STDERR message was the cert format warning and still pass the
     # test. We will still catch any errors that occur and are not related
-    context 'when running on Linux', if: os[:family] == 'windows' do
-      it 'verifies the keystore', if: os[:family] == 'windows' do
+    context 'when running on Windows', if: os[:family] == 'windows' do
+      it 'verifies the keystore' do
         run_shell(keytool_command("-list -v -keystore #{@temp_dir}keystore.ks -storepass puppet"), expect_failures: true) do |r|
           expect(r.exit_code).to be_between(0, 1)
           expectations.each do |expect|
