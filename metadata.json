@@ -104,6 +104,6 @@
   ],
   "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
   "template-url": "https://github.com/puppetlabs/pdk-templates#master",
-  "template-ref": "heads/master-0-g9c14433",
-  "pdk-version": "1.18.0"
+  "template-ref": "heads/master-0-gd610ead",
+  "pdk-version": "1.18.1"
 }
