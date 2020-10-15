@@ -211,7 +211,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when removing entries from keytool' do
     it 'executes keytool with a specific set of options' do
-      expect(provider).to receive(:run_command).with(['mykeytool', '-delete', '-alias', resource[:name], '-keystore', resource[:target]], any_args)
+      expect(provider).to receive(:run_command).with(['mykeytool', '-delete', '-alias', resource[:name], '-keystore', resource[:target], '-storetype', resource[:storetype]], any_args)
       provider.destroy
     end
   end
