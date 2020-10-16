@@ -261,6 +261,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-alias', @resource[:name],
       '-keystore', @resource[:target]
     ]
+    cmd += ['-storetype', storetype] if storetype == :jceks
     tmpfile = password_file
     run_command(cmd, false, tmpfile)
     tmpfile.close!
