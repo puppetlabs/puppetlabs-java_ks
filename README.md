@@ -1,6 +1,6 @@
 # java_ks
 
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-java_ks.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-java_ks)
+[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-java_ks.png?branch=main)](https://travis-ci.org/puppetlabs/puppetlabs-java_ks)
 
 #### Table of Contents
 
@@ -88,7 +88,7 @@ broker.ks keystore with the alias of broker.example.com.
 
 ## Reference
 
-For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-java_ks/blob/master/REFERENCE.md).
+For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-java_ks/blob/main/REFERENCE.md).
 
 ## Limitations
 
@@ -98,7 +98,7 @@ Java 7 is supported as of 1.0.0.
 
 Developed against IBM Java 6 on AIX. Other versions may be unsupported.
 
-For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-java_ks/blob/master/metadata.json)
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-java_ks/blob/main/metadata.json)
 
 ## Development
 
