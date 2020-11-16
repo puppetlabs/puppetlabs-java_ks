@@ -33,7 +33,7 @@ Puppet::Type.newtype(:java_ks) do
           return true if is == :absent
         when :latest
           unless is == :absent
-            return true if provider.latest == provider.current
+            return true if provider.latest.include? provider.current
           end
         end
       end
