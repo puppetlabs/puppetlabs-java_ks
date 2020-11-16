@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v3.2.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.2.0) (2020-06-30)
+## [v3.3.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.3.0) (2020-11-16)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v3.2.0...v3.3.0)
+
+### Added
+
+- \(IAC-994\) Removal of inappropriate terminology [\#335](https://github.com/puppetlabs/puppetlabs-java_ks/pull/335) ([pmcmaw](https://github.com/pmcmaw))
+- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch `main` [\#327](https://github.com/puppetlabs/puppetlabs-java_ks/pull/327) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- Change latest/current comparison to account for chains [\#336](https://github.com/puppetlabs/puppetlabs-java_ks/pull/336) ([mwpower](https://github.com/mwpower))
+- add storetype parameter comparison to 'destroy' method [\#333](https://github.com/puppetlabs/puppetlabs-java_ks/pull/333) ([mwpower](https://github.com/mwpower))
+- Correct jceks symbol comparison [\#332](https://github.com/puppetlabs/puppetlabs-java_ks/pull/332) ([mwpower](https://github.com/mwpower))
+
+## [v3.2.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v3.2.0) (2020-07-01)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v3.1.0...v3.2.0)
 
