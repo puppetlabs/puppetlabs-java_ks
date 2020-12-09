@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'openssl'
 require 'timeout'
 require 'puppet/util/filetype'
@@ -159,7 +161,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.close!
       return true
     rescue => e
-      if e.message =~ %r{password was incorrect}i
+      if e.message.match?(%r{password was incorrect}i)
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
         if @resource[:password_fail_reset] == :true
           File.delete(@resource[:target])

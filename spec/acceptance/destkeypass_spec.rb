@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
