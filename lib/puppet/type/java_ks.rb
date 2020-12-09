@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:java_ks) do
   @doc = 'Manages the entries in a java keystore, and uses composite namevars to
   accomplish the same alias spread across multiple target keystores.'
