@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-java_ks",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "author": "puppetlabs",
   "summary": "Manage arbitrary Java keystore files",
   "license": "Apache-2.0",
