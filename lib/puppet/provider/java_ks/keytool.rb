@@ -159,7 +159,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       run_command(cmd, false, tmpfile)
       tmpfile.close!
-      return true
+      true
     rescue => e
       if e.message.match?(%r{password was incorrect}i)
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
@@ -167,7 +167,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
           File.delete(@resource[:target])
         end
       end
-      return false
+      false
     end
   end
 
