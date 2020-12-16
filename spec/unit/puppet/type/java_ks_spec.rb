@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-! # /usr/bin/env rspec
 require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks) do
