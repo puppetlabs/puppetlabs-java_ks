@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-! # /usr/bin/env rspec
 require 'spec_helper'
 
 describe Puppet::Type.type(:java_ks) do
@@ -40,13 +39,13 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attributes' do
     [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password].each do |param|
-      it "should have a #{param} parameter" do
+      it "has a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
 
     [:ensure].each do |prop|
-      it "should have a #{prop} property" do
+      it "has a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
     end
@@ -54,7 +53,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attribute values' do
     [:present, :absent, :latest].each do |value|
-      it "should support #{value} as a value to ensure" do
+      it "supports #{value} as a value to ensure" do
         described_class.new(jks_resource.merge(ensure: value))
       end
     end
@@ -195,7 +194,7 @@ describe Puppet::Type.type(:java_ks) do
     end
 
     [:private_key, :certificate].each do |file|
-      it "should autorequire for #{file} #file" do
+      it "autorequires for #{file} #file" do
         test_jks = described_class.new(jks_resource)
         test_file = Puppet::Type.type(:file).new(title: jks_resource[file])
 
@@ -206,7 +205,7 @@ describe Puppet::Type.type(:java_ks) do
         rel = test_jks.autorequire[0]
         expect(rel.source.ref).to eq(test_file.ref)
       end
-      it "should autorequire for #{file} #jks" do
+      it "autorequires for #{file} #jks" do
         test_jks = described_class.new(jks_resource)
         test_file = Puppet::Type.type(:file).new(title: jks_resource[file])
 
