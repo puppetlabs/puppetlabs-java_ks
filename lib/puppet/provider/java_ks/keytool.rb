@@ -300,7 +300,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def run_command(cmd, target = false, stdinfile = false, env = {})
-    env[:PATH] = @resource[:path].join(File::PATH_SEPARATOR) if resource[:path]
+    env[:PATH] = @resource[:path].join(File::PATH_SEPARATOR) if @resource[:path]
 
     # The Puppet::Util::Execution.execute method is deprecated in Puppet 3.x
     # but we need this to work on 2.7.x too.
