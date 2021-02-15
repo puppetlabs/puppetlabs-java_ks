@@ -99,7 +99,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 5.5.10 < 8.0.0"
+      "version_requirement": ">= 6.0.0 < 8.0.0"
     }
   ],
   "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
