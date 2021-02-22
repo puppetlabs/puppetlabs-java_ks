@@ -22,11 +22,6 @@
         - puppet6
         provision_list:
         - travis_ub_6
-    - collection:
-        puppet_collection:
-        - puppet5
-        provision_list:
-        - travis_ub_5
   notifications:
     slack:
       secure: A6h/CuKh9x1tYbifGg04I1Dr6Z6E7xCJjMWAj4XVvdXvooAcgQ+A8pZMCFcl9c7URkIj36XS8uzTTzq5Z+ZYiwyLVMJxkSYaRwl2PPxTb/XA3r2f8bxm++XMoMYecUJhy0WkVmEjNarpzHnSi3OWQq6Eup+dEpntJaHFlZptsM0=
@@ -59,4 +54,6 @@ spec/spec_helper.rb:
 .github/workflows/nightly.yml:
   unmanaged: false
 .github/workflows/pr_test.yml:
+  unmanaged: false
+.github/workflows/auto_release.yml:
   unmanaged: false

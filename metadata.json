@@ -99,11 +99,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 5.5.10 < 8.0.0"
+      "version_requirement": ">= 6.0.0 < 8.0.0"
     }
   ],
   "description": "Uses a combination of keytool and Ruby openssl library to manage entries in a Java keystore.",
   "template-url": "https://github.com/puppetlabs/pdk-templates.git#main",
-  "template-ref": "heads/main-0-g1862b96",
-  "pdk-version": "1.19.0.pre (47)"
+  "template-ref": "heads/main-0-g44cc7ed",
+  "pdk-version": "1.18.1"
 }
