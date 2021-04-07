@@ -7,6 +7,20 @@ describe 'managing intermediate certificates' do
   describe 'managing combined and seperate java chain keys' do
     include_context 'common variables'
 
+    it 'verifies keytool is setup', unless: os[:family] == 'windows' do
+      i = 0
+      loop do
+        keytool_status = run_shell('keytool')
+        break if keytool_status['exit_code'] == 0
+        if i == 10
+          exit 1
+        else
+          i += 1
+          sleep 1.minute
+        end
+      end
+    end
+
     it 'creates two private key with chain certs' do
       pp = <<-MANIFEST
         java_ks { 'combined.example.com:#{@temp_dir}chain_combined_key.ks':
