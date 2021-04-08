@@ -12,11 +12,12 @@ describe 'managing intermediate certificates' do
       loop do
         keytool_status = run_shell('keytool')
         break if keytool_status['exit_code'] == 0
-        if i == 10
+        if i >= 8
+          puts keytool_status
           exit 1
         else
           i += 1
-          sleep 1.minute
+          sleep 30.seconds
         end
       end
     end
