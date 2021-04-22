@@ -164,6 +164,7 @@ package { 'jdk8':
 }
     MANIFEST
       LitmusHelper.instance.apply_manifest(pp_one)
+      LitmusHelper.instance.apply_manifest(pp_one)
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
       pp_two = <<-MANIFEST
