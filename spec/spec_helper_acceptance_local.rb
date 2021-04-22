@@ -160,10 +160,11 @@ RSpec.configure do |c|
 include chocolatey
 package { 'jdk8':
   ensure   => '8.0.211',
-  provider => 'chocolatey'
+  provider => 'chocolatey',
+  install_options => ['-y']
 }
     MANIFEST
-      LitmusHelper.instance.apply_manifest(pp_one)
+      LitmusHelper.instance.apply_manifest(pp_one, catch_failures: true)
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
       pp_two = <<-MANIFEST
