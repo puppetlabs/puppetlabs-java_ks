@@ -173,7 +173,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   # Extracts the fingerprints of a given output
   def extract_fingerprint(output)
-    output.scan(%r{Certificate fingerprints:\n\s+(?:MD5:  .*\n\s+)?SHA1: (.*)}).flatten.join('/')
+    fps = Array.new
+    output.scan(%r{^Certificate fingerprints:(.*?)Signature?}m).flatten.each { |certblock|
+      fps.push(certblock.scan(%r{^\s+\S+:\s+(\S+)}m))
+    }
+    fps.flatten.sort.join('/')
   end
 
   # Reading the fingerprint of the certificate on disk.
