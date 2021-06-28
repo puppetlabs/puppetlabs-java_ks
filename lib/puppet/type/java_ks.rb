@@ -35,7 +35,9 @@ Puppet::Type.newtype(:java_ks) do
           return true if is == :absent
         when :latest
           unless is == :absent
-            return true if provider.latest.include? provider.current
+            current = provider.current.split('/')
+            latest = provider.latest.split('/')
+            return true if current.to_set.subset?(latest.to_set)
           end
         end
       end
