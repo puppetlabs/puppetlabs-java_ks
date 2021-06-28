@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.1.0) (2021-06-28)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.0.0...v4.1.0)
+
+### Added
+
+- Accept Datatype Sensitive for Secrets [\#373](https://github.com/puppetlabs/puppetlabs-java_ks/pull/373) ([cocker-cc](https://github.com/cocker-cc))
+
+### Fixed
+
+- Fix fingerprint comparison [\#372](https://github.com/puppetlabs/puppetlabs-java_ks/pull/372) ([kdehairy](https://github.com/kdehairy))
+- \(MODULES-11067\) Fix keytool output parsing [\#370](https://github.com/puppetlabs/puppetlabs-java_ks/pull/370) ([durist](https://github.com/durist))
+
 ## [v4.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.0.0) (2021-03-01)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v3.4.0...v4.0.0)
