@@ -106,7 +106,13 @@ Puppet::Type.newtype(:java_ks) do
       unlocking. Must be six or more characters in length. Cannot be used
       together with :password_file, but you must pass at least one of these parameters.'
 
+    munge do |value|
+      value = value.unwrap if value.respond_to?(:unwrap)
+      super(value)
+    end
+
     validate do |value|
+      value = value.unwrap if value.respond_to?(:unwrap)
       raise Puppet::Error, "password is #{value.length} characters long; must be 6 characters or greater in length" if value.length < 6
     end
   end
@@ -129,7 +135,13 @@ Puppet::Type.newtype(:java_ks) do
   newparam(:destkeypass) do
     desc 'The password used to protect the key in keystore.'
 
+    munge do |value|
+      value = value.unwrap if value.respond_to?(:unwrap)
+      super(value)
+    end
+
     validate do |value|
+      value = value.unwrap if value.respond_to?(:unwrap)
       raise Puppet::Error, "destkeypass is #{value.length} characters long; must be of length 6 or greater" if value.length < 6
     end
   end
@@ -162,6 +174,11 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   newparam(:source_password) do
+    munge do |value|
+      value = value.unwrap if value.respond_to?(:unwrap)
+      super(value)
+    end
+
     desc 'The source keystore password'
   end
 
