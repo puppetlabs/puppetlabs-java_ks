@@ -100,7 +100,7 @@ Puppet::Type.newtype(:java_ks) do
       from a file separate from the server certificate. This will autorequire the specified file.'
   end
 
-  newparam(:password) do
+  newproperty(:password) do
     desc 'The password used to protect the keystore.  If private keys are
       subsequently also protected this password will be used to attempt
       unlocking. Must be six or more characters in length. Cannot be used

@@ -38,13 +38,13 @@ describe Puppet::Type.type(:java_ks) do
   end
 
   describe 'when validating attributes' do
-    [:name, :target, :private_key, :private_key_type, :certificate, :password, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password].each do |param|
+    [:name, :target, :private_key, :private_key_type, :certificate, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password].each do |param|
       it "has a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
 
-    [:ensure].each do |prop|
+    [:ensure, :password].each do |prop|
       it "has a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
