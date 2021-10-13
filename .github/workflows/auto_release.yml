@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6 
+  HONEYCOMB_WRITEKEY: {{ secrets.HONEYCOMB_WRITEKEY }}
   HONEYCOMB_DATASET: litmus tests
   CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
