@@ -5,7 +5,7 @@ on:
     - cron: '0 0 * * *'
 
 env:
-  HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+  HONEYCOMB_WRITEKEY: {{ secrets.HONEYCOMB_WRITEKEY }}
   HONEYCOMB_DATASET: litmus tests
 
 jobs:
