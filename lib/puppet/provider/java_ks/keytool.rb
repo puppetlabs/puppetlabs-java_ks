@@ -280,11 +280,36 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   end
 
   def certificate
-    @resource[:certificate]
+    return @resource[:certificate] if  @resource[:certificate]
+
+    # When no certificate file is specified, we infer the usage of
+    # certificate content and create a tempfile containing this value.
+    # we leave it to to the tempfile to clean it up after the pupet run exists.
+    file = Tempfile.new('certificate')
+    # Check if the specified value is a Sensitive data type. If so, unwrap it and use
+    # the value.
+    content = @resource[:certificate_content].respond_to?(:unwrap) ? @resource[:certificate_content].unwrap : @resource[:certificate_content]
+    file.write(content)
+    file.close
+    file.path
   end
 
   def private_key
-    @resource[:private_key]
+    return @resource[:private_key] if @resource[:private_key]
+    if @resource[:private_key_content]
+
+
+      # When no private key file is specified, we infer the usage of
+      # private key content and create a tempfile containing this value.
+      # we leave it to to the tempfile to clean it up after the pupet run exists.
+      file = Tempfile.new('private_key')
+      # Check if the specified value is a Sensitive data type. If so, unwrap it and use
+      # the value.
+      content = @resource[:private_key_content].respond_to?(:unwrap) ? @resource[:private_key_content].unwrap : @resource[:private_key_content]
+      file.write(content)
+      file.close
+      file.path
+    end
   end
 
   def private_key_type

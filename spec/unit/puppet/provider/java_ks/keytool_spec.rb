@@ -46,6 +46,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                                         write: true,
                                         flush: true,
                                         close!: true,
+                                        close: true,
                                         path: "#{temp_dir}testing.stuff")
     allow(Tempfile).to receive(:new).and_return(tempfile)
   end
@@ -97,29 +98,53 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
   describe 'when importing a private key and certifcate' do
     describe '#to_pkcs12' do
-      it 'converts a certificate to a pkcs12 file' do
-        sleep 0.1 # due to https://github.com/mitchellh/vagrant/issues/5056
-        testing_key = OpenSSL::PKey::RSA.new 1024
-        testing_ca = OpenSSL::X509::Certificate.new
-        testing_ca.serial = 1
-        testing_ca.public_key = testing_key.public_key
-        testing_subj = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
-        testing_ca.subject = OpenSSL::X509::Name.parse testing_subj
-        testing_ca.issuer = testing_ca.subject
-        testing_ca.not_before = Time.now
-        testing_ca.not_after = testing_ca.not_before + 360
-        testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
+      sleep 0.1 # due to https://github.com/mitchellh/vagrant/issues/5056
+      testing_key = OpenSSL::PKey::RSA.new 1024
+      testing_ca = OpenSSL::X509::Certificate.new
+      testing_ca.serial = 1
+      testing_ca.public_key = testing_key.public_key
+      testing_subj = '/CN=Test CA/ST=Denial/L=Springfield/O=Dis/CN=www.example.com'
+      testing_ca.subject = OpenSSL::X509::Name.parse testing_subj
+      testing_ca.issuer = testing_ca.subject
+      testing_ca.not_before = Time.now
+      testing_ca.not_after = testing_ca.not_before + 360
+      testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
 
-        allow(provider).to receive(:password).and_return(resource[:password])
-        allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
-        allow(File).to receive(:read).with(resource[:certificate], hash_including(encoding: 'ISO-8859-1')).and_return(testing_ca.to_pem)
-        expect(OpenSSL::PKey::RSA).to receive(:new).with('private key', 'puppet').and_return('priv_obj')
-        expect(OpenSSL::X509::Certificate).to receive(:new).with(testing_ca.to_pem.chomp).and_return('cert_obj')
+      context "Using the file based parameters for certificate and private_key" do
+        it 'converts a certificate to a pkcs12 file' do
+          allow(provider).to receive(:password).and_return(resource[:password])
+          allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
+          allow(File).to receive(:read).with(resource[:certificate], hash_including(encoding: 'ISO-8859-1')).and_return(testing_ca.to_pem)
+          expect(OpenSSL::PKey::RSA).to receive(:new).with('private key', 'puppet').and_return('priv_obj')
+          expect(OpenSSL::X509::Certificate).to receive(:new).with(testing_ca.to_pem.chomp).and_return('cert_obj')
 
-        pkcs_double = BogusPkcs.new
-        expect(pkcs_double).to receive(:to_der)
-        expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
-        provider.to_pkcs12("#{temp_dir}testing.stuff")
+          pkcs_double = BogusPkcs.new
+          expect(pkcs_double).to receive(:to_der)
+          expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
+          provider.to_pkcs12("#{temp_dir}testing.stuff")
+        end
+      end
+
+      context "Using content based parameters for certificate and private_key" do
+        let(:params) {
+          global_params.tap {|h| [:certificate, :private_key].each {|k| h.delete(k)}}.merge(
+            :private_key_content => 'private_key',
+            :certificate_content => testing_ca.to_pem,
+          )
+        }
+
+        it 'converts a certificate to a pkcs12 file' do
+          allow(provider).to receive(:password).and_return(resource[:password])
+          allow(File).to receive(:read).with('/tmp/testing.stuff').ordered.and_return('private key')
+          allow(File).to receive(:read).with('/tmp/testing.stuff', hash_including(encoding: 'ISO-8859-1')).ordered.and_return(testing_ca.to_pem)
+          expect(OpenSSL::PKey::RSA).to receive(:new).with('private key', 'puppet').and_return('priv_obj')
+          expect(OpenSSL::X509::Certificate).to receive(:new).with(testing_ca.to_pem.chomp).and_return('cert_obj')
+
+          pkcs_double = BogusPkcs.new
+          expect(pkcs_double).to receive(:to_der)
+          expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
+          provider.to_pkcs12("#{temp_dir}testing.stuff")
+        end
       end
     end
 

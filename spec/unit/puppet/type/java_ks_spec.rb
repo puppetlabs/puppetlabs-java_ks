@@ -117,6 +117,30 @@ describe Puppet::Type.type(:java_ks) do
       }.to raise_error(Puppet::Error)
     end
 
+    it 'fails if both :certificate and :certificate_content are provided' do
+      jks = jks_resource.dup
+      jks[:certificate_content] = 'certificate_content'
+      expect {
+        described_class.new(jks)
+      }.to raise_error(Puppet::Error, %r{You must pass either})
+    end
+
+    it 'fails if neither :certificate or :certificate_content is provided' do
+      jks = jks_resource.dup
+      jks.delete(:certificate)
+      expect {
+        described_class.new(jks)
+      }.to raise_error(Puppet::Error, %r{You must pass one of})
+    end
+
+    it 'fails if both :private_key and :private_key_content are provided' do
+      jks = jks_resource.dup
+      jks[:private_key_content] = 'private_content'
+      expect {
+        described_class.new(jks)
+      }.to raise_error(Puppet::Error, %r{You must pass either})
+    end
+
     it 'fails if both :password and :password_file are provided' do
       jks = jks_resource.dup
       jks[:password_file] = '/path/to/password_file'
