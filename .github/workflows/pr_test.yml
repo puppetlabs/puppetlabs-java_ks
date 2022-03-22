@@ -3,7 +3,7 @@ name: "PR Testing"
 on: [pull_request]
 
 env:
-  HONEYCOMB_WRITEKEY: {{ secrets.HONEYCOMB_WRITEKEY }}
+  HONEYCOMB_WRITEKEY: ${{ secrets.HONEYCOMB_WRITEKEY }}
   HONEYCOMB_DATASET: litmus tests
 
 jobs:
