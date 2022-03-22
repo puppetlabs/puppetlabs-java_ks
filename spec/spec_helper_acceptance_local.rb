@@ -158,13 +158,14 @@ RSpec.configure do |c|
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-chocolatey')
       pp_one = <<-MANIFEST
 include chocolatey
-package { 'jdk8':
-  ensure   => '8.0.211',
-  provider => 'chocolatey',
-  install_options => ['-y']
-}
-    MANIFEST
+# package { 'jdk8':
+#   ensure   => '8.0.211',
+#   provider => 'chocolatey',
+#   install_options => ['-y']
+# }
+      MANIFEST
       LitmusHelper.instance.apply_manifest(pp_one, catch_failures: true)
+      LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jdk8 --version 8.0.211 -y')
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
       pp_two = <<-MANIFEST
