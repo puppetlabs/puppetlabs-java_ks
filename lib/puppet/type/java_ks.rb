@@ -66,10 +66,13 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   newparam(:certificate) do
-    desc 'A server certificate, followed by zero or more intermediate certificate authorities.
-      All certificates will be placed in the keystore.  This will autorequire the specified file.'
+    desc 'A file containing a server certificate, followed by zero or more intermediate certificate authorities.
+      All certificates will be placed in the keystore. This will autorequire the specified file.'
+  end
 
-    isrequired
+  newparam(:certificate_content) do
+    desc 'A string containing a server certificate, followed by zero or more intermediate certificate authorities.
+      All certificates will be placed in the keystore.'
   end
 
   newparam(:storetype) do
@@ -82,7 +85,16 @@ Puppet::Type.newtype(:java_ks) do
   newparam(:private_key) do
     desc 'If you want an application to be a server and encrypt traffic,
       you will need a private key.  Private key entries in a keystore must be
-      accompanied by a signed certificate for the keytool provider. This will autorequire the specified file.'
+      accompanied by a signed certificate for the keytool provider. This parameter
+      allows you to specify the file name containing the private key. This will autorequire 
+      the specified file.'
+  end
+
+  newparam(:private_key_content) do
+    desc 'If you want an application to be a server and encrypt traffic,
+      you will need a private key.  Private key entries in a keystore must be
+      accompanied by a signed certificate for the keytool provider. This parameter allows you to specify the content
+      of the private key.'
   end
 
   newparam(:private_key_type) do
@@ -228,6 +240,18 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   validate do
+    unless value(:certificate) || value(:certificate_content)
+      raise Puppet::Error, "You must pass one of 'certificate' or 'certificate_content'"
+    end
+
+    if value(:certificate) && value(:certificate_content)
+      raise Puppet::Error, "You must pass either 'certificate' or 'certificate_content', not both."
+    end
+
+    if value(:private_key) && value(:private_key_content)
+      raise Puppet::Error, "You must pass either 'private_key' or 'private_key_content', not both."
+    end
+
     if value(:password) && value(:password_file)
       raise Puppet::Error, "You must pass either 'password' or 'password_file', not both."
     end
