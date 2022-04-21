@@ -110,7 +110,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.not_after = testing_ca.not_before + 360
       testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
 
-      context "Using the file based parameters for certificate and private_key" do
+      context 'Using the file based parameters for certificate and private_key' do
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
@@ -125,13 +125,13 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         end
       end
 
-      context "Using content based parameters for certificate and private_key" do
-        let(:params) {
-          global_params.tap {|h| [:certificate, :private_key].each {|k| h.delete(k)}}.merge(
-            :private_key_content => 'private_key',
-            :certificate_content => testing_ca.to_pem,
+      context 'Using content based parameters for certificate and private_key' do
+        let(:params) do
+          global_params.tap { |h| [:certificate, :private_key].each { |k| h.delete(k) } }.merge(
+            private_key_content: 'private_key',
+            certificate_content: testing_ca.to_pem,
           )
-        }
+        end
 
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
