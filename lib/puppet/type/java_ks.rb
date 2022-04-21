@@ -86,7 +86,7 @@ Puppet::Type.newtype(:java_ks) do
     desc 'If you want an application to be a server and encrypt traffic,
       you will need a private key.  Private key entries in a keystore must be
       accompanied by a signed certificate for the keytool provider. This parameter
-      allows you to specify the file name containing the private key. This will autorequire 
+      allows you to specify the file name containing the private key. This will autorequire
       the specified file.'
   end
 

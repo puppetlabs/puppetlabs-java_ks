@@ -3,28 +3,29 @@
 require 'spec_helper_acceptance'
 
 RSpec.shared_examples 'a private key creator' do |sensitive|
+  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   it 'creates a private key' do
     pp = if sensitive
-      <<-MANIFEST
-        java_ks { 'broker.example.com:#{temp_dir}private_key.ts':
-          ensure              => #{@ensure_ks},
-          certificate_content => "#{ca_content}",
-          private_key_content => "#{priv_key_content}",
-          password            => 'puppet',
-          path                => #{@resource_path},
-        }
-      MANIFEST
-    else
-      <<-MANIFEST
-        java_ks { 'broker.example.com:#{temp_dir}private_key.ts':
-          ensure              => #{@ensure_ks},
-          certificate_content => Sensitive("#{ca_content}"),
-          private_key_content => Sensitive("#{priv_key_content}"),
-          password            => 'puppet',
-          path                => #{@resource_path},
-        }
-      MANIFEST
-    end
+           <<-MANIFEST
+            java_ks { 'broker.example.com:#{temp_dir}private_key.ts':
+              ensure              => #{@ensure_ks},
+              certificate_content => "#{ca_content}",
+              private_key_content => "#{priv_key_content}",
+              password            => 'puppet',
+              path                => #{@resource_path},
+            }
+          MANIFEST
+         else
+           <<-MANIFEST
+            java_ks { 'broker.example.com:#{temp_dir}private_key.ts':
+              ensure              => #{@ensure_ks},
+              certificate_content => Sensitive("#{ca_content}"),
+              private_key_content => Sensitive("#{priv_key_content}"),
+              password            => 'puppet',
+              path                => #{@resource_path},
+            }
+          MANIFEST
+         end
     idempotent_apply(pp)
   end
 
