@@ -54,20 +54,28 @@ insync? for this parameter to accomplish this.
 
 Default value: `present`
 
+##### `password`
+
+The password used to protect the keystore.  If private keys are
+subsequently also protected this password will be used to attempt
+unlocking. Must be six or more characters in length. Cannot be used
+together with :password_file, but you must pass at least one of these parameters.
+
 #### Parameters
 
 The following parameters are available in the `java_ks` type.
 
 * [`certificate`](#certificate)
+* [`certificate_content`](#certificate_content)
 * [`chain`](#chain)
 * [`destkeypass`](#destkeypass)
 * [`keytool_timeout`](#keytool_timeout)
 * [`name`](#name)
-* [`password`](#password)
 * [`password_fail_reset`](#password_fail_reset)
 * [`password_file`](#password_file)
 * [`path`](#path)
 * [`private_key`](#private_key)
+* [`private_key_content`](#private_key_content)
 * [`private_key_type`](#private_key_type)
 * [`provider`](#provider)
 * [`source_alias`](#source_alias)
@@ -78,8 +86,13 @@ The following parameters are available in the `java_ks` type.
 
 ##### <a name="certificate"></a>`certificate`
 
-A server certificate, followed by zero or more intermediate certificate authorities.
-All certificates will be placed in the keystore.  This will autorequire the specified file.
+A file containing a server certificate, followed by zero or more intermediate certificate authorities.
+All certificates will be placed in the keystore. This will autorequire the specified file.
+
+##### <a name="certificate_content"></a>`certificate_content`
+
+A string containing a server certificate, followed by zero or more intermediate certificate authorities.
+All certificates will be placed in the keystore.
 
 ##### <a name="chain"></a>`chain`
 
@@ -102,13 +115,6 @@ namevar
 
 The alias that is used to identify the entry in the keystore. This will be
 converted to lowercase.
-
-##### <a name="password"></a>`password`
-
-The password used to protect the keystore.  If private keys are
-subsequently also protected this password will be used to attempt
-unlocking. Must be six or more characters in length. Cannot be used
-together with :password_file, but you must pass at least one of these parameters.
 
 ##### <a name="password_fail_reset"></a>`password_fail_reset`
 
@@ -134,7 +140,16 @@ Paths can be specified as an array or as a '
 
 If you want an application to be a server and encrypt traffic,
 you will need a private key.  Private key entries in a keystore must be
-accompanied by a signed certificate for the keytool provider. This will autorequire the specified file.
+accompanied by a signed certificate for the keytool provider. This parameter
+allows you to specify the file name containing the private key. This will autorequire
+the specified file.
+
+##### <a name="private_key_content"></a>`private_key_content`
+
+If you want an application to be a server and encrypt traffic,
+you will need a private key.  Private key entries in a keystore must be
+accompanied by a signed certificate for the keytool provider. This parameter allows you to specify the content
+of the private key.
 
 ##### <a name="private_key_type"></a>`private_key_type`
 
