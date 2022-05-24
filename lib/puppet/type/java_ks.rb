@@ -240,16 +240,18 @@ Puppet::Type.newtype(:java_ks) do
   end
 
   validate do
-    unless value(:certificate) || value(:certificate_content)
-      raise Puppet::Error, "You must pass one of 'certificate' or 'certificate_content'"
-    end
+    if self[:ensure] != :absent
+      unless value(:certificate) || value(:certificate_content)
+        raise Puppet::Error, "You must pass one of 'certificate' or 'certificate_content'"
+      end
 
-    if value(:certificate) && value(:certificate_content)
-      raise Puppet::Error, "You must pass either 'certificate' or 'certificate_content', not both."
-    end
+      if value(:certificate) && value(:certificate_content)
+        raise Puppet::Error, "You must pass either 'certificate' or 'certificate_content', not both."
+      end
 
-    if value(:private_key) && value(:private_key_content)
-      raise Puppet::Error, "You must pass either 'private_key' or 'private_key_content', not both."
+      if value(:private_key) && value(:private_key_content)
+        raise Puppet::Error, "You must pass either 'private_key' or 'private_key_content', not both."
+      end
     end
 
     if value(:password) && value(:password_file)
