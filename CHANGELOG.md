@@ -2,22 +2,30 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.3.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.3.1) (2022-05-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.0...v4.3.1)
+
+### Added
+
+- Don't require certificate or private key params when ensure: absent [\#399](https://github.com/puppetlabs/puppetlabs-java_ks/pull/399) ([tparkercbn](https://github.com/tparkercbn))
+
 ## [v4.3.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.3.0) (2022-04-05)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.2.0...v4.3.0)
 
 ### Added
 
-- pdksync - \(IAC-1751\) - Add Support for Rocky 8 [\#380](https://github.com/puppetlabs/puppetlabs-java_ks/pull/380) ([david22swan](https://github.com/david22swan))
+- Add support for certificate\_content and private\_key\_content parameters [\#385](https://github.com/puppetlabs/puppetlabs-java_ks/pull/385) ([hajee](https://github.com/hajee))
 - pdksync - \(IAC-1753\) - Add Support for AlmaLinux 8 [\#381](https://github.com/puppetlabs/puppetlabs-java_ks/pull/381) ([david22swan](https://github.com/david22swan))
-- Add support for certificate_content and private_key_content parameters [\#385](https://github.com/puppetlabs/puppetlabs-java_ks/pull/385) ([hajee](https://github.com/hajee))
+- pdksync - \(IAC-1751\) - Add Support for Rocky 8 [\#380](https://github.com/puppetlabs/puppetlabs-java_ks/pull/380) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
-- Fix "password" as Property [\#378](https://github.com/puppetlabs/puppetlabs-java_ks/pull/373782) ([cocker-cc](https://github.com/cocker-cc))
-- pdksync - \(IAC-1598\) - Remove Support for Debian 8 [\#379](https://github.com/puppetlabs/puppetlabs-java_ks/pull/379) ([david22swan](https://github.com/david22swan))
-- pdksync - \(IAC-1787\) Remove Support for CentOS 6 [\#384](https://github.com/puppetlabs/puppetlabs-java_ks/pull/384) ([david22swan](https://github.com/david22swan))
 - pdksync - \(GH-iac-334\) Remove Support for Ubuntu 14.04/16.04 [\#390](https://github.com/puppetlabs/puppetlabs-java_ks/pull/390) ([david22swan](https://github.com/david22swan))
+- pdksync - \(IAC-1787\) Remove Support for CentOS 6 [\#384](https://github.com/puppetlabs/puppetlabs-java_ks/pull/384) ([david22swan](https://github.com/david22swan))
+- pdksync - \(IAC-1598\) - Remove Support for Debian 8 [\#379](https://github.com/puppetlabs/puppetlabs-java_ks/pull/379) ([david22swan](https://github.com/david22swan))
+- Fix "password" as Property [\#378](https://github.com/puppetlabs/puppetlabs-java_ks/pull/378) ([cocker-cc](https://github.com/cocker-cc))
 
 ## [v4.2.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.2.0) (2021-08-25)
 
