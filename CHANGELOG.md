@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v4.3.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.3.1) (2022-05-24)
+## [v4.3.2](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.3.2) (2022-05-30)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.0...v4.3.1)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.0...v4.3.2)
 
-### Added
+### Fixed
 
 - Don't require certificate or private key params when ensure: absent [\#399](https://github.com/puppetlabs/puppetlabs-java_ks/pull/399) ([tparkercbn](https://github.com/tparkercbn))
 
