@@ -229,7 +229,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     it 'calls keytool with specific options if only certificate is provided' do
       no_pk = resource.dup
       no_pk.delete(:private_key)
-      expect(provider).to receive(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target]], any_args)
+      expect(provider).to receive(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target], '-storetype', no_pk[:storetype]], any_args)
       expect(no_pk.provider).to receive(:import_ks).never
       no_pk.provider.create
     end
