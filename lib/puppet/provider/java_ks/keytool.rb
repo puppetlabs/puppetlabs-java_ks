@@ -251,7 +251,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-importcert', '-noprompt',
         '-alias', @resource[:name],
         '-file', certificate,
-        '-keystore', @resource[:target]
+        '-keystore', @resource[:target],
+        '-storetype', storetype
       ]
       cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
       tmpfile = password_file
