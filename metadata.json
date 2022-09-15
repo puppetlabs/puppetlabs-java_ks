@@ -67,7 +67,6 @@
     {
       "operatingsystem": "Solaris",
       "operatingsystemrelease": [
-        "10",
         "11"
       ]
     },
@@ -80,13 +79,10 @@
     {
       "operatingsystem": "Windows",
       "operatingsystemrelease": [
-        "2008 R2",
         "2012",
         "2012 R2",
         "2016",
         "2019",
-        "7",
-        "8.1",
         "10"
       ]
     },
