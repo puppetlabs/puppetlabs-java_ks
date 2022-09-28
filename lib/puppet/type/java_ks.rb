@@ -37,7 +37,7 @@ Puppet::Type.newtype(:java_ks) do
           unless is == :absent
             current = provider.current.split('/')
             latest = provider.latest.split('/')
-            return true if current.to_set.subset?(latest.to_set)
+            return true if latest.to_set.subset?(current.to_set)
           end
         end
       end
