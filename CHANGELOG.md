@@ -2,11 +2,24 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.4.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.0) (2022-10-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.1...v4.4.0)
+
+### Added
+
+- pdksync - \(GH-cat-11\) Certify Support for Ubuntu 22.04 [\#408](https://github.com/puppetlabs/puppetlabs-java_ks/pull/408) ([david22swan](https://github.com/david22swan))
+- pdksync - \(GH-cat-12\) Add Support for Redhat 9 [\#404](https://github.com/puppetlabs/puppetlabs-java_ks/pull/404) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- \(MAINT\) Drop support for Solaris 10, Windows Server 2008 R2 and Windows 7+8.1 [\#410](https://github.com/puppetlabs/puppetlabs-java_ks/pull/410) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [v4.3.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.3.1) (2022-05-24)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.0...v4.3.1)
 
-### Added
+### Fixed
 
 - Don't require certificate or private key params when ensure: absent [\#399](https://github.com/puppetlabs/puppetlabs-java_ks/pull/399) ([tparkercbn](https://github.com/tparkercbn))
 
