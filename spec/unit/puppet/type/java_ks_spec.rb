@@ -212,8 +212,8 @@ describe Puppet::Type.type(:java_ks) do
     it 'insync? should return true if subset of sha1 fingerprints match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      allow(provider_var).to receive(:latest).and_return('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A/66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
-      allow(provider_var).to receive(:current).and_return('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      allow(provider_var).to receive(:current).and_return('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A/66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      allow(provider_var).to receive(:latest).and_return('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
       expect(described_class.new(jks).property(:ensure)).to be_insync(:present)
     end
   end
