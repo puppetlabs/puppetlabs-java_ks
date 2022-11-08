@@ -152,7 +152,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       it 'executes openssl and keytool with specific options' do
         expect(provider).to receive(:to_pkcs12).with("#{temp_dir}testing.stuff")
         expect(provider).to receive(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
-                                                        resource[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', resource[:name]], any_args)
+                                                        resource[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias',
+                                                        resource[:name], '-deststoretype', :jceks], any_args)
         provider.import_ks
       end
 
@@ -161,7 +162,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         dkp[:destkeypass] = 'keypass'
         expect(provider).to receive(:to_pkcs12).with("#{temp_dir}testing.stuff")
         expect(provider).to receive(:run_command).with(['mykeytool', '-importkeystore', '-srcstoretype', 'PKCS12', '-destkeystore',
-                                                        dkp[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', dkp[:name], '-destkeypass', dkp[:destkeypass]], any_args)
+                                                        dkp[:target], '-srckeystore', "#{temp_dir}testing.stuff", '-alias', dkp[:name],
+                                                        '-destkeypass', dkp[:destkeypass], '-deststoretype', dkp[:storetype]], any_args)
         provider.import_ks
       end
     end
