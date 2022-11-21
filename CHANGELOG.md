@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.4.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.1) (2022-11-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.4.0...v4.4.1)
+
+### Fixed
+
+- \(CONT-186\) Set `-deststoretype` [\#418](https://github.com/puppetlabs/puppetlabs-java_ks/pull/418) ([david22swan](https://github.com/david22swan))
+- pdksync - \(CONT-189\) Remove support for RedHat6 / OracleLinux6 / Scientific6 [\#417](https://github.com/puppetlabs/puppetlabs-java_ks/pull/417) ([david22swan](https://github.com/david22swan))
+- pdksync - \(CONT-130\) - Dropping Support for Debian 9 [\#414](https://github.com/puppetlabs/puppetlabs-java_ks/pull/414) ([jordanbreen28](https://github.com/jordanbreen28))
+- reversed insync set comparison [\#412](https://github.com/puppetlabs/puppetlabs-java_ks/pull/412) ([rstuart-indue](https://github.com/rstuart-indue))
+
 ## [v4.4.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.0) (2022-10-03)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.3.1...v4.4.0)

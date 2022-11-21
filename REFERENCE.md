@@ -6,7 +6,7 @@
 
 ### Classes
 
-* [`java_ks::config`](#java_ksconfig): java_ks configuration
+* [`java_ks::config`](#java_ks--config): java_ks configuration
 
 ### Resource types
 
@@ -14,7 +14,7 @@
 
 ## Classes
 
-### <a name="java_ksconfig"></a>`java_ks::config`
+### <a name="java_ks--config"></a>`java_ks::config`
 
 java_ks configuration
 
@@ -22,9 +22,9 @@ java_ks configuration
 
 The following parameters are available in the `java_ks::config` class:
 
-* [`params`](#params)
+* [`params`](#-java_ks--config--params)
 
-##### <a name="params"></a>`params`
+##### <a name="-java_ks--config--params"></a>`params`
 
 Data type: `Any`
 
@@ -65,78 +65,78 @@ together with :password_file, but you must pass at least one of these parameters
 
 The following parameters are available in the `java_ks` type.
 
-* [`certificate`](#certificate)
-* [`certificate_content`](#certificate_content)
-* [`chain`](#chain)
-* [`destkeypass`](#destkeypass)
-* [`keytool_timeout`](#keytool_timeout)
-* [`name`](#name)
-* [`password_fail_reset`](#password_fail_reset)
-* [`password_file`](#password_file)
-* [`path`](#path)
-* [`private_key`](#private_key)
-* [`private_key_content`](#private_key_content)
-* [`private_key_type`](#private_key_type)
-* [`provider`](#provider)
-* [`source_alias`](#source_alias)
-* [`source_password`](#source_password)
-* [`storetype`](#storetype)
-* [`target`](#target)
-* [`trustcacerts`](#trustcacerts)
+* [`certificate`](#-java_ks--certificate)
+* [`certificate_content`](#-java_ks--certificate_content)
+* [`chain`](#-java_ks--chain)
+* [`destkeypass`](#-java_ks--destkeypass)
+* [`keytool_timeout`](#-java_ks--keytool_timeout)
+* [`name`](#-java_ks--name)
+* [`password_fail_reset`](#-java_ks--password_fail_reset)
+* [`password_file`](#-java_ks--password_file)
+* [`path`](#-java_ks--path)
+* [`private_key`](#-java_ks--private_key)
+* [`private_key_content`](#-java_ks--private_key_content)
+* [`private_key_type`](#-java_ks--private_key_type)
+* [`provider`](#-java_ks--provider)
+* [`source_alias`](#-java_ks--source_alias)
+* [`source_password`](#-java_ks--source_password)
+* [`storetype`](#-java_ks--storetype)
+* [`target`](#-java_ks--target)
+* [`trustcacerts`](#-java_ks--trustcacerts)
 
-##### <a name="certificate"></a>`certificate`
+##### <a name="-java_ks--certificate"></a>`certificate`
 
 A file containing a server certificate, followed by zero or more intermediate certificate authorities.
 All certificates will be placed in the keystore. This will autorequire the specified file.
 
-##### <a name="certificate_content"></a>`certificate_content`
+##### <a name="-java_ks--certificate_content"></a>`certificate_content`
 
 A string containing a server certificate, followed by zero or more intermediate certificate authorities.
 All certificates will be placed in the keystore.
 
-##### <a name="chain"></a>`chain`
+##### <a name="-java_ks--chain"></a>`chain`
 
 The intermediate certificate authorities, if they are to be taken
 from a file separate from the server certificate. This will autorequire the specified file.
 
-##### <a name="destkeypass"></a>`destkeypass`
+##### <a name="-java_ks--destkeypass"></a>`destkeypass`
 
 The password used to protect the key in keystore.
 
-##### <a name="keytool_timeout"></a>`keytool_timeout`
+##### <a name="-java_ks--keytool_timeout"></a>`keytool_timeout`
 
 Timeout for the keytool command in seconds.
 
 Default value: `120`
 
-##### <a name="name"></a>`name`
+##### <a name="-java_ks--name"></a>`name`
 
 namevar
 
 The alias that is used to identify the entry in the keystore. This will be
 converted to lowercase.
 
-##### <a name="password_fail_reset"></a>`password_fail_reset`
+##### <a name="-java_ks--password_fail_reset"></a>`password_fail_reset`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 If the supplied password does not succeed in unlocking the
 keystore file, then delete the keystore file and create a new one.
 Default: false.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="password_file"></a>`password_file`
+##### <a name="-java_ks--password_file"></a>`password_file`
 
 The path to a file containing the password used to protect the
 keystore. This cannot be used together with :password, but you must pass at least one of these parameters.
 
-##### <a name="path"></a>`path`
+##### <a name="-java_ks--path"></a>`path`
 
 The search path used for command (keytool, openssl) execution.
 Paths can be specified as an array or as a '
 
-##### <a name="private_key"></a>`private_key`
+##### <a name="-java_ks--private_key"></a>`private_key`
 
 If you want an application to be a server and encrypt traffic,
 you will need a private key.  Private key entries in a keystore must be
@@ -144,14 +144,14 @@ accompanied by a signed certificate for the keytool provider. This parameter
 allows you to specify the file name containing the private key. This will autorequire
 the specified file.
 
-##### <a name="private_key_content"></a>`private_key_content`
+##### <a name="-java_ks--private_key_content"></a>`private_key_content`
 
 If you want an application to be a server and encrypt traffic,
 you will need a private key.  Private key entries in a keystore must be
 accompanied by a signed certificate for the keytool provider. This parameter allows you to specify the content
 of the private key.
 
-##### <a name="private_key_type"></a>`private_key_type`
+##### <a name="-java_ks--private_key_type"></a>`private_key_type`
 
 Valid values: `rsa`, `dsa`, `ec`
 
@@ -161,38 +161,38 @@ Valid options: <rsa>, <dsa>, <ec>. Defaults to <rsa>
 
 Default value: `rsa`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-java_ks--provider"></a>`provider`
 
 The specific backend to use for this `java_ks` resource. You will seldom need to specify this --- Puppet will usually
 discover the appropriate provider for your platform.
 
-##### <a name="source_alias"></a>`source_alias`
+##### <a name="-java_ks--source_alias"></a>`source_alias`
 
 The source certificate alias
 
-##### <a name="source_password"></a>`source_password`
+##### <a name="-java_ks--source_password"></a>`source_password`
 
 The source keystore password
 
-##### <a name="storetype"></a>`storetype`
+##### <a name="-java_ks--storetype"></a>`storetype`
 
 Valid values: `jceks`, `pkcs12`, `jks`
 
 Optional storetype
 Valid options: <jceks>, <pkcs12>, <jks>
 
-##### <a name="target"></a>`target`
+##### <a name="-java_ks--target"></a>`target`
 
 namevar
 
 Destination file for the keystore.  This will autorequire the parent directory of the file.
 
-##### <a name="trustcacerts"></a>`trustcacerts`
+##### <a name="-java_ks--trustcacerts"></a>`trustcacerts`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Certificate authorities aren't by default trusted so if you are adding a CA you need to set this to true.
 Defaults to :false.
 
-Default value: ``false``
+Default value: `false`
 
