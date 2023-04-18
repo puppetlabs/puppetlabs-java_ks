@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.4.2](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.1) (2023-04-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.4.1...v4.4.1)
+
+### Fixed
+
+- \(CONT-357\) Syntax update [\#422](https://github.com/puppetlabs/puppetlabs-java_ks/pull/422) ([LukasAud](https://github.com/LukasAud))
+
 ## [v4.4.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.1) (2022-11-21)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.4.0...v4.4.1)
