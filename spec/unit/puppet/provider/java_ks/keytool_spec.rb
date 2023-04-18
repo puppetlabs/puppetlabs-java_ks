@@ -111,6 +111,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
 
       context 'Using the file based parameters for certificate and private_key' do
+        # rubocop:disable RSpec/MultipleExpectations
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
@@ -123,6 +124,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
+        # rubocop:enable RSpec/MultipleExpectations
       end
 
       context 'Using content based parameters for certificate and private_key' do
@@ -133,6 +135,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           )
         end
 
+        # rubocop:disable RSpec/MultipleExpectations
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with('/tmp/testing.stuff').ordered.and_return('private key')
@@ -145,6 +148,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
+        # rubocop:enable RSpec/MultipleExpectations
       end
     end
 
