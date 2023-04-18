@@ -61,11 +61,6 @@ RSpec/ExampleLength:
 RSpec/NestedGroups:
   Max: 4
 
-# Offense count: 7
-RSpec/StubbedMock:
-  Exclude:
-    - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
-
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: .

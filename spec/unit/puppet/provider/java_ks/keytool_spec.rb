@@ -86,7 +86,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
     it 'normally times out after 120 seconds' do
       cmd = '/bin/echo testing 1 2 3'
-      expect(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
+      allow(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
 
       expect { provider.run_command(cmd) }.to raise_error Puppet::Error, "Timed out waiting for 'app.example.com' to run keytool"
     end
@@ -108,6 +108,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
       context 'when using the file based parameters for certificate and private_key' do
         # rubocop:disable RSpec/MultipleExpectations
+        # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
@@ -121,6 +122,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
         # rubocop:enable RSpec/MultipleExpectations
+        # rubocop:enable RSpec/StubbedMock
       end
 
       context 'when using content based parameters for certificate and private_key' do
@@ -132,6 +134,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         end
 
         # rubocop:disable RSpec/MultipleExpectations
+        # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with('/tmp/testing.stuff').ordered.and_return('private key')
@@ -145,6 +148,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
         # rubocop:enable RSpec/MultipleExpectations
+        # rubocop:enable RSpec/StubbedMock
       end
     end
 
