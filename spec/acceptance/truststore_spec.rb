@@ -10,7 +10,7 @@ describe 'managing java truststores' do
     command = "rm #{@temp_dir}truststore.ts"
     command = interpolate_powershell(command) if os[:family] == 'windows'
     run_shell(command, expect_failures: true)
-    pp = <<-EOS
+    pp = <<-MANIFEST
       java_ks { 'puppetca:#{@temp_dir}truststore':
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
@@ -19,7 +19,7 @@ describe 'managing java truststores' do
         trustcacerts => true,
         path         => #{@resource_path},
     }
-    EOS
+    MANIFEST
     idempotent_apply(pp)
   end
 
