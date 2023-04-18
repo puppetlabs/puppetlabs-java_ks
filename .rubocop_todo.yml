@@ -128,12 +128,6 @@ RSpec/StubbedMock:
 RSpec/VerifiedDoubleReference:
   EnforcedStyle: string
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/FileEmpty:
-  Exclude:
-    - 'lib/puppet/provider/java_ks/keytool.rb'
-
 # Offense count: 1
 Style/MixinUsage:
   Exclude:
@@ -145,18 +139,3 @@ Style/MixinUsage:
 Style/OptionalBooleanParameter:
   Exclude:
     - 'lib/puppet/provider/java_ks/keytool.rb'
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowMethodsWithArguments, AllowedMethods, AllowedPatterns, AllowComments.
-# AllowedMethods: define_method
-Style/SymbolProc:
-  Exclude:
-    - 'lib/puppet/type/java_ks.rb'

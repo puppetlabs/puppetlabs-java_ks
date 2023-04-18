@@ -66,7 +66,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     source_pword = sourcepassword
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
-    contents = if File.exist?(@resource[:target]) && !File.zero?(@resource[:target])
+    contents = if File.exist?(@resource[:target]) && !File.empty?(@resource[:target])
                  if source_pword.nil?
                    "#{pword}\n#{pword}"
                  else
@@ -345,7 +345,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
     # owner and group, temporarily raise the umask, and delete the empty file.
-    if target && (File.exist?(target) && File.zero?(target))
+    if target && (File.exist?(target) && File.empty?(target))
       stat = File.stat(target)
       umask = File.umask(0o077)
       File.delete(target)

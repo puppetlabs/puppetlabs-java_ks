@@ -54,9 +54,7 @@ Puppet::Type.newtype(:java_ks) do
 
     isnamevar
 
-    munge do |value|
-      value.downcase
-    end
+    munge(&:downcase)
   end
 
   newparam(:target) do

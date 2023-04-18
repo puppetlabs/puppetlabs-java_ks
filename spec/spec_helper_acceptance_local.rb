@@ -25,7 +25,7 @@ def interpolate_powershell(command)
 end
 
 def remote_windows_temp_dir
-  @remote_windows_temp_dir ||= LitmusHelper.instance.run_shell(interpolate_powershell('echo "$ENV:TEMP"')).stdout.strip.tr('\\', '/') + '/'
+  @remote_windows_temp_dir ||= "#{LitmusHelper.instance.run_shell(interpolate_powershell('echo "$ENV:TEMP"')).stdout.strip.tr('\\', '/')}/"
   @remote_windows_temp_dir
 end
 
