@@ -55,4 +55,5 @@ describe 'using certificate_content and private_key_content' do
   context 'Using data type Sensitive' do
     it_behaves_like 'a private key creator',  true
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

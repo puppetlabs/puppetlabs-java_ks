@@ -167,4 +167,5 @@ describe 'managing intermediate certificates' do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

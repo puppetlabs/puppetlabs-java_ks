@@ -6,18 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 7
-# Configuration parameters: MaximumRangeSize.
-Lint/MissingCopEnableDirective:
-  Exclude:
-    - 'spec/acceptance/chain_key_spec.rb'
-    - 'spec/acceptance/content_spec.rb'
-    - 'spec/acceptance/destkeypass_spec.rb'
-    - 'spec/acceptance/keystore_spec.rb'
-    - 'spec/acceptance/pkcs12_spec.rb'
-    - 'spec/acceptance/private_key_spec.rb'
-    - 'spec/acceptance/truststore_spec.rb'
-
 # Offense count: 8
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
 Metrics/AbcSize:

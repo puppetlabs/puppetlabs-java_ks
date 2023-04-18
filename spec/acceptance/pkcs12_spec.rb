@@ -147,4 +147,5 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

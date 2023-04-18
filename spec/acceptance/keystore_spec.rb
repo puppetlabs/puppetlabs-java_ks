@@ -192,4 +192,5 @@ describe 'managing java keystores' do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

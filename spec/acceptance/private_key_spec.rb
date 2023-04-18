@@ -32,4 +32,5 @@ describe 'managing java private keys' do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

@@ -34,4 +34,5 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
                                        "-keystore #{@temp_dir}#{target} -storepass qwert -keypass qwert"), expect_failures: true)
     expect(result.stdout).to match(%r{keytool error})
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

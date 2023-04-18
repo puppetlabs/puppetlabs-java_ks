@@ -60,4 +60,5 @@ describe 'managing java truststores' do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end
