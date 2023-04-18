@@ -68,11 +68,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                    else
                      Puppet::Util
                    end
-      expect(exec_class).to receive(:execute).with(
-        cmd,
-        failonfail: true,
-        combine: true,
-      )
+      expect(exec_class).to receive(:execute).with(cmd, { failonfail: true, combine: true })
       provider.run_command(cmd)
     end
 
