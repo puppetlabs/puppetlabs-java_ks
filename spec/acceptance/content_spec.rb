@@ -14,7 +14,7 @@ RSpec.shared_examples 'a private key creator' do |sensitive|
               password            => 'puppet',
               path                => #{@resource_path},
             }
-          MANIFEST
+           MANIFEST
          else
            <<-MANIFEST
             java_ks { 'broker.example.com:#{temp_dir}private_key.ts':
@@ -24,7 +24,7 @@ RSpec.shared_examples 'a private key creator' do |sensitive|
               password            => 'puppet',
               path                => #{@resource_path},
             }
-          MANIFEST
+           MANIFEST
          end
     idempotent_apply(pp)
   end

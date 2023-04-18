@@ -23,15 +23,15 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
   end
 
   it 'can make a cert req with the right password' do
-    run_shell(keytool_command('-certreq -alias broker.example.com -v '\
-     "-keystore #{@temp_dir}#{target} -storepass testpass -keypass testkeypass"), expect_failures: true) do |r|
+    run_shell(keytool_command('-certreq -alias broker.example.com -v ' \
+                              "-keystore #{@temp_dir}#{target} -storepass testpass -keypass testkeypass"), expect_failures: true) do |r|
       expect(r.stdout).to match(%r{-BEGIN NEW CERTIFICATE REQUEST-})
     end
   end
 
   it 'cannot make a cert req with the wrong password' do
-    result = run_shell(keytool_command('-certreq -alias broker.example.com -v '\
-     "-keystore #{@temp_dir}#{target} -storepass qwert -keypass qwert"), expect_failures: true)
+    result = run_shell(keytool_command('-certreq -alias broker.example.com -v ' \
+                                       "-keystore #{@temp_dir}#{target} -storepass qwert -keypass qwert"), expect_failures: true)
     expect(result.stdout).to match(%r{keytool error})
   end
 end

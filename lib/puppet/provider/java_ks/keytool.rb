@@ -298,6 +298,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def private_key
     return @resource[:private_key] if @resource[:private_key]
     return unless @resource[:private_key_content]
+
     # When no private key file is specified, we infer the usage of
     # private key content and create a tempfile containing this value.
     # we leave it to to the tempfile to clean it up after the pupet run exists.

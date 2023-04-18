@@ -145,6 +145,7 @@ end
 
 def create_cert_file(cert_name, contents)
   return if File.file?("spec/acceptance/certs/#{cert_name}")
+
   out_file = File.new("spec/acceptance/certs/#{cert_name}", 'w+')
   out_file.puts(contents)
   out_file.close
@@ -156,21 +157,21 @@ RSpec.configure do |c|
     # install java if windows
     if os[:family] == 'windows'
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-chocolatey')
-      pp_one = <<-MANIFEST
-include chocolatey
-# package { 'jdk8':
-#   ensure   => '8.0.211',
-#   provider => 'chocolatey',
-#   install_options => ['-y']
-# }
+      pp_one = <<~MANIFEST
+        include chocolatey
+        # package { 'jdk8':
+        #   ensure   => '8.0.211',
+        #   provider => 'chocolatey',
+        #   install_options => ['-y']
+        # }
       MANIFEST
       LitmusHelper.instance.apply_manifest(pp_one, catch_failures: true)
       LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jdk8 --version 8.0.211 -y')
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
-      pp_two = <<-MANIFEST
-class { 'java': }
-    MANIFEST
+      pp_two = <<~MANIFEST
+        class { 'java': }
+      MANIFEST
       LitmusHelper.instance.apply_manifest(pp_two)
     end
   end
