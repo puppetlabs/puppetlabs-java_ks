@@ -19,7 +19,7 @@ describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.i
       }
     MANIFEST
 
-    idempotent_apply(pp)
+    expect { idempotent_apply(pp) }.not_to raise_error
   end
 
   it 'can make a cert req with the right password' do

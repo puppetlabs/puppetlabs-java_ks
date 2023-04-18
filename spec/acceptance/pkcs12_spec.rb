@@ -19,7 +19,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
     end
 
     expectations = [
@@ -48,7 +48,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
 
       expectations = if os[:family] == 'windows' || (os[:family] == 'ubuntu' && ['20.04', '22.04'].include?(os[:release])) ||
                         (os[:family] == 'debian' && os[:release] =~ %r{^11})
@@ -90,7 +90,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
     end
 
     expectations = [
@@ -130,7 +130,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
     end
 
     expectations = [

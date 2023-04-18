@@ -7,7 +7,7 @@ describe 'managing intermediate certificates' do
   describe 'managing combined and seperate java chain keys' do
     include_context 'with common variables'
 
-    it 'verifies keytool is setup', unless: os[:family] == 'windows' do
+    it 'verifies keytool is setup', unless: os[:family] == 'windows' do # rubocop:disable RSpec/NoExpectationExample
       i = 0
       loop do
         keytool_status = run_shell('keytool')
@@ -43,7 +43,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
     end
 
     expectations_combined = [
@@ -94,7 +94,7 @@ describe 'managing intermediate certificates' do
         }
       MANIFEST
 
-      idempotent_apply(pp)
+      expect { idempotent_apply(pp) }.not_to raise_error
 
       expectations_combined = [
         %r{Alias name: combined\.example\.com},
@@ -146,7 +146,7 @@ describe 'managing intermediate certificates' do
 
       # in noop mode, when the dependent certificate files are not present in the system,
       # java_ks will not invoke openssl to validate their status, thus noop will succeed
-      apply_manifest(pp, noop: true)
+      expect { apply_manifest(pp, noop: true) }.not_to raise_error
     end
 
     # verifies the dependent files are missing
