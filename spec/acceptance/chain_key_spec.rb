@@ -59,6 +59,7 @@ describe 'managing intermediate certificates' do
         end
       end
     end
+
     expectations_seperate = [
       %r{Alias name: seperate\.example\.com},
       %r{Entry type: (keyEntry|PrivateKeyEntry)},

@@ -14,13 +14,6 @@ Lint/BooleanSymbol:
     - 'lib/puppet/type/java_ks.rb'
     - 'spec/unit/puppet/type/java_ks_spec.rb'
 
-# Offense count: 7
-# This cop supports safe autocorrection (--autocorrect).
-Lint/DeprecatedOpenSSLConstant:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: AllowComments.
 Lint/EmptyClass:
@@ -107,14 +100,6 @@ RSpec/DescribeClass:
     - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
     - 'spec/unit/puppet/type/java_ks_spec.rb'
 
-# Offense count: 5
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowConsecutiveOneLiners.
-RSpec/EmptyLineAfterExample:
-  Exclude:
-    - 'spec/acceptance/chain_key_spec.rb'
-    - 'spec/unit/puppet/type/java_ks_spec.rb'
-
 # Offense count: 34
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:
@@ -138,12 +123,6 @@ RSpec/NoExpectationExample:
     - 'spec/acceptance/private_key_spec.rb'
     - 'spec/acceptance/truststore_spec.rb'
     - 'spec/unit/puppet/type/java_ks_spec.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/ReceiveNever:
-  Exclude:
-    - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
 
 # Offense count: 7
 RSpec/StubbedMock:
@@ -169,27 +148,11 @@ Style/ConcatArrayLiterals:
   Exclude:
     - 'lib/puppet/provider/java_ks/keytool.rb'
 
-# Offense count: 3
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowedVars.
-Style/FetchEnvVar:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
-    - 'spec/unit/puppet/type/java_ks_spec.rb'
-
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/FileEmpty:
   Exclude:
     - 'lib/puppet/provider/java_ks/keytool.rb'
-
-# Offense count: 8
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Exclude:
-    - 'lib/puppet/provider/java_ks/keytool.rb'
-    - 'lib/puppet/type/java_ks.rb'
 
 # Offense count: 1
 Style/MixinUsage:

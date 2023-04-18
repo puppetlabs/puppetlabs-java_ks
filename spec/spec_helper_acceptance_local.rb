@@ -51,7 +51,7 @@ def create_and_upload_certs
   create_certs if recreate_certs
   cert_files.each do |cert_file|
     if ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
-      command = "cp spec\\acceptance\\certs\\#{cert_file} #{ENV['TEMP']}\\#{cert_file}"
+      command = "cp spec\\acceptance\\certs\\#{cert_file} #{ENV.fetch('TEMP', nil)}\\#{cert_file}"
       command = interpolate_powershell(command) if os[:family] == 'windows'
       Open3.capture3(command)
     else
@@ -71,7 +71,7 @@ def create_certs
   ca.issuer = ca.subject
   ca.not_before = Time.now
   ca.not_after = ca.not_before + 360
-  ca.sign(key, OpenSSL::Digest::SHA256.new)
+  ca.sign(key, OpenSSL::Digest.new('SHA256'))
 
   key2 = OpenSSL::PKey::RSA.new 1024
   ca2 = OpenSSL::X509::Certificate.new
@@ -82,7 +82,7 @@ def create_certs
   ca2.issuer = ca2.subject
   ca2.not_before = Time.now
   ca2.not_after = ca2.not_before + 360
-  ca2.sign(key2, OpenSSL::Digest::SHA256.new)
+  ca2.sign(key2, OpenSSL::Digest.new('SHA256'))
 
   key_chain = OpenSSL::PKey::RSA.new 1024
   chain = OpenSSL::X509::Certificate.new
@@ -93,7 +93,7 @@ def create_certs
   chain.issuer = ca.subject
   chain.not_before = Time.now
   chain.not_after = chain.not_before + 360
-  chain.sign(key, OpenSSL::Digest::SHA256.new)
+  chain.sign(key, OpenSSL::Digest.new('SHA256'))
 
   key_chain2 = OpenSSL::PKey::RSA.new 1024
   chain2 = OpenSSL::X509::Certificate.new
@@ -104,7 +104,7 @@ def create_certs
   chain2.issuer = chain.subject
   chain2.not_before = Time.now
   chain2.not_after = chain2.not_before + 360
-  chain2.sign(key_chain, OpenSSL::Digest::SHA256.new)
+  chain2.sign(key_chain, OpenSSL::Digest.new('SHA256'))
 
   key_leaf = OpenSSL::PKey::RSA.new 1024
   leaf = OpenSSL::X509::Certificate.new
@@ -115,7 +115,7 @@ def create_certs
   leaf.issuer = chain2.subject
   leaf.not_before = Time.now
   leaf.not_after = leaf.not_before + 360
-  leaf.sign(key_chain2, OpenSSL::Digest::SHA256.new)
+  leaf.sign(key_chain2, OpenSSL::Digest.new('SHA256'))
 
   chain3 = OpenSSL::X509::Certificate.new
   chain3.serial = 6
@@ -124,7 +124,7 @@ def create_certs
   chain3.issuer = ca.subject
   chain3.not_before = Time.now
   chain3.not_after = chain3.not_before + 360
-  chain3.sign(key, OpenSSL::Digest::SHA256.new)
+  chain3.sign(key, OpenSSL::Digest.new('SHA256'))
 
   pkcs12 = OpenSSL::PKCS12.create('pkcs12pass', 'Leaf Cert', key_leaf, leaf, [chain2, chain])
   pkcs12_chain3 = OpenSSL::PKCS12.create('pkcs12pass', 'Leaf Cert', key_leaf, leaf, [chain3])

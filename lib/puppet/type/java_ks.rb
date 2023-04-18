@@ -202,13 +202,9 @@ Puppet::Type.newtype(:java_ks) do
   autorequire(:file) do
     auto_requires = []
     [:private_key, :certificate, :chain].each do |param|
-      if @parameters.include?(param)
-        auto_requires << @parameters[param].value
-      end
+      auto_requires << @parameters[param].value if @parameters.include?(param)
     end
-    if @parameters.include?(:target)
-      auto_requires << ::File.dirname(@parameters[:target].value)
-    end
+    auto_requires << ::File.dirname(@parameters[:target].value) if @parameters.include?(:target)
     auto_requires
   end
 
@@ -241,26 +237,16 @@ Puppet::Type.newtype(:java_ks) do
 
   validate do
     if self[:ensure] != :absent
-      unless value(:certificate) || value(:certificate_content)
-        raise Puppet::Error, "You must pass one of 'certificate' or 'certificate_content'"
-      end
+      raise Puppet::Error, "You must pass one of 'certificate' or 'certificate_content'" unless value(:certificate) || value(:certificate_content)
 
-      if value(:certificate) && value(:certificate_content)
-        raise Puppet::Error, "You must pass either 'certificate' or 'certificate_content', not both."
-      end
+      raise Puppet::Error, "You must pass either 'certificate' or 'certificate_content', not both." if value(:certificate) && value(:certificate_content)
 
-      if value(:private_key) && value(:private_key_content)
-        raise Puppet::Error, "You must pass either 'private_key' or 'private_key_content', not both."
-      end
+      raise Puppet::Error, "You must pass either 'private_key' or 'private_key_content', not both." if value(:private_key) && value(:private_key_content)
     end
 
-    if value(:password) && value(:password_file)
-      raise Puppet::Error, "You must pass either 'password' or 'password_file', not both."
-    end
+    raise Puppet::Error, "You must pass either 'password' or 'password_file', not both." if value(:password) && value(:password_file)
 
-    unless value(:password) || value(:password_file)
-      raise Puppet::Error, "You must pass one of 'password' or 'password_file'."
-    end
+    raise Puppet::Error, "You must pass one of 'password' or 'password_file'." unless value(:password) || value(:password_file)
 
     if value(:storetype) == :pkcs12 && value(:source_password).nil?
       fail "You must provide 'source_password' when using a 'pkcs12' storetype." # rubocop:disable Style/SignalException : Associated test fails if 'raise' is used

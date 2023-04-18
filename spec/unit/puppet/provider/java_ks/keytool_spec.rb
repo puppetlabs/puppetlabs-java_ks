@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
   let(:temp_dir) do
     if Puppet.features.microsoft_windows?
-      ENV['TEMP']
+      ENV.fetch('TEMP', nil)
     else
       '/tmp/'
     end
@@ -108,7 +108,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.issuer = testing_ca.subject
       testing_ca.not_before = Time.now
       testing_ca.not_after = testing_ca.not_before + 360
-      testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
+      testing_ca.sign(testing_key, OpenSSL::Digest.new('SHA256'))
 
       context 'Using the file based parameters for certificate and private_key' do
         # rubocop:disable RSpec/MultipleExpectations
@@ -236,7 +236,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       no_pk = resource.dup
       no_pk.delete(:private_key)
       expect(provider).to receive(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target]], any_args)
-      expect(no_pk.provider).to receive(:import_ks).never
+      expect(no_pk.provider).not_to receive(:import_ks)
       no_pk.provider.create
     end
   end

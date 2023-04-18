@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Puppet::Type.type(:java_ks) do
   let(:temp_dir) do
     if Puppet.features.microsoft_windows?
-      ENV['TEMP']
+      ENV.fetch('TEMP', nil)
     else
       '/tmp/'
     end
@@ -75,6 +75,7 @@ describe Puppet::Type.type(:java_ks) do
       jks[:target] = "#{temp_dir}some_other_app.jks"
       expect(described_class.new(jks)[:target]).not_to eq(jks_resource[:target])
     end
+
     it 'second half of title should not map to target parameter when target is supplied #to equal' do
       jks = jks_resource.dup
       jks[:target] = "#{temp_dir}some_other_app.jks"
@@ -87,6 +88,7 @@ describe Puppet::Type.type(:java_ks) do
       jks.delete(:target)
       expect(described_class.new(jks)[:name]).to eq(jks_resource[:name])
     end
+
     it 'title components should map to namevar parameters #target' do
       jks = jks_resource.dup
       jks.delete(:name)
@@ -237,6 +239,7 @@ describe Puppet::Type.type(:java_ks) do
         rel = test_jks.autorequire[0]
         expect(rel.source.ref).to eq(test_file.ref)
       end
+
       it "autorequires for #{file} #jks" do
         test_jks = described_class.new(jks_resource)
         test_file = Puppet::Type.type(:file).new(title: jks_resource[file])
@@ -261,6 +264,7 @@ describe Puppet::Type.type(:java_ks) do
       rel = test_jks.autorequire[0]
       expect(rel.source.ref).to eq(test_file.ref)
     end
+
     it 'autorequires for the :target directory #jks' do
       test_jks = described_class.new(jks_resource)
       test_file = Puppet::Type.type(:file).new(title: ::File.dirname(jks_resource[:target]))
