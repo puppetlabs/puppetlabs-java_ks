@@ -26,7 +26,7 @@ RSpec.shared_examples 'a private key creator' do |sensitive|
             }
            MANIFEST
          end
-    expect { idempotent_apply(pp) }.not_to raise_error
+    idempotent_apply(pp)
   end
 
   expectations = [

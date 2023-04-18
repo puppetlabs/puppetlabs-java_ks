@@ -61,6 +61,20 @@ RSpec/ExampleLength:
 RSpec/NestedGroups:
   Max: 4
 
+# Offense count: 18
+# Configuration parameters: AllowedPatterns.
+# AllowedPatterns: ^expect_, ^assert_
+RSpec/NoExpectationExample:
+  Exclude:
+    - 'spec/acceptance/chain_key_spec.rb'
+    - 'spec/acceptance/content_spec.rb'
+    - 'spec/acceptance/destkeypass_spec.rb'
+    - 'spec/acceptance/keystore_spec.rb'
+    - 'spec/acceptance/pkcs12_spec.rb'
+    - 'spec/acceptance/private_key_spec.rb'
+    - 'spec/acceptance/truststore_spec.rb'
+    - 'spec/unit/puppet/type/java_ks_spec.rb'
+
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: .

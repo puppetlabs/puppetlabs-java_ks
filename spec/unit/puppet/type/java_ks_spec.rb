@@ -53,7 +53,7 @@ describe Puppet::Type.type(:java_ks) do
 
   describe 'when validating attribute values' do
     [:present, :absent, :latest].each do |value|
-      it "supports #{value} as a value to ensure" do # rubocop:disable RSpec/NoExpectationExample
+      it "supports #{value} as a value to ensure" do
         described_class.new(jks_resource.merge(ensure: value))
       end
     end

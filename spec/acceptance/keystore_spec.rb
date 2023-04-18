@@ -22,7 +22,7 @@ describe 'managing java keystores' do
         }
       MANIFEST
 
-      expect { idempotent_apply(pp_one) }.not_to raise_error
+      idempotent_apply(pp_one)
     end
 
     expectations = [
@@ -56,7 +56,7 @@ describe 'managing java keystores' do
         }
       MANIFEST
 
-      expect { idempotent_apply(pp_two) }.not_to raise_error
+      idempotent_apply(pp_two)
     end
 
     it 'recreates a keystore if password fails' do
@@ -73,7 +73,7 @@ describe 'managing java keystores' do
       }
       MANIFEST
 
-      expect { idempotent_apply(pp_three) }.not_to raise_error
+      idempotent_apply(pp_three)
     end
 
     it 'verifies the keystore again' do
@@ -101,7 +101,7 @@ describe 'managing java keystores' do
           }
         MANIFEST
 
-        expect { idempotent_apply(pp) }.not_to raise_error
+        idempotent_apply(pp)
       end
 
       expectations = [
@@ -136,7 +136,7 @@ describe 'managing java keystores' do
         }
       MANIFEST
 
-      expect { idempotent_apply(pp_one) }.not_to raise_error
+      idempotent_apply(pp_one)
     end
 
     it 'adds a certificate and key' do
@@ -152,7 +152,7 @@ describe 'managing java keystores' do
         }
       MANIFEST
 
-      expect { idempotent_apply(pp_two) }.not_to raise_error
+      idempotent_apply(pp_two)
     end
 
     expectations = [

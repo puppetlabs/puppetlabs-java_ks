@@ -17,7 +17,7 @@ describe 'managing java private keys' do
       }
     MANIFEST
 
-    expect { idempotent_apply(pp) }.not_to raise_error
+    idempotent_apply(pp)
   end
 
   expectations = [

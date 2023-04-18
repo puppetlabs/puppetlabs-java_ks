@@ -20,7 +20,7 @@ describe 'managing java truststores' do
         path         => #{@resource_path},
     }
     MANIFEST
-    expect { idempotent_apply(pp) }.not_to raise_error
+    idempotent_apply(pp)
   end
 
   expectations = [
@@ -49,7 +49,7 @@ describe 'managing java truststores' do
         path                => #{@resource_path},
     }
     MANIFEST
-    expect { idempotent_apply(pp) }.not_to raise_error
+    idempotent_apply(pp)
   end
 
   it 'verifies the truststore again' do
