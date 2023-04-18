@@ -86,3 +86,5 @@ Style/WordArray:
   EnforcedStyle: brackets
 RSpec/MultipleExpectations:
   Max: 3
+Naming/MethodParameterName:
+  AllowedNames: 'is'
