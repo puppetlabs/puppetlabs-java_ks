@@ -20,7 +20,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       certificate: "#{temp_dir}app.example.com.pem",
       private_key: "#{temp_dir}private/app.example.com.pem",
       storetype: 'jceks',
-      provider: described_class.name,
+      provider: described_class.name
     }
   end
   let(:params) do
@@ -179,7 +179,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         certificate: "#{temp_dir}testing.p12",
         storetype: 'pkcs12',
         source_password: 'password',
-        provider: described_class.name,
+        provider: described_class.name
       }
     end
 
@@ -211,7 +211,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         password: 'puppet',
         certificate: "#{temp_dir}app.example.com.pem",
         private_key: "#{temp_dir}private/app.example.com.pem",
-        provider: described_class.name,
+        provider: described_class.name
       }
     end
 

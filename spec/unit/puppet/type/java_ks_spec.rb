@@ -22,7 +22,7 @@ describe Puppet::Type.type(:java_ks) do
       private_key: "#{temp_dir}private/app.example.com.pem",
       private_key_type: 'rsa',
       storetype: 'jceks',
-      provider: :keytool,
+      provider: :keytool
     }
   end
   let(:jks_resource) do
@@ -255,7 +255,7 @@ describe Puppet::Type.type(:java_ks) do
 
     it 'autorequires for the :target directory #file' do
       test_jks = described_class.new(jks_resource)
-      test_file = Puppet::Type.type(:file).new(title: ::File.dirname(jks_resource[:target]))
+      test_file = Puppet::Type.type(:file).new(title: File.dirname(jks_resource[:target]))
 
       Puppet::Resource::Catalog.new :testing do |conf|
         [test_jks, test_file].each { |resource| conf.add_resource resource }
@@ -267,7 +267,7 @@ describe Puppet::Type.type(:java_ks) do
 
     it 'autorequires for the :target directory #jks' do
       test_jks = described_class.new(jks_resource)
-      test_file = Puppet::Type.type(:file).new(title: ::File.dirname(jks_resource[:target]))
+      test_file = Puppet::Type.type(:file).new(title: File.dirname(jks_resource[:target]))
 
       Puppet::Resource::Catalog.new :testing do |conf|
         [test_jks, test_file].each { |resource| conf.add_resource resource }

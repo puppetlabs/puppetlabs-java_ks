@@ -204,7 +204,7 @@ Puppet::Type.newtype(:java_ks) do
     [:private_key, :certificate, :chain].each do |param|
       auto_requires << @parameters[param].value if @parameters.include?(param)
     end
-    auto_requires << ::File.dirname(@parameters[:target].value) if @parameters.include?(:target)
+    auto_requires << File.dirname(@parameters[:target].value) if @parameters.include?(:target)
     auto_requires
   end
 

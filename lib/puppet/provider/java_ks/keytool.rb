@@ -67,10 +67,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
     contents = if File.exist?(@resource[:target]) && !File.zero?(@resource[:target])
-                 if !source_pword.nil?
-                   "#{pword}\n#{source_pword}"
-                 else
+                 if source_pword.nil?
                    "#{pword}\n#{pword}"
+                 else
+                   "#{pword}\n#{source_pword}"
                  end
                elsif !source_pword.nil?
                  "#{pword}\n#{pword}\n#{source_pword}"
@@ -161,10 +161,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       true
-    rescue => e
-      if e.message.match?(%r{password was incorrect}i)
+    rescue StandardError => e
+      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset] == :true)
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
-        File.delete(@resource[:target]) if @resource[:password_fail_reset] == :true
+        File.delete(@resource[:target])
       end
       false
     end
@@ -192,8 +192,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-storetype', 'PKCS12', '-storepass', sourcepassword
       ]
       output = run_command(cmd)
-      latest = extract_fingerprint(output)
-      latest
+      extract_fingerprint(output)
+
     else
       cmd = [
         command_keytool,
@@ -207,8 +207,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         ]
         output += run_command(cmd)
       end
-      latest = extract_fingerprint(output)
-      latest
+      extract_fingerprint(output)
+
     end
   end
 
@@ -228,8 +228,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = extract_fingerprint(output)
-      current
+      extract_fingerprint(output)
+
     end
   end
 
