@@ -139,9 +139,9 @@ Puppet::Type.newtype(:java_ks) do
       keystore file, then delete the keystore file and create a new one.
       Default: false."
 
-    newvalues(:true, :false)
+    newvalues(true, false)
 
-    defaultto :false
+    defaultto false
   end
 
   newparam(:destkeypass) do
@@ -162,9 +162,9 @@ Puppet::Type.newtype(:java_ks) do
     desc "Certificate authorities aren't by default trusted so if you are adding a CA you need to set this to true.
      Defaults to :false."
 
-    newvalues(:true, :false)
+    newvalues(true, false)
 
-    defaultto :false
+    defaultto false
   end
 
   newparam(:path) do

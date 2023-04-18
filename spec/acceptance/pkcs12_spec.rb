@@ -74,7 +74,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         end
       end
     end
-  end # context 'with defaults'
+  end
 
   context 'with a different alias' do
     it 'creates a private key with chain' do
@@ -106,7 +106,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         end
       end
     end
-  end # context 'with a different alias'
+  end
 
   context 'with a destkeypass' do
     command = if os[:family] == 'windows'
@@ -146,5 +146,5 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
         end
       end
     end
-  end # context 'with a destkeypass'
+  end
 end

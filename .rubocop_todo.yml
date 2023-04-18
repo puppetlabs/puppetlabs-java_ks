@@ -6,14 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 12
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Lint/BooleanSymbol:
-  Exclude:
-    - 'lib/puppet/provider/java_ks/keytool.rb'
-    - 'lib/puppet/type/java_ks.rb'
-    - 'spec/unit/puppet/type/java_ks_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: AllowComments.
 Lint/EmptyClass:
@@ -135,18 +127,6 @@ RSpec/StubbedMock:
 # SupportedStyles: constant, string
 RSpec/VerifiedDoubleReference:
   EnforcedStyle: string
-
-# Offense count: 3
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/CommentedKeyword:
-  Exclude:
-    - 'spec/acceptance/pkcs12_spec.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/ConcatArrayLiterals:
-  Exclude:
-    - 'lib/puppet/provider/java_ks/keytool.rb'
 
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).

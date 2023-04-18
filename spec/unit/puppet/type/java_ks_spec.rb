@@ -102,8 +102,8 @@ describe Puppet::Type.type(:java_ks) do
       expect(described_class.new(jks)[:name]).to eq(jks_resource[:name])
     end
 
-    it 'has :false value to :trustcacerts when parameter not provided' do
-      expect(described_class.new(jks_resource)[:trustcacerts]).to eq(:false)
+    it 'has false as the default value to :trustcacerts when parameter not provided' do
+      expect(described_class.new(jks_resource)[:trustcacerts]).to be_nil
     end
 
     it 'has :rsa as the default value for :private_key_type' do
@@ -176,7 +176,7 @@ describe Puppet::Type.type(:java_ks) do
     end
 
     it 'has :false value to :password_fail_reset when parameter not provided' do
-      expect(described_class.new(jks_resource)[:password_fail_reset]).to eq(:false)
+      expect(described_class.new(jks_resource)[:password_fail_reset]).to be_nil
     end
 
     it 'fails if :source_password is not provided for pkcs12 :storetype' do

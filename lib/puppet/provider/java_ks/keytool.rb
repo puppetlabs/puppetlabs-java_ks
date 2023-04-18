@@ -93,7 +93,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-srckeystore', tmppk12.path,
       '-alias', @resource[:name]
     ]
-    cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd << '-trustcacerts' if @resource[:trustcacerts]
     cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
     cmd += ['-deststoretype', storetype] unless storetype.nil?
 
@@ -112,16 +112,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     ]
 
     if @resource[:source_alias]
-      cmd.concat([
-                   '-srcalias', @resource[:source_alias],
-                   '-destalias', @resource[:name]
-                 ])
+      cmd.push(
+        '-srcalias', @resource[:source_alias],
+        '-destalias', @resource[:name]
+      )
     end
 
     if @resource[:destkeypass]
-      cmd.concat([
-                   '-destkeypass', @resource[:destkeypass]
-                 ])
+      cmd.push(
+        '-destkeypass', @resource[:destkeypass]
+      )
     end
 
     pwfile = password_file
@@ -140,7 +140,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-storetype', storetype
     ]
-    cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd << '-trustcacerts' if @resource[:trustcacerts]
     cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
 
     pwfile = password_file
@@ -162,7 +162,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.close!
       true
     rescue StandardError => e
-      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset] == :true)
+      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset])
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
         File.delete(@resource[:target])
       end
@@ -252,7 +252,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-file', certificate,
         '-keystore', @resource[:target]
       ]
-      cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+      cmd << '-trustcacerts' if @resource[:trustcacerts]
       tmpfile = password_file
       run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
