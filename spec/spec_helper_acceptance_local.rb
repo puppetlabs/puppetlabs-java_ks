@@ -177,7 +177,7 @@ RSpec.configure do |c|
   end
 end
 
-RSpec.shared_context 'common variables' do
+RSpec.shared_context 'with common variables' do
   before(:each) do
     java_major, java_minor = (ENV['JAVA_VERSION'] || '8u211').split('u')
     @ensure_ks = 'latest'

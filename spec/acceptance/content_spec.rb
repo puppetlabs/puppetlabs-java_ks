@@ -44,15 +44,15 @@ RSpec.shared_examples 'a private key creator' do |sensitive|
 end
 
 describe 'using certificate_content and private_key_content' do
-  include_context 'common variables'
+  include_context 'with common variables'
   let(:ca_content) { File.read('spec/acceptance/certs/ca.pem') }
   let(:priv_key_content) { File.read('spec/acceptance/certs/privkey.pem') }
 
-  context 'Using data type String' do
+  context 'when using data type String' do
     it_behaves_like 'a private key creator',  false
   end
 
-  context 'Using data type Sensitive' do
+  context 'when using data type Sensitive' do
     it_behaves_like 'a private key creator',  true
   end
   # rubocop:enable RSpec/InstanceVariable

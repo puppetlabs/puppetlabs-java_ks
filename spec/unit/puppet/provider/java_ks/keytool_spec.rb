@@ -72,7 +72,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       provider.run_command(cmd)
     end
 
-    context 'short timeout' do
+    context 'with short timeout' do
       let(:params) do
         global_params.merge(keytool_timeout: 0.1)
       end
@@ -106,7 +106,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.not_after = testing_ca.not_before + 360
       testing_ca.sign(testing_key, OpenSSL::Digest.new('SHA256'))
 
-      context 'Using the file based parameters for certificate and private_key' do
+      context 'when using the file based parameters for certificate and private_key' do
         # rubocop:disable RSpec/MultipleExpectations
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
@@ -123,7 +123,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         # rubocop:enable RSpec/MultipleExpectations
       end
 
-      context 'Using content based parameters for certificate and private_key' do
+      context 'when using content based parameters for certificate and private_key' do
         let(:params) do
           global_params.tap { |h| [:certificate, :private_key].each { |k| h.delete(k) } }.merge(
             private_key_content: 'private_key',

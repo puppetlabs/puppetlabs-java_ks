@@ -4,7 +4,7 @@ require 'spec_helper_acceptance'
 
 describe 'password protected java private keys', unless: UNSUPPORTED_PLATFORMS.include?(os[:family]) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
-  include_context 'common variables'
+  include_context 'with common variables'
   target = "#{@target_dir}destkeypass.ks"
 
   it 'creates a password protected private key' do

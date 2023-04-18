@@ -5,7 +5,7 @@ require 'spec_helper_acceptance'
 describe 'managing intermediate certificates' do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   describe 'managing combined and seperate java chain keys' do
-    include_context 'common variables'
+    include_context 'with common variables'
 
     it 'verifies keytool is setup', unless: os[:family] == 'windows' do
       i = 0
@@ -123,7 +123,7 @@ describe 'managing intermediate certificates' do
   end
 
   describe 'managing non existent java chain keys in noop' do
-    include_context 'common variables'
+    include_context 'with common variables'
 
     it 'does not create a new keystore in noop' do
       pp = <<-MANIFEST

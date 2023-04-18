@@ -32,15 +32,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 19
 
-# Offense count: 6
-# Configuration parameters: Prefixes, AllowedPatterns.
-# Prefixes: when, with, without
-RSpec/ContextWording:
-  Exclude:
-    - 'spec/acceptance/content_spec.rb'
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'spec/unit/puppet/provider/java_ks/keytool_spec.rb'
-
 # Offense count: 9
 # Configuration parameters: IgnoredMetadata.
 RSpec/DescribeClass:

@@ -4,7 +4,7 @@ require 'spec_helper_acceptance'
 
 describe 'managing java keystores' do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
-  include_context 'common variables'
+  include_context 'with common variables'
 
   describe 'basic tests' do
     it 'creates a keystore' do
