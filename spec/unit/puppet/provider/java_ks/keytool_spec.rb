@@ -245,5 +245,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 end
 
+# rubocop:disable Lint/EmptyClass
 class BogusPkcs
 end
+# rubocop:enable Lint/EmptyClass
