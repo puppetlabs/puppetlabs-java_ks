@@ -62,7 +62,7 @@ end
 
 def create_certs
   require 'openssl'
-  key = OpenSSL::PKey::RSA.new 1024
+  key = OpenSSL::PKey::RSA.new 2048
   ca = OpenSSL::X509::Certificate.new
   ca.serial = 1
   ca.public_key = key.public_key
@@ -73,7 +73,7 @@ def create_certs
   ca.not_after = ca.not_before + 360
   ca.sign(key, OpenSSL::Digest.new('SHA256'))
 
-  key2 = OpenSSL::PKey::RSA.new 1024
+  key2 = OpenSSL::PKey::RSA.new 2048
   ca2 = OpenSSL::X509::Certificate.new
   ca2.serial = 2
   ca2.public_key = key2.public_key
@@ -84,7 +84,7 @@ def create_certs
   ca2.not_after = ca2.not_before + 360
   ca2.sign(key2, OpenSSL::Digest.new('SHA256'))
 
-  key_chain = OpenSSL::PKey::RSA.new 1024
+  key_chain = OpenSSL::PKey::RSA.new 2048
   chain = OpenSSL::X509::Certificate.new
   chain.serial = 3
   chain.public_key = key_chain.public_key
@@ -95,7 +95,7 @@ def create_certs
   chain.not_after = chain.not_before + 360
   chain.sign(key, OpenSSL::Digest.new('SHA256'))
 
-  key_chain2 = OpenSSL::PKey::RSA.new 1024
+  key_chain2 = OpenSSL::PKey::RSA.new 2048
   chain2 = OpenSSL::X509::Certificate.new
   chain2.serial = 4
   chain2.public_key = key_chain2.public_key
@@ -106,7 +106,7 @@ def create_certs
   chain2.not_after = chain2.not_before + 360
   chain2.sign(key_chain, OpenSSL::Digest.new('SHA256'))
 
-  key_leaf = OpenSSL::PKey::RSA.new 1024
+  key_leaf = OpenSSL::PKey::RSA.new 2048
   leaf = OpenSSL::X509::Certificate.new
   leaf.serial = 5
   leaf.public_key = key_leaf.public_key
@@ -166,7 +166,8 @@ RSpec.configure do |c|
         # }
       MANIFEST
       LitmusHelper.instance.apply_manifest(pp_one, catch_failures: true)
-      LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jdk8 --version 8.0.211 -y')
+      # LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jdk8 --version 8.0.211 -y')
+      LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jre8 --version 8.0.371 -y')
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
       pp_two = <<~MANIFEST
@@ -179,7 +180,7 @@ end
 
 RSpec.shared_context 'with common variables' do
   before(:each) do
-    java_major, java_minor = (ENV['JAVA_VERSION'] || '8u211').split('u')
+    java_major, _java_minor = (ENV['JAVA_VERSION'] || '8u371').split('u')
     @ensure_ks = 'latest'
     @resource_path = 'undef'
     @target_dir = '/etc/'
@@ -193,8 +194,8 @@ RSpec.shared_context 'with common variables' do
       @resource_path = "['/usr/java6/bin/','/usr/bin/']"
     when 'windows'
       @ensure_ks = 'present'
-      @keytool_path = "C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/"
-      @resource_path = "['C:/Program Files/Java/jdk1.#{java_major}.0_#{java_minor}/bin/']"
+      @keytool_path = "C:/Program Files/Java/jre-1.#{java_major}/bin/"
+      @resource_path = "['C:/Program Files/Java/jre-1.#{java_major}/bin/']"
     when 'ubuntu'
       @ensure_ks = 'present' if ['20.04', '22.04'].include?(os[:release])
     when 'debian'
