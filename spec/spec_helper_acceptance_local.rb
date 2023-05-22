@@ -157,23 +157,21 @@ RSpec.configure do |c|
     # install java if windows
     if os[:family] == 'windows'
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-chocolatey')
-      pp_one = <<~MANIFEST
+      pp_windows = <<~MANIFEST
         include chocolatey
-        # package { 'jdk8':
-        #   ensure   => '8.0.211',
-        #   provider => 'chocolatey',
-        #   install_options => ['-y']
-        # }
+        package { 'jre8':
+          ensure   => '8.0.371',
+          provider => 'chocolatey',
+          install_options => ['-y']
+        }
       MANIFEST
-      LitmusHelper.instance.apply_manifest(pp_one, catch_failures: true)
-      # LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jdk8 --version 8.0.211 -y')
-      LitmusHelper.instance.run_shell('C:\ProgramData\chocolatey\choco.exe upgrade jre8 --version 8.0.371 -y')
+      LitmusHelper.instance.apply_manifest(pp_windows, catch_failures: true)
     else
       LitmusHelper.instance.run_shell('puppet module install puppetlabs-java')
-      pp_two = <<~MANIFEST
+      pp_linux = <<~MANIFEST
         class { 'java': }
       MANIFEST
-      LitmusHelper.instance.apply_manifest(pp_two)
+      LitmusHelper.instance.apply_manifest(pp_linux)
     end
   end
 end

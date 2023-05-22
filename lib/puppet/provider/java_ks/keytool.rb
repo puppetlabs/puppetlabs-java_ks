@@ -365,10 +365,6 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         cmd << '-deststorepass' << @resource[:password]
       end
     end
-    # if Facter.value('osfamily') == 'Windows' && @resource[:password]
-    #   cmd_to_run = cmd.is_a?(String) ? cmd.split(%r{\s}).first : cmd.first
-    #   cmd << '-J-Dkeystore.pkcs12.legacy' if cmd_to_run == command_keytool
-    # end
 
     # Now run the command
     options = { failonfail: true, combine: true }
