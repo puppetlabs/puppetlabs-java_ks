@@ -66,11 +66,11 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     source_pword = sourcepassword
 
     tmpfile = Tempfile.new("#{@resource[:name]}.")
-    contents = if File.exist?(@resource[:target]) && !File.zero?(@resource[:target])
-                 if !source_pword.nil?
-                   "#{pword}\n#{source_pword}"
-                 else
+    contents = if File.exist?(@resource[:target]) && !File.empty?(@resource[:target])
+                 if source_pword.nil?
                    "#{pword}\n#{pword}"
+                 else
+                   "#{pword}\n#{source_pword}"
                  end
                elsif !source_pword.nil?
                  "#{pword}\n#{pword}\n#{source_pword}"
@@ -93,7 +93,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-srckeystore', tmppk12.path,
       '-alias', @resource[:name]
     ]
-    cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd << '-trustcacerts' if @resource[:trustcacerts]
     cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
     cmd += ['-deststoretype', storetype] unless storetype.nil?
 
@@ -112,16 +112,16 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     ]
 
     if @resource[:source_alias]
-      cmd.concat([
-                   '-srcalias', @resource[:source_alias],
-                   '-destalias', @resource[:name]
-                 ])
+      cmd.push(
+        '-srcalias', @resource[:source_alias],
+        '-destalias', @resource[:name]
+      )
     end
 
     if @resource[:destkeypass]
-      cmd.concat([
-                   '-destkeypass', @resource[:destkeypass]
-                 ])
+      cmd.push(
+        '-destkeypass', @resource[:destkeypass]
+      )
     end
 
     pwfile = password_file
@@ -140,7 +140,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       '-keystore', @resource[:target],
       '-storetype', storetype
     ]
-    cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+    cmd << '-trustcacerts' if @resource[:trustcacerts]
     cmd += ['-destkeypass', @resource[:destkeypass]] unless @resource[:destkeypass].nil?
 
     pwfile = password_file
@@ -161,12 +161,10 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       run_command(cmd, false, tmpfile)
       tmpfile.close!
       true
-    rescue => e
-      if e.message.match?(%r{password was incorrect}i)
+    rescue StandardError => e
+      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset])
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
-        if @resource[:password_fail_reset] == :true
-          File.delete(@resource[:target])
-        end
+        File.delete(@resource[:target])
       end
       false
     end
@@ -194,8 +192,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-storetype', 'PKCS12', '-storepass', sourcepassword
       ]
       output = run_command(cmd)
-      latest = extract_fingerprint(output)
-      latest
+      extract_fingerprint(output)
+
     else
       cmd = [
         command_keytool,
@@ -209,8 +207,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         ]
         output += run_command(cmd)
       end
-      latest = extract_fingerprint(output)
-      latest
+      extract_fingerprint(output)
+
     end
   end
 
@@ -230,8 +228,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile = password_file
       output = run_command(cmd, false, tmpfile)
       tmpfile.close!
-      current = extract_fingerprint(output)
-      current
+      extract_fingerprint(output)
+
     end
   end
 
@@ -254,7 +252,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
         '-file', certificate,
         '-keystore', @resource[:target]
       ]
-      cmd << '-trustcacerts' if @resource[:trustcacerts] == :true
+      cmd << '-trustcacerts' if @resource[:trustcacerts]
       tmpfile = password_file
       run_command(cmd, @resource[:target], tmpfile)
       tmpfile.close!
@@ -298,6 +296,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
   def private_key
     return @resource[:private_key] if @resource[:private_key]
     return unless @resource[:private_key_content]
+
     # When no private key file is specified, we infer the usage of
     # private key content and create a tempfile containing this value.
     # we leave it to to the tempfile to clean it up after the pupet run exists.
@@ -346,7 +345,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # the java keytool will not correctly deal with an empty target keystore
     # file. If we encounter an empty keystore target file, preserve the mode,
     # owner and group, temporarily raise the umask, and delete the empty file.
-    if target && (File.exist?(target) && File.zero?(target))
+    if target && (File.exist?(target) && File.empty?(target))
       stat = File.stat(target)
       umask = File.umask(0o077)
       File.delete(target)

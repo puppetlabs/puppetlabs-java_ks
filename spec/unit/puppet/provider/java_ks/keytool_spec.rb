@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Puppet::Type.type(:java_ks).provider(:keytool) do
   let(:temp_dir) do
     if Puppet.features.microsoft_windows?
-      ENV['TEMP']
+      ENV.fetch('TEMP', nil)
     else
       '/tmp/'
     end
@@ -20,7 +20,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       certificate: "#{temp_dir}app.example.com.pem",
       private_key: "#{temp_dir}private/app.example.com.pem",
       storetype: 'jceks',
-      provider: described_class.name,
+      provider: described_class.name
     }
   end
   let(:params) do
@@ -68,15 +68,11 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
                    else
                      Puppet::Util
                    end
-      expect(exec_class).to receive(:execute).with(
-        cmd,
-        failonfail: true,
-        combine: true,
-      )
+      expect(exec_class).to receive(:execute).with(cmd, { failonfail: true, combine: true })
       provider.run_command(cmd)
     end
 
-    context 'short timeout' do
+    context 'with short timeout' do
       let(:params) do
         global_params.merge(keytool_timeout: 0.1)
       end
@@ -90,7 +86,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
 
     it 'normally times out after 120 seconds' do
       cmd = '/bin/echo testing 1 2 3'
-      expect(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
+      allow(Timeout).to receive(:timeout).with(120, Timeout::Error).and_raise(Timeout::Error)
 
       expect { provider.run_command(cmd) }.to raise_error Puppet::Error, "Timed out waiting for 'app.example.com' to run keytool"
     end
@@ -108,9 +104,11 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.issuer = testing_ca.subject
       testing_ca.not_before = Time.now
       testing_ca.not_after = testing_ca.not_before + 360
-      testing_ca.sign(testing_key, OpenSSL::Digest::SHA256.new)
+      testing_ca.sign(testing_key, OpenSSL::Digest.new('SHA256'))
 
-      context 'Using the file based parameters for certificate and private_key' do
+      context 'when using the file based parameters for certificate and private_key' do
+        # rubocop:disable RSpec/MultipleExpectations
+        # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with(resource[:private_key]).and_return('private key')
@@ -123,9 +121,11 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
+        # rubocop:enable RSpec/MultipleExpectations
+        # rubocop:enable RSpec/StubbedMock
       end
 
-      context 'Using content based parameters for certificate and private_key' do
+      context 'when using content based parameters for certificate and private_key' do
         let(:params) do
           global_params.tap { |h| [:certificate, :private_key].each { |k| h.delete(k) } }.merge(
             private_key_content: 'private_key',
@@ -133,6 +133,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           )
         end
 
+        # rubocop:disable RSpec/MultipleExpectations
+        # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
           allow(File).to receive(:read).with('/tmp/testing.stuff').ordered.and_return('private key')
@@ -145,6 +147,8 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
+        # rubocop:enable RSpec/MultipleExpectations
+        # rubocop:enable RSpec/StubbedMock
       end
     end
 
@@ -179,7 +183,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         certificate: "#{temp_dir}testing.p12",
         storetype: 'pkcs12',
         source_password: 'password',
-        provider: described_class.name,
+        provider: described_class.name
       }
     end
 
@@ -211,7 +215,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         password: 'puppet',
         certificate: "#{temp_dir}app.example.com.pem",
         private_key: "#{temp_dir}private/app.example.com.pem",
-        provider: described_class.name,
+        provider: described_class.name
       }
     end
 
@@ -232,7 +236,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       no_pk = resource.dup
       no_pk.delete(:private_key)
       expect(provider).to receive(:run_command).with(['mykeytool', '-importcert', '-noprompt', '-alias', no_pk[:name], '-file', no_pk[:certificate], '-keystore', no_pk[:target]], any_args)
-      expect(no_pk.provider).to receive(:import_ks).never
+      expect(no_pk.provider).not_to receive(:import_ks)
       no_pk.provider.create
     end
   end
@@ -245,5 +249,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
   end
 end
 
+# rubocop:disable Lint/EmptyClass
 class BogusPkcs
 end
+# rubocop:enable Lint/EmptyClass

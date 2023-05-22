@@ -4,13 +4,13 @@ require 'spec_helper_acceptance'
 
 describe 'managing java truststores' do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
-  include_context 'common variables'
+  include_context 'with common variables'
 
   it 'creates a truststore' do
     command = "rm #{@temp_dir}truststore.ts"
     command = interpolate_powershell(command) if os[:family] == 'windows'
     run_shell(command, expect_failures: true)
-    pp = <<-EOS
+    pp = <<-MANIFEST
       java_ks { 'puppetca:#{@temp_dir}truststore':
         ensure       => #{@ensure_ks},
         certificate  => "#{@temp_dir}ca.pem",
@@ -19,7 +19,7 @@ describe 'managing java truststores' do
         trustcacerts => true,
         path         => #{@resource_path},
     }
-    EOS
+    MANIFEST
     idempotent_apply(pp)
   end
 
@@ -60,4 +60,5 @@ describe 'managing java truststores' do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end
