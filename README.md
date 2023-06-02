@@ -75,7 +75,9 @@ java_ks { 'broker.example.com:/etc/activemq/broker.ks':
 }
 ```
 
-**NOTE:** The sensitive fields like `password`, `certificate_content` and `private_key_content` can be deferred using the [Deferred](https://www.puppet.com/docs/puppet/7/template_with_deferred_values.html) function on Puppet Master and enable to execute on agent. This will avoid the sensitive values to be part of Puppet Catalog.
+**NOTE:** Sensitive fields like `password`, `certificate_content` and `private_key_content` can be deferred using the [Deferred](https://www.puppet.com/docs/puppet/7/template_with_deferred_values.html) function. This will ensure sensitive values are not present in the Catalog.
+
+You can see an example of its use below.
 
 ~~~ puppet
 java_ks { 'broker.example.com:/etc/activemq/broker.ks':
