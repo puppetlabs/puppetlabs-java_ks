@@ -69,11 +69,23 @@ For use cases where you want to fetch the certificate data from a secure store, 
 java_ks { 'broker.example.com:/etc/activemq/broker.ks':
   ensure              => latest,
   certificate_content => $certificate_data_fetched_from_secure_store,
-  private_key_content => $private_key_data_fetched_from_secure_store
+  private_key_content => $private_key_data_fetched_from_secure_store,
   password            => 'albatros',
   password_fail_reset => true,
 }
 ```
+
+**NOTE:** The sensitive fields like `password`, `certificate_content` and `private_key_content` can be deferred using the [Deferred](https://www.puppet.com/docs/puppet/7/template_with_deferred_values.html) function on Puppet Master and enable to execute on agent. This will avoid the sensitive values to be part of Puppet Catalog.
+
+~~~ puppet
+java_ks { 'broker.example.com:/etc/activemq/broker.ks':
+  ensure              => latest,
+  certificate_content => Deferred('sprintf', [$certificate_data_fetched_from_secure_store],
+  private_key_content => Deferred('sprintf', [$private_key_data_fetched_from_secure_store],
+  password            => Deferred('sprint', ['albatros']),
+  password_fail_reset => true,
+}
+~~~
 
 We recommend using the data type `Senstive` for the attributes `certificate_content` and `private_key_content`. But These attributes also support a regular `String` data type. The `_content` attributes are mutual exclusive with their file-based variants.
 
