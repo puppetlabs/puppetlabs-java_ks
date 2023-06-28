@@ -1,7 +1,5 @@
 # java_ks
 
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-java_ks.png?branch=main)](https://travis-ci.org/puppetlabs/puppetlabs-java_ks)
-
 #### Table of Contents
 
 1. [Overview](#overview)
