@@ -16,7 +16,7 @@
 /log/
 /pkg/
 /spec/fixtures/manifests/
-/spec/fixtures/modules/
+/spec/fixtures/modules/*
 /tmp/
 /vendor/
 /convert_report.txt
@@ -42,4 +42,3 @@
 /.vscode/
 /.sync.yml
 /.devcontainer/
-/.rubocop.yml
