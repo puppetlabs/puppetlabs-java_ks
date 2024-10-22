@@ -51,7 +51,7 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
       idempotent_apply(pp)
 
       expectations = if os[:family] == 'windows' || (os[:family] == 'ubuntu' && ['20.04', '22.04'].include?(os[:release])) ||
-                        (os[:family] == 'debian' && os[:release] =~ %r{^11})
+                        (os[:family] == 'debian' && os[:release] =~ %r{^11|12})
                        [
                          %r{Alias name: leaf cert},
                          %r{Entry type: (keyEntry|PrivateKeyEntry)},

@@ -197,7 +197,7 @@ RSpec.shared_context 'with common variables' do
     when 'ubuntu'
       @ensure_ks = 'present' if ['20.04', '22.04'].include?(os[:release])
     when 'debian'
-      @ensure_ks = 'present' if os[:release].match?(%r{^11})
+      @ensure_ks = 'present' if os[:release].match?(%r{^11|12})
     end
   end
 end
