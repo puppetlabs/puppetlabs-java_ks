@@ -22,12 +22,22 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
       idempotent_apply(pp)
     end
 
-    expectations = [
-      %r{Alias name: leaf cert},
-      %r{Entry type: (keyEntry|PrivateKeyEntry)},
-      %r{Certificate chain length: 3},
-      %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
-    ]
+    expectations = if os[:family] == 'debian' && os[:release] =~ %r{^12}
+                     [
+                       %r{Alias name: leaf cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 2},
+                       %r{^Serial number: 5.*^Serial number: 6}m,
+                     ]
+                   else
+                     [
+                       %r{Alias name: leaf cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 3},
+                       %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
+                     ]
+                   end
+
     it 'verifies the private key and chain' do
       run_shell(keytool_command("-list -v -keystore #{@temp_dir}pkcs12.ks -storepass puppet"), expect_failures: true) do |r|
         expectations.each do |expect|
@@ -93,12 +103,22 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
       idempotent_apply(pp)
     end
 
-    expectations = [
-      %r{Alias name: leaf_cert},
-      %r{Entry type: (keyEntry|PrivateKeyEntry)},
-      %r{Certificate chain length: 3},
-      %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
-    ]
+    expectations = if os[:family] == 'debian' && os[:release] =~ %r{^12}
+                     [
+                       %r{Alias name: leaf_cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 2},
+                       %r{^Serial number: 5.*^Serial number: 6}m,
+                     ]
+                   else
+                     [
+                       %r{Alias name: leaf_cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 3},
+                       %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
+                     ]
+                   end
+
     it 'verifies the private key and chain' do
       run_shell(keytool_command("-list -v -keystore #{@temp_dir}pkcs12.ks -storepass puppet"), expect_failures: true) do |r|
         expectations.each do |expect|
@@ -133,12 +153,21 @@ describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] 
       idempotent_apply(pp)
     end
 
-    expectations = [
-      %r{Alias name: leaf_cert},
-      %r{Entry type: (keyEntry|PrivateKeyEntry)},
-      %r{Certificate chain length: 3},
-      %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
-    ]
+    expectations = if os[:family] == 'debian' && os[:release] =~ %r{^12}
+                     [
+                       %r{Alias name: leaf_cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 2},
+                       %r{^Serial number: 5.*^Serial number: 6}m,
+                     ]
+                   else
+                     [
+                       %r{Alias name: leaf_cert},
+                       %r{Entry type: (keyEntry|PrivateKeyEntry)},
+                       %r{Certificate chain length: 3},
+                       %r{^Serial number: 5.*^Serial number: 4.*^Serial number: 3}m,
+                     ]
+                   end
     it 'verifies the private key and chain' do
       run_shell(keytool_command("-list -v -keystore #{@temp_dir}pkcs12.ks -storepass puppet"), expect_failures: true) do |r|
         expectations.each do |expect|
