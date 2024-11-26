@@ -26,9 +26,9 @@ The following parameters are available in the `java_ks::config` class:
 
 ##### <a name="-java_ks--config--params"></a>`params`
 
-Data type: `Any`
+Data type: `Hash`
 
-
+A hash containing the parameters required for the java config.
 
 Default value: `{}`
 

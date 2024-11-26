@@ -5,16 +5,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.0) - 2024-11-26
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.0.0...v5.1.0)
+
 ## [v5.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.0.0) - 2023-05-22
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v4.4.2...v5.0.0)
 
+### Changed
+
+- (CONT-785) Add Support for Puppet 8 / Drop Support for Puppet 6 [#430](https://github.com/puppetlabs/puppetlabs-java_ks/pull/430) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - (CONT-1008) Add missing Windows 2022 Support [#435](https://github.com/puppetlabs/puppetlabs-java_ks/pull/435) ([david22swan](https://github.com/david22swan))
-
-### Changed
-- (CONT-785) Add Support for Puppet 8 / Drop Support for Puppet 6 [#430](https://github.com/puppetlabs/puppetlabs-java_ks/pull/430) ([david22swan](https://github.com/david22swan))
 
 ## [v4.4.2](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v4.4.2) - 2023-04-18
 
@@ -99,6 +104,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v3.4.0...v4.0.0)
 
 ### Changed
+
 - pdksync - (MAINT) Remove SLES 11 support [#354](https://github.com/puppetlabs/puppetlabs-java_ks/pull/354) ([sanfrancrisko](https://github.com/sanfrancrisko))
 - pdksync - (MAINT) Remove RHEL 5 family support [#353](https://github.com/puppetlabs/puppetlabs-java_ks/pull/353) ([sanfrancrisko](https://github.com/sanfrancrisko))
 - pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [#351](https://github.com/puppetlabs/puppetlabs-java_ks/pull/351) ([carabasdaniel](https://github.com/carabasdaniel))
@@ -149,14 +155,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.4.0...v3.0.0)
 
+### Changed
+
+- pdksync - (MODULES-8444) - Raise lower Puppet bound [#276](https://github.com/puppetlabs/puppetlabs-java_ks/pull/276) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - (FM-8155) Add Window Server 2019 support [#281](https://github.com/puppetlabs/puppetlabs-java_ks/pull/281) ([eimlav](https://github.com/eimlav))
 - (FM-8042) Add RedHat 8 support [#280](https://github.com/puppetlabs/puppetlabs-java_ks/pull/280) ([eimlav](https://github.com/eimlav))
 - Add initial support for DSA private keys. [#273](https://github.com/puppetlabs/puppetlabs-java_ks/pull/273) ([surcouf](https://github.com/surcouf))
-
-### Changed
-- pdksync - (MODULES-8444) - Raise lower Puppet bound [#276](https://github.com/puppetlabs/puppetlabs-java_ks/pull/276) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
@@ -183,13 +190,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/2.2.0...2.3.0)
 
+### Changed
+
+- [FM-6966] Removal of unsupported OS from java_ks [#230](https://github.com/puppetlabs/puppetlabs-java_ks/pull/230) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - pdksync - (MODULES-6805) metadata.json shows support for puppet 6 [#246](https://github.com/puppetlabs/puppetlabs-java_ks/pull/246) ([tphoney](https://github.com/tphoney))
 - (FM-7238) - Addition of support for Ubuntu 18.04 [#237](https://github.com/puppetlabs/puppetlabs-java_ks/pull/237) ([david22swan](https://github.com/david22swan))
-
-### Changed
-- [FM-6966] Removal of unsupported OS from java_ks [#230](https://github.com/puppetlabs/puppetlabs-java_ks/pull/230) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
@@ -227,13 +235,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/1.6.0...2.0.0)
 
+### Changed
+
+- (MODULES-5814) - Removing Windows 8 [#197](https://github.com/puppetlabs/puppetlabs-java_ks/pull/197) ([pmcmaw](https://github.com/pmcmaw))
+
 ### Added
 
-- Add Java 9 support [#195](https://github.com/puppetlabs/puppetlabs-java_ks/pull/195) ([sanderc85](https://github.com/sanderc85))
+- Add Java 9 support [#195](https://github.com/puppetlabs/puppetlabs-java_ks/pull/195) ([scornelissen85](https://github.com/scornelissen85))
 - support removal of keystore file if password incorrect [#151](https://github.com/puppetlabs/puppetlabs-java_ks/pull/151) ([jessereynolds](https://github.com/jessereynolds))
-
-### Changed
-- (MODULES-5814) - Removing Windows 8 [#197](https://github.com/puppetlabs/puppetlabs-java_ks/pull/197) ([pmcmaw](https://github.com/pmcmaw))
 
 ### Fixed
 
