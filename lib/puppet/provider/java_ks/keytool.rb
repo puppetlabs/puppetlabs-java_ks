@@ -358,7 +358,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # From a best practice standpoint the keystore should be protected by file
     # permissions and not just the passphrase so "making it work on SLES"
     # trumps.
-    if Facter.value('osfamily') == 'Suse' && @resource[:password]
+    if Facter.value('os.family') == 'Suse' && @resource[:password]
       cmd_to_run = cmd.is_a?(String) ? cmd.split(%r{\s}).first : cmd.first
       if cmd_to_run == command_keytool
         cmd << '-srcstorepass' << @resource[:password]
