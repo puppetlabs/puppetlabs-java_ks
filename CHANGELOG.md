@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v5.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.0) - 2024-11-26
+## [v5.1.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.1) - 2025-01-24
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.1.0...v5.1.1)
+
+### Fixed
+
+- (CAT-2203) Removing legacy facts [#466](https://github.com/puppetlabs/puppetlabs-java_ks/pull/466) ([amitkarsale](https://github.com/amitkarsale))
+
+## [v5.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.0) - 2024-11-27
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.0.0...v5.1.0)
 
@@ -241,7 +249,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- Add Java 9 support [#195](https://github.com/puppetlabs/puppetlabs-java_ks/pull/195) ([scornelissen85](https://github.com/scornelissen85))
+- Add Java 9 support [#195](https://github.com/puppetlabs/puppetlabs-java_ks/pull/195) ([SndR85](https://github.com/SndR85))
 - support removal of keystore file if password incorrect [#151](https://github.com/puppetlabs/puppetlabs-java_ks/pull/151) ([jessereynolds](https://github.com/jessereynolds))
 
 ### Fixed
