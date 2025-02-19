@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:java_ks) do
   @doc = 'Manages the entries in a java keystore, and uses composite namevars to
   accomplish the same alias spread across multiple target keystores.'
@@ -132,14 +134,12 @@ Puppet::Type.newtype(:java_ks) do
       keystore. This cannot be used together with :password, but you must pass at least one of these parameters.'
   end
 
-  newparam(:password_fail_reset) do
+  newparam(:password_fail_reset, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc "If the supplied password does not succeed in unlocking the
       keystore file, then delete the keystore file and create a new one.
       Default: false."
 
-    newvalues(true, false)
-
-    defaultto false
+    defaultto :false
   end
 
   newparam(:destkeypass) do
@@ -156,13 +156,11 @@ Puppet::Type.newtype(:java_ks) do
     end
   end
 
-  newparam(:trustcacerts) do
+  newparam(:trustcacerts, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc "Certificate authorities aren't by default trusted so if you are adding a CA you need to set this to true.
      Defaults to :false."
 
-    newvalues(true, false)
-
-    defaultto false
+    defaultto :false
   end
 
   newparam(:path) do
