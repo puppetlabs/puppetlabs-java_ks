@@ -102,8 +102,22 @@ describe Puppet::Type.type(:java_ks) do
       expect(described_class.new(jks)[:name]).to eq(jks_resource[:name])
     end
 
-    it 'has false as the default value to :trustcacerts when parameter not provided' do
-      expect(described_class.new(jks_resource)[:trustcacerts]).to be_nil
+    it 'resource[:trustcacerts] is falsey when parameter not provided' do
+      expect(described_class.new(jks_resource)[:trustcacerts]).to be_falsey
+    end
+
+    it 'resource[:trustcacerts] is the boolean `false` when set to `false`' do
+      jks = jks_resource.dup
+      jks[:trustcacerts] = false
+
+      expect(described_class.new(jks)[:trustcacerts]).to be false
+    end
+
+    it 'resource[:trustcacerts] is the boolean `true` when set to `true`' do
+      jks = jks_resource.dup
+      jks[:trustcacerts] = true
+
+      expect(described_class.new(jks)[:trustcacerts]).to be true
     end
 
     it 'has :rsa as the default value for :private_key_type' do
@@ -175,8 +189,22 @@ describe Puppet::Type.type(:java_ks) do
       }.to raise_error(Puppet::Error, %r{length 6})
     end
 
-    it 'has :false value to :password_fail_reset when parameter not provided' do
-      expect(described_class.new(jks_resource)[:password_fail_reset]).to be_nil
+    it 'resource[:password_fail_reset] is falsey when parameter not provided' do
+      expect(described_class.new(jks_resource)[:password_fail_reset]).to be_falsey
+    end
+
+    it 'resource[:password_fail_reset] is the boolean `false` when parameter set to `false`' do
+      jks = jks_resource.dup
+      jks[:password_fail_reset] = false
+
+      expect(described_class.new(jks)[:password_fail_reset]).to be false
+    end
+
+    it 'resource[:password_fail_reset] is the boolean `true` when parameter set to `true`' do
+      jks = jks_resource.dup
+      jks[:password_fail_reset] = true
+
+      expect(described_class.new(jks)[:password_fail_reset]).to be true
     end
 
     it 'fails if :source_password is not provided for pkcs12 :storetype' do
