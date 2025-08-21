@@ -2,9 +2,7 @@ fixtures:
   repositories:
     facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
     provision: 'https://github.com/puppetlabs/provision.git'
-    puppet_agent:
-      repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
-      ref: v4.21.0
+    puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
   forge_modules:
     chocolatey: "puppetlabs/chocolatey"
     java: "puppetlabs/java"
