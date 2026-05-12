@@ -39,8 +39,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     allow(provider).to receive(:command).with(:keytool).and_return('mykeytool')
     allow(provider).to receive(:command).with(:openssl).and_return('myopenssl')
 
-    allow(provider).to receive(:command_keytool).and_return('mykeytool')
-    allow(provider).to receive(:command_openssl).and_return('myopenssl')
+    allow(provider).to receive_messages(command_keytool: 'mykeytool', command_openssl: 'myopenssl')
 
     tempfile = class_double('tempfile', class: Tempfile,
                                         write: true,

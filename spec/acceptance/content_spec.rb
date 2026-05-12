@@ -3,7 +3,7 @@
 require 'spec_helper_acceptance'
 
 RSpec.shared_examples 'a private key creator' do |sensitive|
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
+  # rubocop:disable RSpec/InstanceVariable -- Instance variables are inherited and thus cannot be contained within lets
   it 'creates a private key' do
     pp = if sensitive
            <<-MANIFEST

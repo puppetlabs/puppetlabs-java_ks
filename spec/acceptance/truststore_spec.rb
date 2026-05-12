@@ -3,7 +3,7 @@
 require 'spec_helper_acceptance'
 
 describe 'managing java truststores' do
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
+  # rubocop:disable RSpec/InstanceVariable -- Instance variables are inherited and thus cannot be contained within lets
   include_context 'with common variables'
 
   it 'creates a truststore' do

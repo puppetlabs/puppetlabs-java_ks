@@ -245,7 +245,7 @@ Puppet::Type.newtype(:java_ks) do
     raise Puppet::Error, "You must pass one of 'password' or 'password_file'." unless value(:password) || value(:password_file)
 
     if value(:storetype) == :pkcs12 && value(:source_password).nil?
-      fail "You must provide 'source_password' when using a 'pkcs12' storetype." # rubocop:disable Style/SignalException : Associated test fails if 'raise' is used
+      fail "You must provide 'source_password' when using a 'pkcs12' storetype." # rubocop:disable Style/SignalException -- Associated test fails if 'raise' is used
     end
   end
 end

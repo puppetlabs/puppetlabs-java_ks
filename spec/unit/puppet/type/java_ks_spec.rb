@@ -220,8 +220,7 @@ describe Puppet::Type.type(:java_ks) do
     it 'insync? should return false if sha1 fingerprints do not match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      allow(provider_var).to receive(:latest).and_return('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A')
-      allow(provider_var).to receive(:current).and_return('21:46:45:65:57:50:FE:2D:DA:7C:C8:57:D2:33:3A:B0:A6')
+      allow(provider_var).to receive_messages(latest: '9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A', current: '21:46:45:65:57:50:FE:2D:DA:7C:C8:57:D2:33:3A:B0:A6')
       expect(described_class.new(jks).property(:ensure)).not_to be_insync(:present)
     end
 
@@ -234,16 +233,15 @@ describe Puppet::Type.type(:java_ks) do
     it 'insync? should return true if sha1 fingerprints match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      allow(provider_var).to receive(:latest).and_return('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
-      allow(provider_var).to receive(:current).and_return('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      allow(provider_var).to receive_messages(latest: '66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A', current: '66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
       expect(described_class.new(jks).property(:ensure)).to be_insync(:present)
     end
 
     it 'insync? should return true if subset of sha1 fingerprints match and state is :present' do
       jks = jks_resource.dup
       jks[:ensure] = :latest
-      allow(provider_var).to receive(:current).and_return('9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A/66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
-      allow(provider_var).to receive(:latest).and_return('66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
+      allow(provider_var).to receive_messages(current: '9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A:E7:8F:6A/66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A',
+latest: '66:9B:8B:23:4C:6A:9A:08:F6:4E:B6:01:23:EA:5A')
       expect(described_class.new(jks).property(:ensure)).to be_insync(:present)
     end
   end

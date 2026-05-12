@@ -3,7 +3,7 @@
 require 'spec_helper_acceptance'
 
 describe 'managing intermediate certificates' do
-  # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
+  # rubocop:disable RSpec/InstanceVariable -- Instance variables are inherited and thus cannot be contained within lets
   describe 'managing combined and seperate java chain keys' do
     include_context 'with common variables'
 

@@ -162,7 +162,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.close!
       true
     rescue StandardError => e
-      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset])
+      if e.message.match?(%r{password was incorrect}i) && @resource[:password_fail_reset]
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
         File.delete(@resource[:target])
       end
@@ -172,9 +172,8 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
 
   # Extracts the fingerprints of a given output
   def extract_fingerprint(output)
-    fps = []
-    output.scan(%r{^Certificate fingerprints:(.*?)Signature?}m).flatten.each do |certblock|
-      fps.push(certblock.scan(%r{^\s+\S+:\s+(\S+)}m))
+    fps = output.scan(%r{^Certificate fingerprints:(.*?)Signature?}m).flatten.map do |certblock|
+      certblock.scan(%r{^\s+\S+:\s+(\S+)}m)
     end
     fps.flatten.sort.join('/')
   end
@@ -395,7 +394,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # for previously empty files, restore the umask, mode, owner and group.
     # The funky double-take check is because on Suse defined? doesn't seem
     # to behave quite the same as on Debian, RedHat
-    if target and (defined? stat and stat) # rubocop:disable Style/AndOr : Changing 'and' to '&&' causes test failures.
+    if target and (defined? stat and stat) # rubocop:disable Style/AndOr -- Changing 'and' to '&&' causes test failures.
       File.umask(umask)
       # Need to change group ownership before mode to prevent making the file
       # accessible to the wrong group.
