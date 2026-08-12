@@ -8,6 +8,17 @@ Gemfile:
   optional:
     ":development":
     - gem: ruby-pwsh
+  # MODULES-11721: pin puppetlabs_spec_helper and puppet_litmus above pdk-templates'
+  # own defaults (>= 8.0 and ~> 2.5 respectively), which are loose enough for a
+  # scheduled `pdk update` to silently revert this PR: puppetlabs_spec_helper 8.0.0
+  # still pins puppet-lint ~> 4.0 (conflicts with voxpupuli-puppet-lint-plugins ~> 7.0,
+  # needed for Puppet 9), and puppet_litmus below 2.8.0 doesn't support
+  # --collection-platform-exclude, which ci.yml/nightly.yml pass unconditionally.
+  overrides:
+    - gem: 'puppetlabs_spec_helper'
+      version: '~> 9.0'
+    - gem: 'puppet_litmus'
+      version: '~> 2.8'
 spec/spec_helper.rb:
   mock_with: ":rspec"
   coverage_report: true
@@ -17,10 +28,37 @@ spec/spec_helper.rb:
   unmanaged: false
 .github/workflows/auto_release.yml:
   unmanaged: false
+# MODULES-11721: ci.yml and nightly.yml are maintained by hand because they carry
+# Puppet 9 customisations that pdk-templates cannot express -- the `ruby_version`
+# and `additional_packages` inputs (no such keys in the templates). Leaving them
+# managed means the scheduled `pdk update` PR silently reverts Puppet 9 support.
+# acceptance_flags below is kept in step with the hand-written `flags:` -- that part
+# IS expressible via the template's own acceptance_flags key, so it isn't itself a
+# reason for unmanaged: true; these files stay unmanaged solely for ruby_version and
+# additional_packages. They can go back to template management once pdk-templates
+# supports those two inputs.
 .github/workflows/ci.yml:
-  unmanaged: false
+  unmanaged: true
+  acceptance_flags:
+    - '--nightly'
+    - '--collection-platform-exclude 9:redhat-7'
+    - '--collection-platform-exclude 9:centos-7'
+    - '--collection-platform-exclude 9:oraclelinux-7'
+    - '--collection-platform-exclude 9:scientific-7'
+    - '--collection-platform-exclude 9:debian-10'
+    - '--collection-platform-exclude 9:ubuntu-18.04'
+    - '--collection-platform-exclude 9:ubuntu-20.04'
 .github/workflows/nightly.yml:
-  unmanaged: false
+  unmanaged: true
+  acceptance_flags:
+    - '--nightly'
+    - '--collection-platform-exclude 9:redhat-7'
+    - '--collection-platform-exclude 9:centos-7'
+    - '--collection-platform-exclude 9:oraclelinux-7'
+    - '--collection-platform-exclude 9:scientific-7'
+    - '--collection-platform-exclude 9:debian-10'
+    - '--collection-platform-exclude 9:ubuntu-18.04'
+    - '--collection-platform-exclude 9:ubuntu-20.04'
 .github/workflows/release.yml:
   unmanaged: false
 .travis.yml:
