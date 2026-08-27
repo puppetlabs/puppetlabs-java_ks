@@ -181,6 +181,12 @@ Puppet::Type.newtype(:java_ks) do
     defaultto 120
   end
 
+  newparam(:keytool) do
+    desc 'Path to the keytool executable used by the provider.'
+
+    defaultto 'keytool'
+  end
+
   newparam(:source_password) do
     munge do |value|
       value = value.unwrap if value.respond_to?(:unwrap)
