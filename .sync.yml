@@ -8,6 +8,9 @@ Gemfile:
   optional:
     ":development":
     - gem: ruby-pwsh
+  overrides:
+    - gem: 'puppet_litmus'
+      version: '~> 2.0'
 spec/spec_helper.rb:
   mock_with: ":rspec"
   coverage_report: true
