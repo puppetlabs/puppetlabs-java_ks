@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v5.1.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.1) - 2025-01-24
+## [v6.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v6.0.0) - 2026-09-16
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.1.1...v6.0.0)
+
+### Changed
+
+- (CAT-2377) Prepare module for Puppetcore / Drop Support for Puppet 7 [#471](https://github.com/puppetlabs/puppetlabs-java_ks/pull/471) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+### Added
+
+- MODULES-11721: Add Puppet 9 support [#475](https://github.com/puppetlabs/puppetlabs-java_ks/pull/475) ([span786](https://github.com/span786))
+
+### Fixed
+
+- Fix boolean parameters [#469](https://github.com/puppetlabs/puppetlabs-java_ks/pull/469) ([alexjfisher](https://github.com/alexjfisher))
+- Fix race condition by memoizing `Tempfile` objects [#461](https://github.com/puppetlabs/puppetlabs-java_ks/pull/461) ([alexjfisher](https://github.com/alexjfisher))
+
+## [v5.1.1](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v5.1.1) - 2025-01-27
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.1.0...v5.1.1)
 
