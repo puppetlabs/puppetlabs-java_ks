@@ -38,7 +38,7 @@ describe Puppet::Type.type(:java_ks) do
   end
 
   describe 'when validating attributes' do
-    [:name, :target, :private_key, :private_key_type, :certificate, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password].each do |param|
+    [:name, :target, :private_key, :private_key_type, :certificate, :password_file, :trustcacerts, :destkeypass, :password_fail_reset, :source_password, :keytool].each do |param|
       it "has a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
@@ -213,6 +213,16 @@ describe Puppet::Type.type(:java_ks) do
       expect {
         described_class.new(jks)
       }.to raise_error(Puppet::Error, %r{You must provide 'source_password' when using a 'pkcs12' storetype})
+    end
+
+    it 'uses keytool as the default :keytool value' do
+      expect(described_class.new(jks_resource)[:keytool]).to eq('keytool')
+    end
+
+    it 'accepts a custom :keytool value' do
+      jks = jks_resource.merge(keytool: '/usr/lib/jvm/java-17-openjdk/bin/keytool')
+
+      expect(described_class.new(jks)[:keytool]).to eq('/usr/lib/jvm/java-17-openjdk/bin/keytool')
     end
   end
 
