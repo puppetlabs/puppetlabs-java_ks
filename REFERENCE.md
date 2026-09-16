@@ -118,7 +118,7 @@ converted to lowercase.
 
 ##### <a name="-java_ks--password_fail_reset"></a>`password_fail_reset`
 
-Valid values: `true`, `false`
+Valid values: `true`, `false`, `yes`, `no`
 
 If the supplied password does not succeed in unlocking the
 keystore file, then delete the keystore file and create a new one.
@@ -189,7 +189,7 @@ Destination file for the keystore.  This will autorequire the parent directory o
 
 ##### <a name="-java_ks--trustcacerts"></a>`trustcacerts`
 
-Valid values: `true`, `false`
+Valid values: `true`, `false`, `yes`, `no`
 
 Certificate authorities aren't by default trusted so if you are adding a CA you need to set this to true.
 Defaults to :false.
