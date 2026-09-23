@@ -59,6 +59,21 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
     end
   end
 
+  describe '#command_keytool' do
+    it 'uses the keytool parameter default' do
+      allow(provider).to receive(:command_keytool).and_call_original
+
+      expect(provider.command_keytool).to eq('keytool')
+    end
+
+    it 'uses a custom keytool parameter when provided' do
+      allow(provider).to receive(:command_keytool).and_call_original
+      resource[:keytool] = '/usr/lib/jvm/java-17-openjdk/bin/keytool'
+
+      expect(provider.command_keytool).to eq('/usr/lib/jvm/java-17-openjdk/bin/keytool')
+    end
+  end
+
   describe 'when running keystore commands', if: !Puppet.features.microsoft_windows? do
     it 'calls the passed command' do
       cmd = '/bin/echo testing 1 2 3'
