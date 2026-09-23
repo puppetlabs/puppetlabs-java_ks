@@ -69,6 +69,7 @@ The following parameters are available in the `java_ks` type.
 * [`certificate_content`](#-java_ks--certificate_content)
 * [`chain`](#-java_ks--chain)
 * [`destkeypass`](#-java_ks--destkeypass)
+* [`keytool`](#-java_ks--keytool)
 * [`keytool_timeout`](#-java_ks--keytool_timeout)
 * [`name`](#-java_ks--name)
 * [`password_fail_reset`](#-java_ks--password_fail_reset)
@@ -102,6 +103,12 @@ from a file separate from the server certificate. This will autorequire the spec
 ##### <a name="-java_ks--destkeypass"></a>`destkeypass`
 
 The password used to protect the key in keystore.
+
+##### <a name="-java_ks--keytool"></a>`keytool`
+
+Path to the keytool executable used by the provider.
+
+Default value: `keytool`
 
 ##### <a name="-java_ks--keytool_timeout"></a>`keytool_timeout`
 
