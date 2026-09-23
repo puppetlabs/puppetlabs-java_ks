@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v6.1.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v6.1.0) - 2026-09-23
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v6.0.0...v6.1.0)
+
+### Added
+
+- Make keytool path configureable [#477](https://github.com/puppetlabs/puppetlabs-java_ks/pull/477) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [v6.0.0](https://github.com/puppetlabs/puppetlabs-java_ks/tree/v6.0.0) - 2026-09-16
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java_ks/compare/v5.1.1...v6.0.0)
