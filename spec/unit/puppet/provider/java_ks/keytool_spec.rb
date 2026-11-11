@@ -179,6 +179,24 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         expect(OpenSSL::PKCS12).to receive(:create).with('puppet', 'app', 'priv_obj', 'cert_obj', [], 'AES-256-CBC', 'AES-256-CBC', nil, -1)
         provider.pkcs12_create('puppet', 'app', 'priv_obj', 'cert_obj', [])
       end
+
+      it 'produces a PKCS12 without a MAC that round-trips in FIPS mode' do
+        allow(provider).to receive(:fips_mode?).and_return(true)
+        key = OpenSSL::PKey::RSA.new(2048)
+        cert = OpenSSL::X509::Certificate.new
+        cert.version = 2
+        cert.serial = 1
+        cert.subject = cert.issuer = OpenSSL::X509::Name.parse('/CN=app')
+        cert.public_key = key.public_key
+        cert.not_before = Time.now
+        cert.not_after = Time.now + 3600
+        cert.sign(key, OpenSSL::Digest.new('SHA256'))
+
+        der = provider.pkcs12_create('puppet', 'app', key, cert, []).to_der
+
+        expect(OpenSSL::ASN1.decode(der).value.size).to eq(2) # version + authSafe, no macData
+        expect(OpenSSL::PKCS12.new(der, 'puppet').key.to_der).to eq(key.to_der)
+      end
     end
 
     describe '#import_ks' do
