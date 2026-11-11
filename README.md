@@ -122,6 +122,8 @@ For information on the classes and types, see the [REFERENCE.md](https://github.
 
 The java_ks module uses the `keytool` and `openssl` commands. It should work on all systems with these commands.
 
+On a host running in FIPS mode, the module creates the temporary PKCS12 file it hands to `keytool` with PBES2 and AES-256 and without an integrity MAC, because the PKCS12 defaults in OpenSSL 1.x (RC2 and 3DES) and the key derivation for the PKCS12 MAC are not FIPS approved. Without this, importing a private key fails with `encrypt error` (OpenSSL 1.1.1) or `mac generation error` (OpenSSL 3 whose FIPS provider has no PKCS12 KDF, such as the one bundled with the FIPS builds of the OpenVox agent). `keytool` reads PBES2 since Java 8u301 and 11.0.12. Outside FIPS mode the file is created as before.
+
 Java 7 is supported as of 1.0.0.
 
 Developed against IBM Java 6 on AIX. Other versions may be unsupported.
