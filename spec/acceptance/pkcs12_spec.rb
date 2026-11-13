@@ -3,7 +3,7 @@
 require 'spec_helper_acceptance'
 
 # SLES by default does not support this form of encyrption.
-describe 'managing java pkcs12', unless: (os[:family] == 'sles' || (os[:family] == 'debian' && os[:release].start_with?('10')) || (os[:family] == 'ubuntu' && os[:release].start_with?('18'))) do
+describe 'managing java pkcs12', unless: os[:family] == 'sles' || (os[:family] == 'debian' && os[:release].start_with?('10')) || (os[:family] == 'ubuntu' && os[:release].start_with?('18')) do
   # rubocop:disable RSpec/InstanceVariable : Instance variables are inherited and thus cannot be contained within lets
   include_context 'with common variables'
   context 'with defaults' do

@@ -20,7 +20,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       certificate: "#{temp_dir}app.example.com.pem",
       private_key: "#{temp_dir}private/app.example.com.pem",
       storetype: 'jceks',
-      provider: described_class.name
+      provider: described_class.name,
     }
   end
   let(:params) do
@@ -122,7 +122,6 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
       testing_ca.sign(testing_key, OpenSSL::Digest.new('SHA256'))
 
       context 'when using the file based parameters for certificate and private_key' do
-        # rubocop:disable RSpec/MultipleExpectations
         # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
@@ -136,7 +135,6 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
-        # rubocop:enable RSpec/MultipleExpectations
         # rubocop:enable RSpec/StubbedMock
       end
 
@@ -148,7 +146,6 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           )
         end
 
-        # rubocop:disable RSpec/MultipleExpectations
         # rubocop:disable RSpec/StubbedMock
         it 'converts a certificate to a pkcs12 file' do
           allow(provider).to receive(:password).and_return(resource[:password])
@@ -162,7 +159,6 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
           expect(OpenSSL::PKCS12).to receive(:create).with(resource[:password], resource[:name], 'priv_obj', 'cert_obj', []).and_return(pkcs_double)
           provider.to_pkcs12("#{temp_dir}testing.stuff")
         end
-        # rubocop:enable RSpec/MultipleExpectations
         # rubocop:enable RSpec/StubbedMock
       end
     end
@@ -198,7 +194,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         certificate: "#{temp_dir}testing.p12",
         storetype: 'pkcs12',
         source_password: 'password',
-        provider: described_class.name
+        provider: described_class.name,
       }
     end
 
@@ -230,7 +226,7 @@ describe Puppet::Type.type(:java_ks).provider(:keytool) do
         password: 'puppet',
         certificate: "#{temp_dir}app.example.com.pem",
         private_key: "#{temp_dir}private/app.example.com.pem",
-        provider: described_class.name
+        provider: described_class.name,
       }
     end
 
