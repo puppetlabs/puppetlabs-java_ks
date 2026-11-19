@@ -22,7 +22,7 @@ describe Puppet::Type.type(:java_ks) do
       private_key: "#{temp_dir}private/app.example.com.pem",
       private_key_type: 'rsa',
       storetype: 'jceks',
-      provider: :keytool
+      provider: :keytool,
     }
   end
   let(:jks_resource) do

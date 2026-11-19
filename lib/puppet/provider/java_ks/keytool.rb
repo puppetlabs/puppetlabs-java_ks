@@ -162,7 +162,7 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
       tmpfile.close!
       true
     rescue StandardError => e
-      if e.message.match?(%r{password was incorrect}i) && (@resource[:password_fail_reset])
+      if e.message.match?(%r{password was incorrect}i) && @resource[:password_fail_reset]
         # we have the wrong password for the keystore. so delete it if :password_fail_reset
         File.delete(@resource[:target])
       end
@@ -285,14 +285,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # certificate content and create a tempfile containing this value.
     # we leave it to to the tempfile to clean it up after the pupet run exists.
     @temp_certificate_file ||= begin
-                                 file = Tempfile.new('certificate')
-                                 # Check if the specified value is a Sensitive data type. If so, unwrap it and use
-                                 # the value.
-                                 content = @resource[:certificate_content].respond_to?(:unwrap) ? @resource[:certificate_content].unwrap : @resource[:certificate_content]
-                                 file.write(content)
-                                 file.close
-                                 file
-                               end
+      file = Tempfile.new('certificate')
+      # Check if the specified value is a Sensitive data type. If so, unwrap it and use
+      # the value.
+      content = @resource[:certificate_content].respond_to?(:unwrap) ? @resource[:certificate_content].unwrap : @resource[:certificate_content]
+      file.write(content)
+      file.close
+      file
+    end
 
     @temp_certificate_file.path
   end
@@ -305,14 +305,14 @@ Puppet::Type.type(:java_ks).provide(:keytool) do
     # private key content and create a tempfile containing this value.
     # we leave it to to the tempfile to clean it up after the pupet run exists.
     @temp_private_key_file ||= begin
-                                 file = Tempfile.new('private_key')
-                                 # Check if the specified value is a Sensitive data type. If so, unwrap it and use
-                                 # the value.
-                                 content = @resource[:private_key_content].respond_to?(:unwrap) ? @resource[:private_key_content].unwrap : @resource[:private_key_content]
-                                 file.write(content)
-                                 file.close
-                                 file
-                               end
+      file = Tempfile.new('private_key')
+      # Check if the specified value is a Sensitive data type. If so, unwrap it and use
+      # the value.
+      content = @resource[:private_key_content].respond_to?(:unwrap) ? @resource[:private_key_content].unwrap : @resource[:private_key_content]
+      file.write(content)
+      file.close
+      file
+    end
     @temp_private_key_file.path
   end
 

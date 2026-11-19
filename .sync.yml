@@ -15,8 +15,6 @@ Gemfile:
   # needed for Puppet 9), and puppet_litmus below 2.8.0 doesn't support
   # --collection-platform-exclude, which ci.yml/nightly.yml pass unconditionally.
   overrides:
-    - gem: 'puppetlabs_spec_helper'
-      version: '~> 9.0'
     - gem: 'puppet_litmus'
       version: '~> 2.8'
 spec/spec_helper.rb:
@@ -66,3 +64,7 @@ spec/spec_helper.rb:
   delete: true
 .rubocop.yml:
   include_todos: true
+Rakefile:
+  # puppet-lint checks the module disabled by hand (Rakefile/.puppet-lint.rc) (MODULES-11997 pdk update)
+  extra_disabled_lint_checks:
+  - anchor_resource
